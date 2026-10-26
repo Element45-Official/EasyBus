@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyBus - Live Tracking</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent body scrolling for a dashboard feel */
+        }
+        
+        /* Custom Map Styles */
+        .leaflet-control-zoom {
+            border: none !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+            border-radius: 0.5rem !important;
+            overflow: hidden;
+        }
+        
+        .leaflet-control-zoom a {
+            color: #475e92 !important;
+            width: 36px !important;
+            height: 36px !important;
+            line-height: 36px !important;
+        }
+
+        /* Bus Marker Animation Pulse */
+        .bus-marker-wrapper {
+            position: relative;
+        }
+        .bus-pulse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 48px;
+            height: 48px;
+            background-color: rgba(245, 158, 11, 0.4);
+            border-radius: 50%;
+            z-index: -1;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+        }
+
+        /* Hide scrollbar for timeline but allow scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen bg-gray-50">
+
+    <!-- Header / Navbar -->
+    <!-- Using #475e92 to roughly match the desaturated dark blue from the logo image -->
+    <header class="bg-[#475e92] text-white py-3 px-6 shadow-md flex items-center justify-between z-20 shrink-0">
+        <div class="flex items-center gap-3">
+            <!-- Bus Logo Icon -->
+            <i class="ph-fill ph-bus text-[32px] text-[#f59e0b]"></i>
+            <!-- Brand Text -->
+            <h1 class="text-2xl font-bold tracking-tight">
+                <span class="text-white">Easy</span><span class="text-[#f59e0b]">Bus</span>
+            </h1>
+        </div>
+        <div class="flex items-center gap-4 text-sm font-medium">
+            <button class="hidden md:flex items-center gap-2 hover:text-[#f59e0b] transition-colors">
+                <i class="ph ph-question text-xl"></i> Help
+            </button>
+            <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center border border-white/30 cursor-pointer hover:bg-white/30 transition-colors">
+                <i class="ph ph-user text-white"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex flex-col md:flex-row flex-1 overflow-hidden relative">
+        
+        <!-- Left Sidebar: Timeline -->
+        <aside class="w-full md:w-[380px] bg-white shadow-[4px_0_24px_rgba(0,0,0,0.05)] z-10 flex flex-col shrink-0">
+            <div class="p-6 border-b border-gray-100 bg-gray-50/50">
+                <div class="flex items-center justify-between mb-1">
+                    <h2 class="text-lg font-bold text-gray-800">Trip Status</h2>
+                    <span class="px-2.5 py-1 bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wider rounded-md">On Time</span>
+                </div>
+                <p class="text-sm text-gray-500">Route: Kuala Lumpur → Johor Bahru</p>
+            </div>
+
+            <!-- Timeline Scrollable Area -->
+            <div class="p-6 flex-1 overflow-y-auto no-scrollbar">
+                <div class="relative">
+                    <!-- Vertical Track Line -->
+                    <div class="absolute top-2 left-[19px] bottom-6 w-0.5 bg-gray-200"></div>
+                    <!-- Completed Vertical Line Overlay -->
+                    <div class="absolute top-2 left-[19px] h-[55%] w-0.5 bg-[#f59e0b]"></div>
+
+                    <!-- Step 1: Booked -->
+                    <div class="relative flex gap-5 mb-8">
+                        <div class="w-10 h-10 rounded-full bg-[#f59e0b] text-white flex items-center justify-center shadow-sm shrink-0 z-10 ring-4 ring-white">
+                            <i class="ph-bold ph-check text-lg"></i>
+                        </div>
+                        <div class="pt-2">
+                            <h3 class="font-semibold text-gray-800 leading-none">Ticket Booked</h3>
+                            <p class="text-sm text-gray-500 mt-1">Confirmed online</p>
+                            <span class="text-xs text-gray-400 mt-1 block">Today, 08:15 AM</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Departed -->
+                    <div class="relative flex gap-5 mb-8">
+                        <div class="w-10 h-10 rounded-full bg-[#f59e0b] text-white flex items-center justify-center shadow-sm shrink-0 z-10 ring-4 ring-white">
+                            <i class="ph-bold ph-check text-lg"></i>
+                        </div>
+                        <div class="pt-2">
+                            <h3 class="font-semibold text-gray-800 leading-none">Departed KL (TBS)</h3>
+                            <p class="text-sm text-gray-500 mt-1">Bus left the terminal successfully.</p>
+                            <span class="text-xs text-gray-400 mt-1 block">Today, 09:30 AM</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: In Transit (Current) -->
+                    <div class="relative flex gap-5 mb-8">
+                        <!-- Pulsing current marker -->
+                        <div class="w-10 h-10 rounded-full bg-white border-2 border-[#f59e0b] text-[#f59e0b] flex items-center justify-center shadow-md shrink-0 z-10 ring-4 ring-white relative">
+                            <div class="absolute inset-0 rounded-full border-2 border-[#f59e0b] animate-ping opacity-50"></div>
+                            <i class="ph-fill ph-bus text-xl"></i>
+                        </div>
+                        <div class="pt-2">
+                            <h3 class="font-bold text-[#f59e0b] leading-none">In Transit</h3>
+                            <p class="text-sm text-gray-600 mt-1">Currently travelling along PLUS Highway.</p>
+                            <span class="text-xs font-medium text-gray-500 mt-1 block">Updated just now</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Arriving -->
+                    <div class="relative flex gap-5 mb-8">
+                        <div class="w-10 h-10 rounded-full bg-gray-100 border-2 border-gray-200 text-gray-400 flex items-center justify-center shrink-0 z-10 ring-4 ring-white">
+                            <i class="ph-bold ph-map-pin text-lg"></i>
+                        </div>
+                        <div class="pt-2">
+                            <h3 class="font-semibold text-gray-500 leading-none">Approaching Drop-off</h3>
+                            <p class="text-sm text-gray-400 mt-1">Skudai Toll Plaza</p>
+                            <span class="text-xs text-gray-400 mt-1 block">Est. 12:45 PM</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Arrived -->
+                    <div class="relative flex gap-5">
+                        <div class="w-10 h-10 rounded-full bg-gray-100 border-2 border-gray-200 text-gray-400 flex items-center justify-center shrink-0 z-10 ring-4 ring-white">
+                            <i class="ph-bold ph-flag-checkered text-lg"></i>
+                        </div>
+                        <div class="pt-2">
+                            <h3 class="font-semibold text-gray-500 leading-none">Arrived at Johor Bahru</h3>
+                            <p class="text-sm text-gray-400 mt-1">Larkin Sentral Terminal</p>
+                            <span class="text-xs text-gray-400 mt-1 block">Est. 01:15 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Side: Map Area -->
+        <div class="flex-1 relative h-[50vh] md:h-full shrink-0">
+            <!-- Map Container -->
+            <div id="map" class="absolute inset-0 z-0"></div>
+
+            <!-- Floating Tracking Card -->
+            <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-[90%] md:w-auto bg-white rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] z-10 flex flex-col md:flex-row p-1 overflow-hidden border border-gray-100">
+                <!-- Info block -->
+                <div class="flex items-center gap-4 px-5 py-3 border-b md:border-b-0 md:border-r border-gray-100">
+                    <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-[#475e92]">
+                        <i class="ph-fill ph-barcode text-2xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block">Tracking ID</span>
+                        <span class="font-bold text-gray-900 text-lg">#EB-89244</span>
+                    </div>
+                </div>
+
+                <!-- Info block -->
+                <div class="flex items-center gap-4 px-5 py-3 border-b md:border-b-0 md:border-r border-gray-100">
+                    <div>
+                        <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block">Plate No.</span>
+                        <span class="font-bold text-gray-700 text-md">JVV 9012</span>
+                    </div>
+                </div>
+
+                <!-- Info block (Highlight) -->
+                <div class="flex items-center gap-4 px-6 py-3 bg-[#fffaf0]">
+                    <div>
+                        <span class="text-[10px] text-[#b47101] font-bold uppercase tracking-widest block">Est. Arrival</span>
+                        <span class="font-bold text-[#f59e0b] text-xl">1h 24m</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Map Gradient Fade (Top) to blend with header -->
+            <div class="absolute top-0 left-0 w-full h-8 bg-gradient-to-b from-gray-900/10 to-transparent pointer-events-none z-10"></div>
+        </div>
+
+    </main>
+
+    <script>
+        // Define route coordinates simulating a highway path from KL to JB
+        const routePath = [
+            [3.1390, 101.6869],   // KL (TBS)
+            [2.9818, 101.7820],   // Kajang
+            [2.7166, 101.9388],   // Seremban
+            [2.2748, 102.2980],   // Ayer Keroh
+            [2.1481, 102.7753],   // Pagoh
+            [1.9304, 103.1492],   // Yong Peng
+            [1.4927, 103.7414]    // JB (Larkin)
+        ];
+
+        // Initialize Map
+        // Using a modern, clean light basemap (CartoDB Positron) which looks great for dashboards
+        const map = L.map('map', {
+            zoomControl: false // We'll add it manually to reposition if needed
+        }).setView([2.3, 102.7], 8); 
+
+        L.control.zoom({
+            position: 'topright'
+        }).addTo(map);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+
+        // Draw the full route path
+        const routeLine = L.polyline(routePath, {
+            color: '#475e92', 
+            weight: 5,
+            opacity: 0.6,
+            dashArray: '10, 10', // dashed line for pending route
+            lineJoin: 'round'
+        }).addTo(map);
+
+        // Fit map bounds to show the whole route initially
+        map.fitBounds(routeLine.getBounds(), { padding: [50, 50] });
+
+        // Add Start (KL) and End (JB) Markers
+        const dotIcon = (color) => L.divIcon({
+            className: 'custom-div-icon',
+            html: `<div style="background-color:${color}; width:14px; height:14px; border-radius:50%; border:3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
+            iconSize: [14, 14],
+            iconAnchor: [7, 7]
+        });
+
+        L.marker(routePath[0], {icon: dotIcon('#475e92')}).addTo(map).bindPopup('<b>Kuala Lumpur</b><br>TBS Terminal');
+        L.marker(routePath[routePath.length - 1], {icon: dotIcon('#475e92')}).addTo(map).bindPopup('<b>Johor Bahru</b><br>Larkin Sentral');
+
+        // Create the Bus Marker (Animated)
+        const busIconHtml = `
+            <div class="bus-marker-wrapper">
+                <div class="bus-pulse"></div>
+                <div class="bg-[#f59e0b] text-white w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shadow-lg relative z-10">
+                    <i class="ph-fill ph-bus text-xl"></i>
+                </div>
+            </div>
+        `;
+        const busIcon = L.divIcon({
+            className: 'bg-transparent',
+            html: busIconHtml,
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        });
+
+        // Initialize bus marker somewhere in the middle (e.g. Ayer Keroh area)
+        let busMarker = L.marker(routePath[3], {icon: busIcon, zIndexOffset: 1000}).addTo(map);
+
+        // ---- Animation Logic for Demo ----
+        // We will animate the bus moving along the routePath array.
+        let progress = 0.45; // Start around 45% of the trip
+        const animationSpeed = 0.0003; // Adjust for faster/slower movement
+
+        // Draw a solid line behind the bus to show completed route
+        let completedRouteLine = L.polyline([], {
+            color: '#f59e0b', // Orange completed path
+            weight: 5,
+            opacity: 1,
+            lineJoin: 'round'
+        }).addTo(map);
+
+        function animateBus() {
+            progress += animationSpeed;
+            if (progress > 0.95) {
+                // Loop back for demo purposes
+                progress = 0.1; 
+            }
+
+            const totalSegments = routePath.length - 1;
+            const scaledProgress = progress * totalSegments;
+            const currentIndex = Math.floor(scaledProgress);
+            const segmentProgress = scaledProgress - currentIndex;
+
+            let currentLat, currentLng;
+
+            if (currentIndex >= totalSegments) {
+                currentLat = routePath[totalSegments][0];
+                currentLng = routePath[totalSegments][1];
+            } else {
+                const startNode = routePath[currentIndex];
+                const endNode = routePath[currentIndex + 1];
+                
+                // Linear interpolation between the two points
+                currentLat = startNode[0] + (endNode[0] - startNode[0]) * segmentProgress;
+                currentLng = startNode[1] + (endNode[1] - startNode[1]) * segmentProgress;
+            }
+
+            // Update bus position
+            const newPos = [currentLat, currentLng];
+            busMarker.setLatLng(newPos);
+
+            // Update the completed solid line up to the bus's current position
+            const completedCoords = routePath.slice(0, currentIndex + 1);
+            completedCoords.push(newPos);
+            completedRouteLine.setLatLngs(completedCoords);
+
+            // Keep animating
+            requestAnimationFrame(animateBus);
+        }
+
+        // Start animation
+        requestAnimationFrame(animateBus);
+
+        // Slight map pan interaction to follow bus on initial load
+        setTimeout(() => {
+            map.panTo(busMarker.getLatLng(), {animate: true, duration: 1.5});
+        }, 1000);
+
+    </script>
+</body>
+</html>

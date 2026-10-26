@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyBus | Travel Freely Across Malaysia</title>
+    
+    <!-- Google Fonts: Poppins for headings, Inter for body -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#1e3a8a', // Deep Blue
+                        primaryLight: '#3b82f6',
+                        accent: '#f59e0b', // Vibrant Amber/Orange
+                        accentHover: '#d97706',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles for input date icons */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            background: transparent;
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            height: auto;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
+        }
+        
+        .hero-pattern {
+            background-image: linear-gradient(rgba(30, 58, 138, 0.7), rgba(30, 58, 138, 0.4)), url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2069&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        .image-zoom:hover img {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased font-sans">
+
+    <!-- Navigation Bar -->
+    <nav class="absolute w-full z-50 transition-all duration-300 bg-transparent border-b border-white/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer">
+                    <i class="fa-solid fa-bus-simple text-3xl text-accent mr-2"></i>
+                    <span class="font-heading font-bold text-2xl text-white tracking-tight">Easy<span class="text-accent">Bus</span></span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#" class="text-white hover:text-accent transition-colors font-medium">Home</a>
+                    <a href="#destinations" class="text-white hover:text-accent transition-colors font-medium">Destinations</a>
+                    <a href="#" class="text-white hover:text-accent transition-colors font-medium">Schedules</a>
+                    <a href="#features" class="text-white hover:text-accent transition-colors font-medium">Features</a>
+                    <a href="#" class="text-white hover:text-accent transition-colors font-medium">Contact</a>
+                </div>
+                
+                <!-- Auth Buttons -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="#" class="text-white font-medium hover:text-accent transition-colors">Log In</a>
+                    <a href="#" class="bg-accent hover:bg-accentHover text-white px-5 py-2.5 rounded-full font-medium transition-colors shadow-lg shadow-accent/30">
+                        Sign Up
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button class="text-white hover:text-accent focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-48 lg:pt-48 lg:pb-64 hero-pattern flex items-center justify-center text-center px-4">
+        <div class="max-w-4xl mx-auto relative z-10">
+            <span class="block text-accent font-bold tracking-wider uppercase mb-3 text-sm md:text-base">Explore Malaysia, Ride Your Freedom</span>
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-heading font-bold text-white leading-tight mb-6 drop-shadow-lg">
+                Travel Freely Across Malaysia with EasyBus
+            </h1>
+            <p class="text-lg md:text-xl text-gray-200 mb-10 drop-shadow max-w-2xl mx-auto">
+                Flexible routes, reliable transport, and seamless bookings. Start your journey today with just a few clicks.
+            </p>
+        </div>
+    </section>
+
+    <!-- Search Widget (Overlapping Hero) -->
+    <section class="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-32 lg:-mt-24 mb-20">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 lg:p-8 border border-gray-100">
+            
+            <!-- Tabs -->
+            <div class="flex space-x-6 border-b border-gray-200 mb-6 pb-2">
+                <button id="tab-one-way" class="text-primary border-b-2 border-primary font-semibold pb-2 px-1 focus:outline-none transition-colors" onclick="setTripType('one-way')">
+                    One-Way
+                </button>
+                <button id="tab-round-trip" class="text-gray-400 border-b-2 border-transparent hover:text-primary font-medium pb-2 px-1 focus:outline-none transition-colors" onclick="setTripType('round-trip')">
+                    Round-Trip
+                </button>
+            </div>
+
+            <!-- Search Form -->
+            <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                
+                <!-- From -->
+                <div class="relative">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">From</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-location-dot text-gray-400"></i>
+                        </div>
+                        <input type="text" placeholder="Leaving from..." class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primaryLight focus:border-primaryLight outline-none transition-all text-sm font-medium">
+                    </div>
+                </div>
+
+                <!-- To -->
+                <div class="relative">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">To</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-map-pin text-gray-400"></i>
+                        </div>
+                        <input type="text" placeholder="Going to..." class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primaryLight focus:border-primaryLight outline-none transition-all text-sm font-medium">
+                    </div>
+                    <!-- Swap Button -->
+                    <button type="button" class="hidden lg:flex absolute top-8 -left-6 bg-white border border-gray-200 rounded-full w-8 h-8 items-center justify-center text-primary hover:bg-gray-50 shadow-sm z-10 transition-transform hover:scale-110">
+                        <i class="fa-solid fa-right-left"></i>
+                    </button>
+                </div>
+
+                <!-- Departure Date -->
+                <div class="relative">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Depart</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-regular fa-calendar text-gray-400"></i>
+                        </div>
+                        <input type="date" class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primaryLight focus:border-primaryLight outline-none transition-all text-sm font-medium text-gray-700 bg-white">
+                    </div>
+                </div>
+
+                <!-- Return Date -->
+                <div class="relative opacity-50" id="return-date-container">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Return</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-regular fa-calendar-check text-gray-400"></i>
+                        </div>
+                        <input type="date" id="return-date" disabled class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primaryLight focus:border-primaryLight outline-none transition-all text-sm font-medium text-gray-700 bg-gray-50 cursor-not-allowed">
+                    </div>
+                </div>
+
+                <!-- Search Button & Passengers -->
+                <div class="relative flex flex-col justify-end">
+                    <button type="button" class="w-full bg-accent hover:bg-accentHover text-white py-3 px-4 rounded-lg font-bold text-lg transition-all shadow-lg shadow-accent/30 flex items-center justify-center gap-2 h-[46px]">
+                        <i class="fa-solid fa-magnifying-glass"></i> Search Buses
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </section>
+
+    <!-- Popular Routes Section -->
+    <section id="destinations" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-heading font-bold text-primary mb-4">Popular Bus Routes</h2>
+                <p class="text-gray-500 max-w-2xl mx-auto">Discover the most traveled destinations in Malaysia. Book your tickets in advance and secure the best seats for a comfortable journey.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Card 1 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 image-zoom border border-gray-100 group">
+                    <div class="h-56 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1596422846543-74c6fc0e240e?q=80&w=2000&auto=format&fit=crop" alt="Kuala Lumpur" class="w-full h-full object-cover transition-transform duration-500">
+                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm">
+                            Top Choice
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-xl font-bold text-gray-800">Kuala Lumpur to Penang</h3>
+                        </div>
+                        <div class="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                            <span class="flex items-center gap-1"><i class="fa-regular fa-clock text-accent"></i> 4h 30m</span>
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-couch text-accent"></i> VIP Setup</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
+                            <div class="text-gray-500 text-sm">From <span class="text-xl font-bold text-primary block">RM 35.00</span></div>
+                            <button class="text-accent font-semibold group-hover:text-primary transition-colors flex items-center gap-2">Book Now <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 image-zoom border border-gray-100 group">
+                    <div class="h-56 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1582298681142-83b63294c653?q=80&w=2000&auto=format&fit=crop" alt="Melaka" class="w-full h-full object-cover transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-xl font-bold text-gray-800">Johor Bahru to Melaka</h3>
+                        </div>
+                        <div class="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                            <span class="flex items-center gap-1"><i class="fa-regular fa-clock text-accent"></i> 3h 15m</span>
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-wifi text-accent"></i> Free WiFi</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
+                            <div class="text-gray-500 text-sm">From <span class="text-xl font-bold text-primary block">RM 22.00</span></div>
+                            <button class="text-accent font-semibold group-hover:text-primary transition-colors flex items-center gap-2">Book Now <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 image-zoom border border-gray-100 group">
+                    <div class="h-56 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1528644498305-65c2763f03a6?q=80&w=2000&auto=format&fit=crop" alt="Ipoh" class="w-full h-full object-cover transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-xl font-bold text-gray-800">Kuala Lumpur to Ipoh</h3>
+                        </div>
+                        <div class="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                            <span class="flex items-center gap-1"><i class="fa-regular fa-clock text-accent"></i> 2h 45m</span>
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-bolt text-accent"></i> Express</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
+                            <div class="text-gray-500 text-sm">From <span class="text-xl font-bold text-primary block">RM 25.00</span></div>
+                            <button class="text-accent font-semibold group-hover:text-primary transition-colors flex items-center gap-2">Book Now <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Features Section -->
+    <section id="features" class="py-16 bg-white border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-heading font-bold text-primary mb-4">Why Choose EasyBus?</h2>
+                <p class="text-gray-500 max-w-2xl mx-auto">We provide a seamless and secure ticketing experience to ensure your journey is hassle-free from start to finish.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
+                <!-- Feature 1 -->
+                <div class="p-6 rounded-2xl hover:bg-gray-50 transition-colors">
+                    <div class="w-20 h-20 mx-auto bg-blue-50 text-primary rounded-full flex items-center justify-center text-3xl mb-6 shadow-sm">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Instant Booking</h3>
+                    <p class="text-gray-500">Get your e-tickets instantly via email or SMS. No printing required, just show and go.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="p-6 rounded-2xl hover:bg-gray-50 transition-colors">
+                    <div class="w-20 h-20 mx-auto bg-blue-50 text-primary rounded-full flex items-center justify-center text-3xl mb-6 shadow-sm">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Secure Payments</h3>
+                    <p class="text-gray-500">Your transactions are protected with industry-leading encryption. Pay via FPX, Card, or E-wallet.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="p-6 rounded-2xl hover:bg-gray-50 transition-colors">
+                    <div class="w-20 h-20 mx-auto bg-blue-50 text-primary rounded-full flex items-center justify-center text-3xl mb-6 shadow-sm">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Real-time Tracking</h3>
+                    <p class="text-gray-500">Know exactly where your bus is and the estimated time of arrival through our live GPS integration.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-white py-12 border-t-4 border-accent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <div class="flex items-center justify-center md:justify-start mb-4">
+                    <i class="fa-solid fa-bus-simple text-2xl text-accent mr-2"></i>
+                    <span class="font-heading font-bold text-xl text-white tracking-tight">Easy<span class="text-accent">Bus</span></span>
+                </div>
+                <p class="text-blue-200 text-sm max-w-sm">Delivering convenient, reliable, and comfortable bus travels across Malaysia. Your journey begins here.</p>
+            </div>
+            
+            <div class="text-blue-200 text-sm">
+                <p>&copy; 2026 EasyBus Malaysia. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Script -->
+    <script>
+        // Simple logic to toggle Return Date field based on trip type
+        function setTripType(type) {
+            const oneWayTab = document.getElementById('tab-one-way');
+            const roundTripTab = document.getElementById('tab-round-trip');
+            const returnContainer = document.getElementById('return-date-container');
+            const returnInput = document.getElementById('return-date');
+
+            if (type === 'one-way') {
+                // Style Active Tab
+                oneWayTab.classList.add('text-primary', 'border-primary', 'font-semibold');
+                oneWayTab.classList.remove('text-gray-400', 'border-transparent', 'font-medium');
+                
+                // Style Inactive Tab
+                roundTripTab.classList.remove('text-primary', 'border-primary', 'font-semibold');
+                roundTripTab.classList.add('text-gray-400', 'border-transparent', 'font-medium');
+                
+                // Disable Return Date
+                returnContainer.classList.add('opacity-50');
+                returnInput.disabled = true;
+                returnInput.classList.add('bg-gray-50', 'cursor-not-allowed');
+                returnInput.classList.remove('bg-white');
+                returnInput.value = "";
+                
+            } else {
+                // Style Active Tab
+                roundTripTab.classList.add('text-primary', 'border-primary', 'font-semibold');
+                roundTripTab.classList.remove('text-gray-400', 'border-transparent', 'font-medium');
+                
+                // Style Inactive Tab
+                oneWayTab.classList.remove('text-primary', 'border-primary', 'font-semibold');
+                oneWayTab.classList.add('text-gray-400', 'border-transparent', 'font-medium');
+                
+                // Enable Return Date
+                returnContainer.classList.remove('opacity-50');
+                returnInput.disabled = false;
+                returnInput.classList.remove('bg-gray-50', 'cursor-not-allowed');
+                returnInput.classList.add('bg-white');
+            }
+        }
+    </script>
+</body>
+</html>
