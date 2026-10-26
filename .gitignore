@@ -1,0 +1,22 @@
+# Compiled Java classes & build outputs
+bin/
+build/
+target/
+*.class
+
+# Package files
+*.war
+*.ear
+
+# Logs & temporary files
+*.log
+*.tmp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Other editor settings (Eclipse .project/.classpath/.settings are kept portable for the team)
+.vscode/
+.idea/
