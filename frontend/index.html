@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -74,9 +74,9 @@
                 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#" class="text-white hover:text-accent transition-colors font-medium">Home</a>
+                    <a href="index.html" class="text-white hover:text-accent transition-colors font-medium">Home</a>
                     <a href="#destinations" class="text-white hover:text-accent transition-colors font-medium">Destinations</a>
-                    <a href="#" class="text-white hover:text-accent transition-colors font-medium">Schedules</a>
+                    <a href="schedule-list.html" class="text-white hover:text-accent transition-colors font-medium">Schedules</a><a href="tracking.html" class="text-white hover:text-accent transition-colors font-medium">Live Tracking</a>
                     <a href="#features" class="text-white hover:text-accent transition-colors font-medium">Features</a>
                     <a href="#" class="text-white hover:text-accent transition-colors font-medium">Contact</a>
                 </div>
@@ -179,7 +179,7 @@
 
                 <!-- Search Button & Passengers -->
                 <div class="relative flex flex-col justify-end">
-                    <button type="button" class="w-full bg-accent hover:bg-accentHover text-white py-3 px-4 rounded-lg font-bold text-lg transition-all shadow-lg shadow-accent/30 flex items-center justify-center gap-2 h-[46px]">
+                    <button type="button" onclick="window.location.href='schedule-list.html'" class="w-full bg-accent hover:bg-accentHover text-white py-3 px-4 rounded-lg font-bold text-lg transition-all shadow-lg shadow-accent/30 flex items-center justify-center gap-2 h-[46px] cursor-pointer">
                         <i class="fa-solid fa-magnifying-glass"></i> Search Buses
                     </button>
                 </div>
@@ -216,7 +216,7 @@
                         </div>
                         <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
                             <div class="text-gray-500 text-sm">From <span class="text-xl font-bold text-primary block">RM 35.00</span></div>
-                            <button class="text-accent font-semibold group-hover:text-primary transition-colors flex items-center gap-2">Book Now <i class="fa-solid fa-arrow-right"></i></button>
+                            <button onclick="window.location.href='seat-selection.html'" class="text-accent font-semibold group-hover:text-primary transition-colors flex items-center gap-2 cursor-pointer">Book Now <i class="fa-solid fa-arrow-right"></i></button>
                         </div>
                     </div>
                 </div>
@@ -236,7 +236,7 @@
                         </div>
                         <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
                             <div class="text-gray-500 text-sm">From <span class="text-xl font-bold text-primary block">RM 22.00</span></div>
-                            <button class="text-accent font-semibold group-hover:text-primary transition-colors flex items-center gap-2">Book Now <i class="fa-solid fa-arrow-right"></i></button>
+                            <button onclick="window.location.href='seat-selection.html'" class="text-accent font-semibold group-hover:text-primary transition-colors flex items-center gap-2 cursor-pointer">Book Now <i class="fa-solid fa-arrow-right"></i></button>
                         </div>
                     </div>
                 </div>
@@ -256,7 +256,7 @@
                         </div>
                         <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
                             <div class="text-gray-500 text-sm">From <span class="text-xl font-bold text-primary block">RM 25.00</span></div>
-                            <button class="text-accent font-semibold group-hover:text-primary transition-colors flex items-center gap-2">Book Now <i class="fa-solid fa-arrow-right"></i></button>
+                            <button onclick="window.location.href='seat-selection.html'" class="text-accent font-semibold group-hover:text-primary transition-colors flex items-center gap-2 cursor-pointer">Book Now <i class="fa-solid fa-arrow-right"></i></button>
                         </div>
                     </div>
                 </div>
@@ -298,7 +298,7 @@
                         <i class="fa-solid fa-map-location-dot"></i>
                     </div>
                     <h3 class="text-xl font-bold text-gray-800 mb-3">Real-time Tracking</h3>
-                    <p class="text-gray-500 mb-4">Know exactly where your bus is and the estimated time of arrival through our live GPS integration.</p><a href="Tracking.html" class="inline-flex items-center text-primary font-semibold hover:text-accent transition-colors">Open Live Map <i class="fa-solid fa-arrow-right ml-2 text-sm"></i></a>
+                    <p class="text-gray-500">Know exactly where your bus is and the estimated time of arrival through our live GPS integration.</p>
                 </div>
             </div>
         </div>
