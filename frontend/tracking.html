@@ -1,57 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="page-tracking">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EasyBus - Fleet Tracking Preview</title>
 
-    <!-- Tailwind CSS -->
+    
     <link rel="stylesheet" href="assets/css/easybus.css">
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-    <!-- Google Fonts: Plus Jakarta Sans -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-
-        /* Bus Marker Animation Pulse */
-        .bus-marker-wrapper {
-            position: relative;
-        }
-        .bus-pulse {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            background-color: rgba(245, 158, 11, 0.45);
-            border-radius: 50%;
-            z-index: -1;
-            animation: pulseRing 2s infinite;
-        }
-
-        @keyframes pulseRing {
-            0% { transform: translate(-50%, -50%) scale(0.7); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
-        }
-
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-    </style>
 </head>
 <body class="flex flex-col min-h-screen md:h-screen bg-slate-900 text-slate-100">
 

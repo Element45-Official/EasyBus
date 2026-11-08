@@ -1,156 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="page-seat-selection">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EasyBus - VIP Bus Seat Selection</title>
 
-    <!-- Tailwind CSS -->
     <link rel="stylesheet" href="assets/css/easybus.css">
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #000;
-            margin: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* Glassmorphism Styling */
-        .glass-dark {
-            background: rgba(15, 15, 15, 0.78);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-        }
-
-        /* Entrance Animations */
-        @keyframes slideDown {
-            0% { opacity: 0; transform: translateY(-40px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes slideUp {
-            0% { opacity: 0; transform: translateY(40px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        .animate-slide-down { animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-slide-up { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-        /* Kerusi & Perspective Styling */
-        .seat-marker {
-            position: absolute;
-            transform: translate(-50%, -50%);
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .seat-marker.appear {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        .seat-marker.appear:hover:not(.is-reserved) {
-            transform: translate(-50%, -55%) scale(1.15);
-            z-index: 40;
-        }
-
-        .seat-marker.appear.is-reserved:hover {
-            transform: translate(-50%, -50%) scale(1.05);
-        }
-
-        /* Burst & Pulse Effects */
-        .burst-ring {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            border: 2px solid #f59e0b;
-            pointer-events: none;
-            animation: burstAnim 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        @keyframes burstAnim {
-            0% { width: 100%; height: 100%; opacity: 1; border-width: 4px; }
-            100% { width: 250%; height: 250%; opacity: 0; border-width: 0; }
-        }
-
-        .pulse-ring {
-            position: absolute;
-            inset: -4px;
-            border-radius: 50%;
-            border: 2px solid rgba(252, 211, 77, 0.6);
-            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-            opacity: 0;
-        }
-        @keyframes pulse-ring {
-            0% { transform: scale(0.8); opacity: 1; }
-            100% { transform: scale(1.8); opacity: 0; }
-        }
-
-        @keyframes move-arrow {
-            0%, 100% { transform: translateX(0); opacity: 0.5;}
-            50% { transform: translateX(8px); opacity: 1;}
-        }
-        .animate-arrow {
-            display: inline-block;
-            animation: move-arrow 1.2s infinite ease-in-out;
-        }
-
-        @keyframes shake-seat {
-            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
-            25% { transform: translate(-55%, -50%) rotate(-8deg); }
-            50% { transform: translate(-45%, -50%) rotate(8deg); }
-            75% { transform: translate(-55%, -50%) rotate(-8deg); }
-        }
-        .shake-seat {
-            animation: shake-seat 0.4s ease-in-out;
-        }
-
-        .btn-shimmer {
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-shimmer::after {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
-            transform: rotate(35deg) translateX(-100%);
-            animation: shimmer 3s infinite;
-        }
-        @keyframes shimmer {
-            0% { transform: rotate(35deg) translateX(-150%); }
-            100% { transform: rotate(35deg) translateX(150%); }
-        }
-
-        .ambient-light {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(245,158,11,0.05) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 1;
-        }
-    </style>
 </head>
 <body class="relative min-h-screen w-full flex flex-col text-white">
 
     <!-- 1. Background Interior Layer -->
     <div class="absolute inset-0 z-0">
-        <!-- Gunakan imej interior bas tempatan (image_cca655.png) atau fallback URL interior bas -->
+        <!-- Gunakan imej interior bas tempatan -->
         <img src="assets/images/bus-interior.png" alt="VIP Bus Interior" class="w-full h-full object-cover object-center">
         <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-black/90"></div>
         <div class="ambient-light"></div>
     </div>
 
-    <!-- Static cabin diagram -->
+    <!-- Seat map with labels for the reservation preview -->
     <div class="absolute inset-0 z-10 pointer-events-none" id="seat-container">
 
         <!-- ROW 3 (Belakang) -->
         <!-- 3A (Kiri Window) - Pre-reserved -->
-        <div id="btn-seat-3A" class="seat-marker is-reserved pointer-events-auto" style="top: 47%; left: 28%;">
+        <div id="btn-seat-3A" class="seat-marker is-reserved pointer-events-auto">
             <div class="relative w-7 h-7 rounded-full bg-red-500/20 border border-red-500/50 flex items-center justify-center backdrop-blur-sm shadow-md" id="pin-3A">
                 <span class="text-[9px] font-bold text-red-300">3A</span>
                 <i class="fa-solid fa-lock absolute -top-1 -right-1 text-red-400 text-[9px] bg-black/80 rounded-full p-[2px] shadow-lg border border-red-500/40"></i>
@@ -161,29 +36,23 @@
         </div>
 
         <!-- 3B (Kiri Laluan) - Available -->
-        <div id="btn-seat-3B" class="seat-marker pointer-events-auto group" style="top: 45%; left: 38%;">
-            <div class="relative w-7 h-7 rounded-full bg-white/10 border border-white/30 flex items-center justify-center backdrop-blur-md group-hover:bg-amber-400/90 transition-colors shadow-lg" id="pin-3B">
-                <span class="text-[9px] font-bold">3B</span>
-            </div>
+        <div id="btn-seat-3B" class="seat-marker pointer-events-auto group">
+            <label for="seat-3B" class="seat-preview-pin w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shadow-lg" id="pin-3B">3B</label>
         </div>
 
         <!-- 3C (Kanan Laluan) - Available -->
-        <div id="btn-seat-3C" class="seat-marker pointer-events-auto group" style="top: 50%; left: 63%;">
-            <div class="relative w-7 h-7 rounded-full bg-white/10 border border-white/30 flex items-center justify-center backdrop-blur-md group-hover:bg-amber-400/90 transition-colors shadow-lg" id="pin-3C">
-                <span class="text-[9px] font-bold">3C</span>
-            </div>
+        <div id="btn-seat-3C" class="seat-marker pointer-events-auto group">
+            <label for="seat-3C" class="seat-preview-pin w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shadow-lg" id="pin-3C">3C</label>
         </div>
 
         <!-- ROW 2 (Tengah) -->
         <!-- 2A (Kiri Window) - Available -->
-        <div id="btn-seat-2A" class="seat-marker pointer-events-auto group" style="top: 55%; left: 22%;">
-            <div class="relative w-9 h-9 rounded-full bg-white/10 border border-white/30 flex items-center justify-center backdrop-blur-md group-hover:bg-amber-400/90 transition-colors shadow-lg" id="pin-2A">
-                <span class="text-[10px] font-bold">2A</span>
-            </div>
+        <div id="btn-seat-2A" class="seat-marker pointer-events-auto group">
+            <label for="seat-2A" class="seat-preview-pin w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shadow-lg" id="pin-2A">2A</label>
         </div>
 
         <!-- 2B (Kiri Laluan) - Pre-reserved -->
-        <div id="btn-seat-2B" class="seat-marker is-reserved pointer-events-auto" style="top: 54%; left: 35%;">
+        <div id="btn-seat-2B" class="seat-marker is-reserved pointer-events-auto">
             <div class="relative w-9 h-9 rounded-full bg-red-500/20 border border-red-500/50 flex items-center justify-center backdrop-blur-sm shadow-md" id="pin-2B">
                 <span class="text-[10px] font-bold text-red-300">2B</span>
                 <i class="fa-solid fa-lock absolute -top-1 -right-1 text-red-400 text-xs bg-black/80 rounded-full p-[2px] shadow-lg border border-red-500/40"></i>
@@ -194,34 +63,24 @@
         </div>
 
         <!-- 2C (Kanan Laluan) - Available -->
-        <div id="btn-seat-2C" class="seat-marker pointer-events-auto group" style="top: 59%; left: 65%;">
-            <div class="relative w-9 h-9 rounded-full bg-white/10 border border-white/30 flex items-center justify-center backdrop-blur-md group-hover:bg-amber-400/90 transition-colors shadow-lg" id="pin-2C">
-                <span class="text-[10px] font-bold">2C</span>
-            </div>
+        <div id="btn-seat-2C" class="seat-marker pointer-events-auto group">
+            <label for="seat-2C" class="seat-preview-pin w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shadow-lg" id="pin-2C">2C</label>
         </div>
 
         <!-- ROW 1 (Depan / Target Utama) -->
         <!-- 1A (Depan Kiri Window) - Available -->
-        <div id="btn-seat-1A" class="seat-marker pointer-events-auto group" style="top: 76%; left: 16%;">
-            <div class="relative w-11 h-11 rounded-full bg-white/10 border border-white/30 flex items-center justify-center backdrop-blur-md group-hover:bg-amber-400/90 transition-colors shadow-lg" id="pin-1A">
-                <span class="text-xs font-bold">1A</span>
-            </div>
+        <div id="btn-seat-1A" class="seat-marker pointer-events-auto group">
+            <label for="seat-1A" class="seat-preview-pin w-11 h-11 rounded-full flex items-center justify-center text-xs font-bold shadow-lg" id="pin-1A">1A</label>
         </div>
 
         <!-- 1B (Depan Kiri Laluan) - Available -->
-        <div id="btn-seat-1B" class="seat-marker pointer-events-auto group" style="top: 67%; left: 30%;">
-            <div class="relative w-11 h-11 rounded-full bg-white/10 border border-white/30 flex items-center justify-center backdrop-blur-md group-hover:bg-amber-400/90 transition-colors shadow-lg" id="pin-1B">
-                <span class="text-xs font-bold">1B</span>
-            </div>
+        <div id="btn-seat-1B" class="seat-marker pointer-events-auto group">
+            <label for="seat-1B" class="seat-preview-pin w-11 h-11 rounded-full flex items-center justify-center text-xs font-bold shadow-lg" id="pin-1B">1B</label>
         </div>
 
-        <!-- 1C (Depan Kanan - Default Selected) -->
-        <div id="btn-seat-1C" class="seat-marker pointer-events-auto group z-20" style="top: 70%; left: 68%;">
-            <div class="relative w-11 h-11 rounded-full bg-amber-500 border-2 border-white flex items-center justify-center shadow-[0_0_30px_rgba(245,158,11,0.6)] transition-colors" id="pin-1C">
-                <div class="pulse-ring" id="pulse-1C"></div>
-                <span class="text-xs font-bold text-gray-900" id="text-1C">1C</span>
-            </div>
-
+        <!-- 1C (initial preview selection) -->
+        <div id="btn-seat-1C" class="seat-marker pointer-events-auto group z-20">
+            <label for="seat-1C" class="seat-preview-pin w-11 h-11 rounded-full flex items-center justify-center text-xs font-bold shadow-lg" id="pin-1C">1C</label>
         </div>
 
     </div>
@@ -240,7 +99,7 @@
                     <h1 class="text-lg font-bold tracking-wide uppercase text-white flex items-center justify-center gap-2">
                         <i class="fa-solid fa-couch text-amber-400"></i> EasyBus Seat Selection
                     </h1>
-                    <p class="text-[11px] text-gray-400">Sample cabin and reservation form</p>
+                    <p class="text-[11px] text-gray-400">Reservation preview</p>
                 </div>
                 <a href="schedules.html" class="w-10 h-10 rounded-full glass-dark flex items-center justify-center hover:bg-white/20 hover:scale-105 transition-all text-gray-300 hover:text-white" title="Back to Schedules" aria-label="Back to Schedules">
                     <i class="fa-solid fa-table text-xl"></i>
@@ -286,31 +145,69 @@
                 <div class="bg-black/60 backdrop-blur-md rounded-full px-5 py-2 border border-white/10 text-xs font-medium text-gray-300 flex items-center gap-2.5 shadow-lg">
                     <span class="flex items-center gap-1.5 text-emerald-400"><span class="w-2.5 h-2.5 rounded-full bg-white/40 border border-white/60 inline-block"></span> Available</span>
                     <span class="text-gray-500">•</span>
+                    <span class="text-amber-400">Selected</span>
                     <span class="text-gray-500">•</span>
                     <span class="flex items-center gap-1.5 text-red-400"><span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span> Reserved &amp; Locked</span>
                 </div>
             </div>
         </div>
 
-        <form method="post" class="w-full max-w-2xl mx-auto mt-auto pointer-events-auto glass-dark rounded-t-3xl p-5 space-y-3">
+        <form id="seat-preview" method="post" aria-labelledby="seat-preview-title" class="w-full max-w-2xl mx-auto mt-auto pointer-events-auto glass-dark rounded-t-3xl p-5 space-y-3">
             <input type="hidden" name="tripId" value="1">
-            <label for="seatNumber" class="block font-bold">Choose a seat</label>
-            <p class="text-sm text-gray-300">Sample fare: RM 35.00. The Java servlet will confirm availability and save the reservation.</p>
-            <div class="flex flex-wrap items-center gap-3">
-                <select id="seatNumber" name="seatNumber" class="bg-slate-900 border border-white/20 rounded-xl px-4 py-2 text-white" required>
-                    <option value="">Select a seat</option>
-                    <option>1A</option>
-                    <option>1B</option>
-                    <option>1C</option>
-                    <option>2A</option>
-                    <option disabled>2B (reserved)</option>
-                    <option>2C</option>
-                    <option disabled>3A (reserved)</option>
-                    <option>3B</option>
-                    <option>3C</option>
-                </select>
-                <button type="submit" disabled class="bg-amber-500 text-slate-950 px-4 py-2 rounded-xl font-bold">Confirm Seat</button>
-                <a href="tracking.html" class="text-amber-300 underline text-sm">View Tracking Preview</a>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <h2 id="seat-preview-title" class="text-lg font-bold">Seat Reservation Preview</h2>
+                <p class="text-sm text-gray-300">Fare <strong class="text-white">RM 35.00</strong></p>
+            </div>
+
+            <fieldset>
+                <legend class="text-sm font-bold mb-2">
+                    <span class="seat-preview-before">Choose a seat</span>
+                    <span class="seat-preview-after">Reserved seat</span>
+                </legend>
+                <div class="flex flex-wrap items-center gap-2">
+                    <label class="seat-choice">
+                        <input type="radio" name="seatNumber" value="1A" id="seat-1A">
+                        <span>1A</span>
+                    </label>
+                    <label class="seat-choice">
+                        <input type="radio" name="seatNumber" value="1B" id="seat-1B">
+                        <span>1B</span>
+                    </label>
+                    <label class="seat-choice">
+                        <input type="radio" name="seatNumber" value="1C" id="seat-1C" checked>
+                        <span>1C</span>
+                    </label>
+                    <label class="seat-choice">
+                        <input type="radio" name="seatNumber" value="2A" id="seat-2A">
+                        <span>2A</span>
+                    </label>
+                    <label class="seat-choice">
+                        <input type="radio" name="seatNumber" value="2C" id="seat-2C">
+                        <span>2C</span>
+                    </label>
+                    <label class="seat-choice">
+                        <input type="radio" name="seatNumber" value="3B" id="seat-3B">
+                        <span>3B</span>
+                    </label>
+                    <label class="seat-choice">
+                        <input type="radio" name="seatNumber" value="3C" id="seat-3C">
+                        <span>3C</span>
+                    </label>
+                </div>
+            </fieldset>
+
+            <div class="seat-preview-before flex flex-wrap items-center justify-between gap-3">
+                <p class="text-sm font-bold text-emerald-400">Status: Available</p>
+                <a href="#seat-confirmed" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl font-bold">Confirm Seat</a>
+            </div>
+
+            <div id="seat-confirmed" tabindex="-1" class="seat-preview-after">
+                <p class="text-sm font-bold text-red-400"><i class="fa-solid fa-lock" aria-hidden="true"></i> Status: Reserved &amp; Locked</p>
+                <p class="mt-1 text-sm text-gray-300">Booking confirmed in this preview. The selected seat is locked in the cabin map.</p>
+                <div class="mt-3 flex flex-wrap items-center gap-4">
+                    <a href="tracking.html" class="text-amber-300 underline text-sm">View Tracking Preview</a>
+                    <a href="#seat-preview" class="text-gray-300 underline text-sm">Reset Preview</a>
+                </div>
             </div>
         </form>
     </div>
