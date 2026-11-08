@@ -13,4 +13,4 @@ Open [index.html](index.html) in a browser to walk through the ICT584 frontend. 
 
 Open **Admin Portal** from the home page footer to reach [Admin Schedule Management](schedule-list.html), with the add and edit schedule forms, fleet registration, booking management, operations overview, and financial dashboard.
 
-Schedules, bookings, fleet, finances, and tracking display sample data. Form fields show what the servlet will receive. Submit and delete controls are disabled until their servlet routes are connected.
+Schedules, bookings, fleet, finances, and tracking display sample data. The schedule list, [My Bookings](my-bookings.html), and [fleet roster](fleet-registration.html#fleet-roster) include interactive confirmation flows that reset on reload. Saving to the database requires servlet routes.

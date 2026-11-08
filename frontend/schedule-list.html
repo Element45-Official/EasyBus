@@ -6,6 +6,7 @@
     <title>EasyBus - Admin Schedule Management</title>
     
     <link rel="stylesheet" href="assets/css/easybus.css">
+    <script src="assets/js/record-action.js" defer></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <!-- Google Fonts: Plus Jakarta Sans -->
@@ -84,7 +85,8 @@
                 </div>
             </div>
 
-            <p class="my-4 text-sm text-slate-300">Sample departures. Open the edit form for ABC1234 to preview schedule changes.</p>
+            <p class="my-4 text-sm text-slate-300">Manage upcoming departures and remove cancelled schedules.</p>
+            <p id="record-feedback" class="record-feedback" role="status" tabindex="-1" hidden></p>
 
             <!-- BUS SCHEDULE LIST TABLE -->
             <div class="overflow-x-auto rounded-xl border border-slate-700/60">
@@ -117,7 +119,7 @@
                                         class="inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg shadow transition active:scale-95 cursor-pointer">
                                         <i class="fa-regular fa-pen-to-square"></i> Edit
                                     </a>
-                                    <button type="button" disabled title="Schedule deletion requires the Java servlet" class="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow transition active:scale-95 cursor-pointer">
+                                    <button type="button" disabled title="Only cancelled schedules can be deleted" class="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow transition active:scale-95 cursor-pointer">
                                         <i class="fa-regular fa-trash-can"></i> Delete
                                     </button>
                                 </div>
@@ -140,7 +142,7 @@
                                         class="inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg shadow transition active:scale-95 cursor-pointer">
                                         <i class="fa-regular fa-pen-to-square"></i> Edit
                                     </button>
-                                    <button type="button" disabled title="Schedule deletion requires the Java servlet" class="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow transition active:scale-95 cursor-pointer">
+                                    <button type="button" disabled title="Only cancelled schedules can be deleted" class="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow transition active:scale-95 cursor-pointer">
                                         <i class="fa-regular fa-trash-can"></i> Delete
                                     </button>
                                 </div>
@@ -163,7 +165,7 @@
                                         class="inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg shadow transition active:scale-95 cursor-pointer">
                                         <i class="fa-regular fa-pen-to-square"></i> Edit
                                     </button>
-                                    <button type="button" disabled title="Schedule deletion requires the Java servlet" class="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow transition active:scale-95 cursor-pointer">
+                                    <button id="record-action" type="button" aria-haspopup="dialog" data-count="reportOtherSchedules" class="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow transition active:scale-95 cursor-pointer">
                                         <i class="fa-regular fa-trash-can"></i> Delete
                                     </button>
                                 </div>
@@ -175,15 +177,15 @@
 
         </div>
 
-        <section id="reports" class="mt-8">
+        <section id="reports" class="mt-8" aria-labelledby="operations-heading">
         <div class="glass-card rounded-2xl w-full overflow-hidden border border-slate-700 shadow-2xl p-6" id="reportsModalCard">
             <!-- Modal Header -->
             <div class="flex justify-between items-center pb-4 border-b border-slate-700 text-white mb-5">
                 <div>
-                    <h3 class="font-bold text-base flex items-center gap-2">
+                    <h2 id="operations-heading" class="font-bold text-xl flex items-center gap-2">
                         <i class="fa-solid fa-chart-pie text-amber-400"></i> Operations Overview
-                    </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Sample fleet and schedule totals</p>
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Fleet and schedule totals</p>
                 </div>
             </div>
 
@@ -199,7 +201,7 @@
 
                 <!-- Available Schedules -->
                 <div class="p-4 bg-slate-800/80 rounded-xl border border-slate-700 text-center">
-                    <span class="text-xs text-slate-400 font-semibold block uppercase">Available</span>
+                    <span class="text-xs text-slate-400 font-semibold block uppercase">Available Schedules</span>
                     <span class="text-3xl font-black text-emerald-400 my-1 block" id="reportAvailableSchedules">1</span>
                     <span class="text-[11px] text-slate-300 font-medium block">Active departures:</span>
                     <span class="text-[10px] text-emerald-300 font-bold block mt-0.5">Open for booking</span>
@@ -207,10 +209,9 @@
 
                 <!-- Booked / Full / Other -->
                 <div class="p-4 bg-slate-800/80 rounded-xl border border-slate-700 text-center">
-                    <span class="text-xs text-slate-400 font-semibold block uppercase">Booked / Other</span>
+                    <span class="text-xs text-slate-400 font-semibold block uppercase">Full or Cancelled</span>
                     <span class="text-3xl font-black text-slate-300 my-1 block" id="reportOtherSchedules">2</span>
-                    <span class="text-[11px] text-slate-300 font-medium block">Trips status:</span>
-                    <span class="text-[10px] text-slate-400 font-bold block mt-0.5">Full or cancelled</span>
+                    <span class="text-[11px] text-slate-300 font-medium block">Closed for booking</span>
                 </div>
             </div>
 
@@ -229,6 +230,21 @@
         </footer>
 
     </main>
+
+    <dialog id="record-dialog" class="record-dialog" aria-labelledby="record-title" aria-describedby="record-description"
+            data-success="The schedule for bus DEF9012 was deleted.">
+        <p class="record-dialog-label">Schedule management</p>
+        <h2 id="record-title">Delete bus schedule?</h2>
+        <div class="record-dialog-summary">
+            <strong>Kuala Lumpur → Penang</strong>
+            <p>Bus DEF9012 · 3 Jun 2026, 9:15 AM · Cancelled</p>
+        </div>
+        <p id="record-description">This departure has no bookings. Deleting it will permanently remove it from the schedule.</p>
+        <form method="dialog" class="record-dialog-actions">
+            <button value="keep" class="record-button" autofocus>Keep schedule</button>
+            <button value="confirm" class="record-button record-button-danger">Delete schedule</button>
+        </form>
+    </dialog>
 
 </body>
 </html>

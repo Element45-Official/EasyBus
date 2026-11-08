@@ -6,6 +6,7 @@
     <title>EasyBus - Fleet &amp; Driver Registration Panel</title>
     
     <link rel="stylesheet" href="assets/css/easybus.css">
+    <script src="assets/js/record-action.js" defer></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <!-- Google Fonts: Plus Jakarta Sans -->
@@ -43,8 +44,6 @@
 
             <!-- FORM SECTION (FUNCTION 4: ONBOARD BUS & DRIVER) -->
             <form id="fleetOnboardForm" method="post" class="space-y-6">
-                <p class="text-sm text-slate-300">Preview only. Saving will be available when the Java servlet is connected.</p>
-
                 <!-- SECTION 1: VEHICLE INFORMATION -->
                 <div>
                     <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3 flex items-center gap-2">
@@ -127,13 +126,15 @@
                 </div>
 
                 <!-- SECTION 3: ACTIVE FLEET ROSTER (DELETE FUNCTION 3) -->
-                <div class="mt-8 pt-6 border-t border-white/10">
+                <div id="fleet-roster" class="mt-8 pt-6 border-t border-white/10">
                     <div class="flex justify-between items-center mb-3">
                         <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-                            <i class="fa-solid fa-list-check text-amber-400"></i> Active Fleet Roster &amp; Resource Decommissioning
+                            <i class="fa-solid fa-list-check text-amber-400"></i> Fleet roster
                         </h4>
-                        <span class="text-xs text-slate-400 font-medium" id="pageAssetCount">3 Registered Fleet Assets</span>
+                        <span class="text-xs text-slate-400 font-medium"><span id="pageAssetCount">4</span> registered vehicles</span>
                     </div>
+
+                    <p id="record-feedback" class="record-feedback" role="status" tabindex="-1" hidden></p>
 
                     <div class="overflow-x-auto rounded-xl border border-white/10">
                         <table class="w-full text-left text-xs sm:text-sm border-collapse">
@@ -184,6 +185,18 @@
                                         </button>
                                     </td>
                                 </tr>
+                                <tr class="hover:bg-slate-700/30">
+                                    <td class="py-3 px-4 font-bold text-white">VJE 9021</td>
+                                    <td class="py-3 px-4">40</td>
+                                    <td class="py-3 px-4">Unassigned</td>
+                                    <td class="py-3 px-4 text-slate-400">—</td>
+                                    <td class="py-3 px-4 text-slate-400">—</td>
+                                    <td class="py-3 px-4 text-center">
+                                        <button id="record-action" type="button" aria-haspopup="dialog" data-count="pageAssetCount" class="px-3 py-1.5 rounded-lg border border-red-500/40 text-red-400 hover:text-red-300 font-semibold">
+                                            Remove
+                                        </button>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -199,6 +212,21 @@
         </footer>
 
     </main>
+
+    <dialog id="record-dialog" class="record-dialog" aria-labelledby="record-title" aria-describedby="record-description"
+            data-success="Bus VJE 9021 was removed from the fleet roster.">
+        <p class="record-dialog-label">Fleet management</p>
+        <h2 id="record-title">Remove vehicle from fleet?</h2>
+        <div class="record-dialog-summary">
+            <strong>Bus VJE 9021</strong>
+            <p>40 seats · No driver or trips assigned</p>
+        </div>
+        <p id="record-description">This vehicle has no linked trips. Removing it will permanently delete its fleet record.</p>
+        <form method="dialog" class="record-dialog-actions">
+            <button value="keep" class="record-button" autofocus>Keep vehicle</button>
+            <button value="confirm" class="record-button record-button-danger">Remove vehicle</button>
+        </form>
+    </dialog>
 
 </body>
 </html>

@@ -2,6 +2,111 @@
 
 /* EasyBus page styles. Page scopes keep the original selector specificity. */
 
+.record-dialog {
+    width: min(30rem, calc(100% - 2rem));
+    padding: clamp(1rem, 5vw, 1.75rem);
+    border: 1px solid #475569;
+    border-radius: 1rem;
+    background: #0f172a;
+    color: #cbd5e1;
+    box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.45);
+}
+
+.record-dialog::backdrop {
+    background: rgba(2, 6, 23, 0.72);
+    backdrop-filter: blur(3px);
+}
+
+.record-dialog-label {
+    margin-bottom: 0.375rem;
+    color: #fbbf24;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.record-dialog h2 {
+    color: #fff;
+    font-size: 1.375rem;
+    font-weight: 800;
+}
+
+.record-dialog-summary {
+    margin: 1rem 0;
+    padding: 0.875rem 1rem;
+    border-radius: 0.625rem;
+    background: #1e293b;
+}
+
+.record-dialog-summary strong {
+    color: #f8fafc;
+}
+
+.record-dialog-summary p,
+.record-dialog #record-description {
+    font-size: 0.875rem;
+}
+
+.record-dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.625rem;
+    margin-top: 1.25rem;
+}
+
+.record-button {
+    padding: 0.625rem 0.875rem;
+    border: 1px solid #475569;
+    border-radius: 0.625rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+}
+
+.record-button:hover {
+    background: #1e293b;
+}
+
+.record-button:focus-visible {
+    outline: 2px solid #fbbf24;
+    outline-offset: 2px;
+}
+
+.record-button-danger {
+    border-color: #b91c1c;
+    background: #b91c1c;
+    color: #fff;
+}
+
+.record-button-danger:hover {
+    background: #991b1b;
+}
+
+.record-feedback {
+    margin: 1rem 0;
+    padding: 0.75rem 1rem;
+    border: 1px solid #065f46;
+    border-radius: 0.625rem;
+    background: #052e2b;
+    color: #a7f3d0;
+    font-size: 0.875rem;
+}
+
+.booking-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    background: #064e3b;
+    color: #a7f3d0;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.booking-status.is-cancelled {
+    background: #451a1a;
+    color: #fecaca;
+}
+
 /* Schedule forms and fleet registration */
 :where(.page-add-schedule, .page-edit-schedule, .page-fleet-registration) body {
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -102,6 +207,26 @@
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+}
+
+.revenue-share {
+    display: block;
+    width: min(15rem, 100%);
+    height: 0.75rem;
+    margin-top: 0.375rem;
+}
+
+.revenue-share::-webkit-meter-bar {
+    border: 0;
+    background: #334155;
+}
+
+.revenue-share::-webkit-meter-optimum-value {
+    background: #fbbf24;
+}
+
+.revenue-share::-moz-meter-bar {
+    background: #fbbf24;
 }
 
 /* Account settings */
@@ -225,7 +350,17 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
     margin: 0;
     padding: 0;
-    overflow: hidden;
+}
+
+.tracking-position-ring {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tracking-position-ring {
+        animation: none;
+    }
 }
 
 :where(.page-tracking) .bus-marker-wrapper {

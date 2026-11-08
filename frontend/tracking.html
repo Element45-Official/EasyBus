@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EasyBus - Fleet Tracking Preview</title>
+    <title>EasyBus - Fleet Tracking</title>
 
     
     <link rel="stylesheet" href="assets/css/easybus.css">
@@ -20,8 +20,8 @@
     <header class="shrink-0 flex flex-wrap items-center gap-4 px-5 py-4 border-b border-slate-700">
         <a href="index.html" class="font-bold text-amber-400">EasyBus</a>
         <a href="schedules.html" class="text-sm hover:underline">Schedules</a>
-        <a href="seat-selection.html" class="text-sm hover:underline">Seat Preview</a>
-        <h1 class="text-sm font-bold">Tracking Preview</h1>
+        <a href="my-bookings.html" class="text-sm hover:underline">My Bookings</a>
+        <h1 class="text-sm font-bold">Fleet Tracking</h1>
     </header>
 
     <!-- MAIN TRACKING AREA -->
@@ -29,8 +29,6 @@
 
         <!-- LEFT SIDEBAR -->
         <aside class="w-full md:w-[360px] bg-slate-900 border-r border-slate-800 flex flex-col shrink-0 overflow-y-auto no-scrollbar z-10">
-
-            <p class="p-4 text-sm text-slate-300 border-b border-slate-800">Sample route and vehicle details.</p>
 
             <!-- Route & Status Header -->
             <div class="p-5 border-b border-slate-800 bg-slate-950/50">
@@ -78,9 +76,9 @@
                 </span>
 
                 <div class="grid grid-cols-3 gap-2 text-center">
-                    <!-- Sample Speed -->
+                    <!-- Speed -->
                     <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700">
-                        <span class="text-[10px] text-slate-400 font-bold uppercase block">Sample Speed</span>
+                        <span class="text-[10px] text-slate-400 font-bold uppercase block">Speed</span>
                         <span id="trackingLiveSpeed" class="text-xl font-extrabold text-amber-400 font-mono mt-1 block">82 <span class="text-[10px] font-normal text-slate-400">km/h</span></span>
                     </div>
 
@@ -149,13 +147,15 @@
 
         <!-- RIGHT SIDE: ROUTE DIAGRAM -->
         <div class="flex-1 relative min-h-[22rem] md:h-full bg-slate-950">
+            <h2 class="absolute inset-x-0 top-0 z-10 pt-4 text-center text-xs font-bold text-slate-400 uppercase tracking-wider">Route schematic</h2>
             <div class="absolute inset-0 z-0 flex justify-center items-center pb-28">
                 <svg viewBox="0 0 520 340" role="img" aria-labelledby="route-map-title" class="w-full h-full max-w-2xl">
-                    <title id="route-map-title">Sample route diagram from Kuala Lumpur to Johor Bahru</title>
+                    <title id="route-map-title">Bus ABC1234 at Ayer Keroh on the route from Kuala Lumpur to Johor Bahru</title>
                     <path d="M98 70 L155 104 L207 164 L270 178 L328 228 L422 270" fill="none" stroke="#334155" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M98 70 L155 104 L207 164 L270 178" fill="none" stroke="#f59e0b" stroke-width="6" stroke-linecap="round"/>
                     <path d="M270 178 L328 228 L422 270" fill="none" stroke="#60a5fa" stroke-width="6" stroke-linecap="round" stroke-dasharray="8 12"/>
                     <circle cx="98" cy="70" r="8" fill="#e2e8f0"/>
+                    <circle cx="270" cy="178" r="14" fill="#f59e0b" class="tracking-position-ring animate-ping"/>
                     <circle cx="270" cy="178" r="12" fill="#f59e0b" stroke="#fff" stroke-width="3"/>
                     <circle cx="422" cy="270" r="8" fill="#e2e8f0"/>
                     <g fill="#e2e8f0" font-family="sans-serif" font-size="15">
@@ -168,7 +168,7 @@
 
             <!-- FLOATING SUMMARY CARD OVER MAP -->
             <div class="absolute bottom-5 left-1/2 transform -translate-x-1/2 w-[90%] max-w-lg bg-slate-900/90 backdrop-blur-md rounded-2xl shadow-2xl z-10 p-4 border border-slate-700">
-                <div class="flex items-center justify-between text-xs">
+                <div class="flex flex-wrap items-center justify-between gap-3 text-xs">
                     <div>
                         <div class="flex items-center gap-2">
                             <span id="cardVehiclePlate" class="font-mono font-bold text-white text-sm">Bus ABC1234</span>
