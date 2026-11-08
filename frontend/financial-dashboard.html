@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EasyBus - Daily Financial Summary Dashboard</title>
-    
+
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
+    <link rel="stylesheet" href="assets/css/easybus.css">
+
     <!-- Font Awesome 6 Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -44,7 +44,7 @@
                     <span class="text-2xl font-extrabold text-white tracking-tight">Easy<span class="text-amber-400">Bus</span></span>
                     <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full text-xs font-bold">Financial Summary</span>
                 </div>
-                <h1 class="text-sm text-slate-400 mt-0.5">Daily ticket sales volume, passenger counts, and ticket revenue</h1>
+                <h1 class="text-sm text-slate-400 mt-0.5">Sample daily ticket sales, passenger counts, and ticket revenue</h1>
             </div>
         </div>
 
@@ -55,14 +55,14 @@
             </a>
             <a href="tracking.html" class="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition shadow-lg shadow-amber-500/20">
                 <i class="fa-solid fa-location-crosshairs"></i>
-                <span>Live Tracking</span>
+                <span>Tracking Preview</span>
             </a>
         </div>
     </header>
 
     <!-- 3 CORE FINANCIAL METRIC CARDS (FEATURE 2) -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        
+
         <!-- Metric 1: Total Tickets Sold Today -->
         <div class="glass-card rounded-2xl p-6 border-l-4 border-l-blue-500">
             <div class="flex items-center justify-between">
@@ -170,61 +170,5 @@
         &copy; 2026 EasyBus Malaysia &bull; Daily Financial Summary Dashboard
     </footer>
 
-    <script>
-        function renderFinancialMetrics() {
-            if (!window.EasyBusStore || typeof window.EasyBusStore.getFinancialMetrics !== 'function') return;
-            const metrics = window.EasyBusStore.getFinancialMetrics();
-
-            const elTickets = document.getElementById('finTotalTickets');
-            const elRevenue = document.getElementById('finTotalRevenue');
-            const elAvg = document.getElementById('finAvgTicketValue');
-            const elFormula = document.getElementById('finAvgFormula');
-            const elBreakdown = document.getElementById('finRouteBreakdown');
-            const elSumTickets = document.getElementById('finSummaryTickets');
-            const elSumRevenue = document.getElementById('finSummaryRevenue');
-
-            if (elTickets) elTickets.textContent = metrics.totalTicketsSold;
-            if (elRevenue) elRevenue.textContent = `RM ${metrics.totalRevenue.toFixed(2)}`;
-            if (elAvg) elAvg.textContent = `RM ${metrics.averageTicketValue.toFixed(2)}`;
-            if (elFormula) {
-                elFormula.innerHTML = `Calculated: RM ${metrics.totalRevenue.toFixed(2)} &divide; ${metrics.totalTicketsSold} tickets = RM ${metrics.averageTicketValue.toFixed(2)} average fare.`;
-            }
-            if (elSumTickets) elSumTickets.textContent = `Total: ${metrics.totalTicketsSold} Tickets`;
-            if (elSumRevenue) elSumRevenue.textContent = `Total Revenue: RM ${metrics.totalRevenue.toFixed(2)}`;
-
-            if (elBreakdown) {
-                elBreakdown.innerHTML = '';
-                if (!metrics.routeBreakdown || metrics.routeBreakdown.length === 0) {
-                    elBreakdown.innerHTML = '<div class="p-4 text-center text-slate-400 text-sm">No active ticket revenue records found.</div>';
-                } else {
-                    const colors = ['text-amber-400', 'text-blue-400', 'text-emerald-400', 'text-purple-400', 'text-rose-400'];
-                    metrics.routeBreakdown.forEach((r, idx) => {
-                        const colorClass = colors[idx % colors.length];
-                        const item = document.createElement('div');
-                        item.className = 'p-3.5 bg-slate-800/60 rounded-xl border border-slate-700/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2';
-                        item.innerHTML = `
-                            <div>
-                                <span class="font-bold text-white text-sm">${r.route}</span>
-                                <span class="block text-xs text-slate-400">${r.tickets} Tickets Sold &bull; Bus ${r.bus || 'Fleet'} &bull; RM ${(r.revenue / (r.tickets || 1)).toFixed(2)} avg fare</span>
-                            </div>
-                            <div class="text-left sm:text-right">
-                                <span class="text-base font-extrabold ${colorClass}">RM ${r.revenue.toFixed(2)}</span>
-                                <span class="block text-[11px] text-slate-400">${r.percentage || r.percent || 0}% of total revenue</span>
-                            </div>
-                        `;
-                        elBreakdown.appendChild(item);
-                    });
-                }
-            }
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', renderFinancialMetrics);
-        } else {
-            renderFinancialMetrics();
-        }
-    </script>
-    <script src="assets/js/easybus-store.js"></script>
-    <script src="assets/js/easybus-nav.js"></script>
 </body>
 </html>

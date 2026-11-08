@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EasyBus - Fleet &amp; Driver Registration Panel</title>
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/easybus.css">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <!-- Google Fonts: Plus Jakarta Sans -->
@@ -13,31 +13,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            orange: '#f59e0b',
-                            amber: '#fbbf24',
-                            darkRed: '#d93844',
-                            glass: 'rgba(255, 255, 255, 0.18)',
-                            glassDark: 'rgba(15, 23, 42, 0.65)',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-image: 
+            background-image:
                 linear-gradient(to bottom, rgba(10, 15, 29, 0.78), rgba(15, 23, 42, 0.92)),
                 url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2000&auto=format&fit=crop');
             background-size: cover;
@@ -84,15 +63,12 @@
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-10 text-white selection:bg-amber-500 selection:text-slate-900">
 
-    <!-- Toast Notification Container -->
-    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none"></div>
-
     <!-- Main Outer Wrapper -->
     <main class="w-full max-w-4xl my-auto">
 
         <!-- Glassmorphism Main Card Container -->
         <div class="glass-card rounded-3xl p-6 sm:p-8 md:p-10 relative overflow-hidden">
-            
+
             <!-- Top Subtle Light Accent Line -->
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent"></div>
 
@@ -114,7 +90,8 @@
             </header>
 
             <!-- FORM SECTION (FUNCTION 4: ONBOARD BUS & DRIVER) -->
-            <form id="fleetOnboardForm" onsubmit="handleFleetSubmit(event)" class="space-y-6">
+            <form id="fleetOnboardForm" method="post" class="space-y-6">
+                <p class="text-sm text-slate-300">Preview only. Saving will be available when the Java servlet is connected.</p>
 
                 <!-- SECTION 1: VEHICLE INFORMATION -->
                 <div>
@@ -185,12 +162,12 @@
                     </a>
 
                     <div class="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3">
-                        <button type="button" onclick="resetFormFleet()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 bg-slate-700/60 hover:bg-slate-700 text-slate-200 font-bold text-sm transition-all duration-200 active:scale-95">
+                        <button type="reset" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 bg-slate-700/60 hover:bg-slate-700 text-slate-200 font-bold text-sm transition-all duration-200 active:scale-95">
                             <i class="fa-solid fa-rotate-right"></i>
                             <span>Reset Defaults</span>
                         </button>
 
-                        <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 transition-all duration-200 active:scale-95 cursor-pointer">
+                        <button type="submit" disabled class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 transition-all duration-200 active:scale-95 cursor-pointer">
                             <i class="fa-solid fa-plus"></i>
                             <span>Onboard Vehicle &amp; Driver</span>
                         </button>
@@ -226,7 +203,7 @@
                                     <td class="py-3 px-4 text-slate-400">LIC-1001</td>
                                     <td class="py-3 px-4 text-slate-400">012-3456789</td>
                                     <td class="py-3 px-4 text-center">
-                                        <button type="button" onclick="removeRosterItem('page-row-1', 'ABC1234', 'Ahmad Albab')" class="text-red-400 hover:text-red-300 p-1.5 transition cursor-pointer" title="Decommission Bus / Remove Driver">
+                                        <button type="button" disabled class="text-red-400 hover:text-red-300 p-1.5 transition cursor-pointer" title="Decommission Bus / Remove Driver">
                                             <i class="fa-regular fa-trash-can"></i>
                                         </button>
                                     </td>
@@ -238,7 +215,7 @@
                                     <td class="py-3 px-4 text-slate-400">LIC-1002</td>
                                     <td class="py-3 px-4 text-slate-400">017-9876543</td>
                                     <td class="py-3 px-4 text-center">
-                                        <button type="button" onclick="removeRosterItem('page-row-2', 'XYZ5678', 'Muthu')" class="text-red-400 hover:text-red-300 p-1.5 transition cursor-pointer" title="Decommission Bus / Remove Driver">
+                                        <button type="button" disabled class="text-red-400 hover:text-red-300 p-1.5 transition cursor-pointer" title="Decommission Bus / Remove Driver">
                                             <i class="fa-regular fa-trash-can"></i>
                                         </button>
                                     </td>
@@ -250,7 +227,7 @@
                                     <td class="py-3 px-4 text-slate-300">LIC-1003</td>
                                     <td class="py-3 px-4 text-slate-300">016-2233445</td>
                                     <td class="py-3 px-4 text-center">
-                                        <button type="button" onclick="removeRosterItem('page-row-3', 'DEF9012', 'Lim')" class="text-red-400 hover:text-red-300 p-1.5 transition cursor-pointer" title="Decommission Bus / Remove Driver">
+                                        <button type="button" disabled class="text-red-400 hover:text-red-300 p-1.5 transition cursor-pointer" title="Decommission Bus / Remove Driver">
                                             <i class="fa-regular fa-trash-can"></i>
                                         </button>
                                     </td>
@@ -271,144 +248,5 @@
 
     </main>
 
-    <!-- JAVASCRIPT FOR FORM HANDLING & TOAST NOTIFICATIONS -->
-    <script>
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast-animate pointer-events-auto flex items-center gap-3 p-4 rounded-xl backdrop-blur-xl border text-white shadow-xl ${
-                type === 'success' ? 'bg-slate-900/90 border-amber-500/50 shadow-amber-500/10' : 'bg-slate-900/90 border-red-500/50 shadow-red-500/10'
-            }`;
-            const iconClass = type === 'success' ? 'fa-solid fa-circle-check text-amber-400' : 'fa-solid fa-arrow-rotate-left text-red-400';
-            toast.innerHTML = `
-                <i class="${iconClass} text-xl"></i>
-                <div class="flex-1 text-sm font-semibold">${message}</div>
-                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white transition-colors">
-                    <i class="fa-solid fa-xmark text-sm"></i>
-                </button>
-            `;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateY(-20px)';
-                toast.style.transition = 'all 0.3s ease';
-                setTimeout(() => toast.remove(), 300);
-            }, 3500);
-        }
-
-        function resetFormFleet() {
-            document.getElementById('busPlateNum').value = 'DEF9012';
-            document.getElementById('seatCapacity').value = '40';
-            document.getElementById('driverName').value = 'Lim';
-            document.getElementById('licenseNum').value = 'LIC-1003';
-            document.getElementById('contactPhone').value = '016-2233445';
-            showToast('Form reset to default specifications (Lim / DEF9012).', 'warning');
-        }
-
-        function renderFleetRoster() {
-            if (!window.EasyBusStore || typeof window.EasyBusStore.getFleet !== 'function') return;
-            const fleet = window.EasyBusStore.getFleet();
-            const tbody = document.getElementById('pageRosterBody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            fleet.forEach((item, index) => {
-                const rowId = 'page-row-' + (index + 1);
-                const plate = item.plate || item.busPlateNum || '';
-                const seats = item.capacity || item.seatCapacity || item.seats || 40;
-                const driver = item.driver || item.driverName || 'N/A';
-                const license = item.license || item.licenseNum || ('LIC-' + (1001 + index));
-                const phone = item.phone || item.contactPhone || '012-0000000';
-
-                const row = document.createElement('tr');
-                row.id = rowId;
-                row.className = 'hover:bg-slate-700/30 transition-colors';
-                row.innerHTML = `
-                    <td class="py-3 px-4 font-bold text-white">${plate}</td>
-                    <td class="py-3 px-4">${seats}</td>
-                    <td class="py-3 px-4">${driver}</td>
-                    <td class="py-3 px-4 text-slate-400">${license}</td>
-                    <td class="py-3 px-4 text-slate-400">${phone}</td>
-                    <td class="py-3 px-4 text-center">
-                        <button type="button" onclick="removeRosterItem('${rowId}', '${plate}', '${driver}')" class="text-red-400 hover:text-red-300 p-1.5 transition cursor-pointer" title="Decommission Bus / Remove Driver">
-                            <i class="fa-regular fa-trash-can"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-            const countEl = document.getElementById('pageAssetCount');
-            if (countEl) countEl.innerText = `${fleet.length} Registered Fleet Assets`;
-        }
-
-        function handleFleetSubmit(e) {
-            e.preventDefault();
-            const plate = document.getElementById('busPlateNum').value.trim();
-            const seats = document.getElementById('seatCapacity').value.trim();
-            const driver = document.getElementById('driverName').value.trim();
-            const license = document.getElementById('licenseNum').value.trim();
-            const phone = document.getElementById('contactPhone').value.trim();
-
-            if (window.EasyBusStore && typeof window.EasyBusStore.addFleetAsset === 'function') {
-                window.EasyBusStore.addFleetAsset({
-                    plate: plate,
-                    capacity: parseInt(seats, 10) || 40,
-                    driver: driver,
-                    license: license,
-                    phone: phone,
-                    status: 'Active'
-                });
-                renderFleetRoster();
-            } else {
-                const tbody = document.getElementById('pageRosterBody');
-                const newRowId = 'page-row-' + Date.now();
-                const row = document.createElement('tr');
-                row.id = newRowId;
-                row.className = 'hover:bg-slate-700/30 bg-amber-500/10 transition-colors';
-                row.innerHTML = `
-                    <td class="py-3 px-4 font-bold text-amber-400">${plate}</td>
-                    <td class="py-3 px-4 font-semibold">${seats}</td>
-                    <td class="py-3 px-4 font-semibold text-white">${driver}</td>
-                    <td class="py-3 px-4 text-slate-300">${license}</td>
-                    <td class="py-3 px-4 text-slate-300">${phone}</td>
-                    <td class="py-3 px-4 text-center">
-                        <button type="button" onclick="removeRosterItem('${newRowId}', '${plate}', '${driver}')" class="text-red-400 hover:text-red-300 p-1.5 transition cursor-pointer" title="Decommission Bus / Remove Driver">
-                            <i class="fa-regular fa-trash-can"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.prepend(row);
-                const count = tbody.querySelectorAll('tr').length;
-                document.getElementById('pageAssetCount').innerText = `${count} Registered Fleet Assets`;
-            }
-
-            showToast(`Bus <strong>${plate}</strong> (${seats} seats) and Driver <strong>${driver}</strong> (${license}) onboarded successfully!`, 'success');
-        }
-
-        function removeRosterItem(rowId, plate, driver) {
-            if (confirm(`Are you sure you want to remove decommissioned bus "${plate}" or resigned driver "${driver}" from the active fleet roster?`)) {
-                if (window.EasyBusStore && typeof window.EasyBusStore.deleteFleetAsset === 'function') {
-                    window.EasyBusStore.deleteFleetAsset(plate);
-                }
-                const row = document.getElementById(rowId);
-                if (row) {
-                    row.style.opacity = '0';
-                    setTimeout(() => {
-                        row.remove();
-                        const count = document.querySelectorAll('#pageRosterBody tr').length;
-                        document.getElementById('pageAssetCount').innerText = `${count} Registered Fleet Assets`;
-                        showToast(`Fleet asset ${plate} / ${driver} removed from active roster.`, 'warning');
-                    }, 200);
-                }
-            }
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', renderFleetRoster);
-        } else {
-            renderFleetRoster();
-        }
-    </script>
-    <script src="assets/js/easybus-store.js"></script>
-    <script src="assets/js/easybus-nav.js"></script>
 </body>
 </html>

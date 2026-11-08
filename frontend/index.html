@@ -4,38 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EasyBus | Travel Freely Across Malaysia</title>
-    
+
     <!-- Google Fonts: Poppins for headings, Inter for body -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
+    <link rel="stylesheet" href="assets/css/easybus.css">
+
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Tailwind Configuration -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        heading: ['Poppins', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: '#1e3a8a', // Deep Blue
-                        primaryLight: '#3b82f6',
-                        accent: '#f59e0b', // Vibrant Amber/Orange
-                        accentHover: '#d97706',
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- EasyBus State Store & Unified Navigation -->
-    <script src="assets/js/easybus-store.js"></script>
-    <script src="assets/js/easybus-nav.js"></script>
 
     <style>
         /* Custom styles for input date icons */
@@ -51,14 +28,14 @@
             top: 0;
             width: auto;
         }
-        
+
         .hero-pattern {
             background-image: linear-gradient(rgba(30, 58, 138, 0.7), rgba(30, 58, 138, 0.4)), url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2069&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
         }
-        
+
         .image-zoom:hover img {
             transform: scale(1.05);
         }
@@ -75,9 +52,6 @@
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased font-sans selection:bg-accent selection:text-white">
 
-    <!-- Toast Notification Container -->
-    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none"></div>
-
     <!-- Navigation Bar -->
     <nav class="absolute w-full z-40 transition-all duration-300 bg-transparent border-b border-white/20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -87,55 +61,40 @@
                     <i class="fa-solid fa-bus-simple text-3xl text-accent mr-2"></i>
                     <span class="font-heading font-bold text-2xl text-white tracking-tight">Easy<span class="text-accent">Bus</span></span>
                 </a>
-                
+
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex space-x-8 items-center">
+                <div class="hidden lg:flex space-x-5 items-center">
                     <a href="index.html" class="text-white hover:text-accent transition-colors font-medium">Home</a>
                     <a href="#destinations" class="text-white hover:text-accent transition-colors font-medium">Destinations</a>
-                    <a href="schedule-list.html" class="text-white hover:text-accent transition-colors font-medium">Schedules</a>
+                    <a href="schedules.html" class="text-white hover:text-accent transition-colors font-medium">Schedules</a>
                     <a href="account-settings.html" class="text-white hover:text-accent transition-colors font-medium flex items-center gap-1.5"><i class="fa-solid fa-user-gear text-xs text-accent"></i> <span>Account Settings</span></a>
-                    <a href="tracking.html" class="text-white hover:text-accent transition-colors font-medium">Live Tracking</a>
+                    <a href="tracking.html" class="text-white hover:text-accent transition-colors font-medium">Tracking Preview</a>
                     <a href="#features" class="text-white hover:text-accent transition-colors font-medium">Features</a>
-                    <a href="#" class="text-white hover:text-accent transition-colors font-medium">Contact</a>
-                </div>
-                
+                    </div>
+
                 <!-- Auth Buttons (Desktop) -->
-                <div id="navAuthArea" class="hidden md:flex items-center space-x-4">
-                    <button type="button" onclick="openRegisterModal('login')" class="text-white font-medium hover:text-accent transition-colors cursor-pointer">
+                <div id="navAuthArea" class="hidden lg:flex items-center space-x-4">
+                    <a href="#login" class="text-white font-medium hover:text-accent transition-colors cursor-pointer">
                         Log In
-                    </button>
+                    </a>
                     <!-- Trigger for Function 3: Passenger Registration Form Modal -->
-                    <button type="button" onclick="openRegisterModal('register')" class="bg-accent hover:bg-accentHover text-white px-5 py-2.5 rounded-full font-medium transition-colors shadow-lg shadow-accent/30 cursor-pointer flex items-center gap-2">
+                    <a href="#register" class="bg-accent hover:bg-accentHover text-white px-5 py-2.5 rounded-full font-medium transition-colors shadow-lg shadow-accent/30 cursor-pointer flex items-center gap-2">
                         <i class="fa-solid fa-user-plus text-sm"></i>
                         <span>Sign Up</span>
-                    </button>
+                    </a>
                 </div>
 
-                <!-- Mobile menu button -->
-                <div class="md:hidden flex items-center">
-                    <button type="button" onclick="toggleMobileMenu()" class="text-white hover:text-accent focus:outline-none p-2">
-                        <i class="fa-solid fa-bars text-2xl"></i>
-                    </button>
+            </div>
+            <details class="lg:hidden pb-4 text-white">
+                <summary class="cursor-pointer font-semibold">Menu</summary>
+                <div class="flex flex-wrap gap-4 pt-3 text-sm">
+                    <a href="schedules.html">Schedules</a>
+                    <a href="tracking.html">Tracking Preview</a>
+                    <a href="account-settings.html">Account Settings</a>
+                    <a href="#login">Log In</a>
+                    <a href="#register">Sign Up</a>
                 </div>
-            </div>
-        </div>
-
-        <!-- Mobile Drawer -->
-        <div id="mobileMenu" class="hidden md:hidden bg-primary/95 backdrop-blur-md border-b border-white/10 px-4 pt-2 pb-6 space-y-3">
-            <a href="index.html" class="block text-white hover:text-accent py-2 font-medium">Home</a>
-            <a href="#destinations" class="block text-white hover:text-accent py-2 font-medium">Destinations</a>
-            <a href="schedule-list.html" class="block text-white hover:text-accent py-2 font-medium">Schedules</a>
-            <a href="account-settings.html" class="block text-white hover:text-accent py-2 font-medium">Account Settings & Password Reset</a>
-            <a href="tracking.html" class="block text-white hover:text-accent py-2 font-medium">Live Tracking</a>
-            <a href="#features" class="block text-white hover:text-accent py-2 font-medium">Features</a>
-            <div class="pt-4 border-t border-white/20 flex flex-col gap-2">
-                <button type="button" onclick="openRegisterModal('login')" class="w-full text-center py-2.5 text-white font-medium hover:bg-white/10 rounded-xl transition">
-                    Log In
-                </button>
-                <button type="button" onclick="openRegisterModal('register')" class="w-full text-center py-2.5 bg-accent hover:bg-accentHover text-white font-bold rounded-xl shadow">
-                    Sign Up / Register
-                </button>
-            </div>
+            </details>
         </div>
     </nav>
 
@@ -150,11 +109,11 @@
                 Flexible routes, reliable transport, and seamless bookings. Start your journey today with just a few clicks.
             </p>
             <div class="flex items-center justify-center gap-4 flex-wrap">
-                <button type="button" onclick="openRegisterModal('register')" class="bg-accent hover:bg-accentHover text-white px-6 py-3 rounded-xl font-bold shadow-xl shadow-accent/30 transition transform hover:-translate-y-0.5 flex items-center gap-2">
+                <a href="#register" class="bg-accent hover:bg-accentHover text-white px-6 py-3 rounded-xl font-bold shadow-xl shadow-accent/30 transition transform hover:-translate-y-0.5 flex items-center gap-2">
                     <i class="fa-solid fa-user-plus"></i>
                     <span>Register New Passenger</span>
-                </button>
-                <a href="schedule-list.html" class="bg-white/15 hover:bg-white/25 text-white border border-white/30 backdrop-blur-sm px-6 py-3 rounded-xl font-semibold transition">
+                </a>
+                <a href="schedules.html" class="bg-white/15 hover:bg-white/25 text-white border border-white/30 backdrop-blur-sm px-6 py-3 rounded-xl font-semibold transition">
                     View Schedules
                 </a>
             </div>
@@ -164,20 +123,11 @@
     <!-- Search Widget (Overlapping Hero) -->
     <section class="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-32 lg:-mt-24 mb-20">
         <div class="bg-white rounded-2xl shadow-2xl p-6 lg:p-8 border border-gray-100">
-            
-            <!-- Tabs -->
-            <div class="flex space-x-6 border-b border-gray-200 mb-6 pb-2">
-                <button id="tab-one-way" class="text-primary border-b-2 border-primary font-semibold pb-2 px-1 focus:outline-none transition-colors" onclick="setTripType('one-way')">
-                    One-Way
-                </button>
-                <button id="tab-round-trip" class="text-gray-400 border-b-2 border-transparent hover:text-primary font-medium pb-2 px-1 focus:outline-none transition-colors" onclick="setTripType('round-trip')">
-                    Round-Trip
-                </button>
-            </div>
 
-            <!-- Search Form -->
-            <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-end" onsubmit="handleSearchSubmit(event)">
-                
+            <h2 class="text-xl font-bold text-primary mb-2">Find a Trip</h2>
+            <p class="text-sm text-gray-600 mb-5">Search fields are shown for the servlet. Browse the sample schedules to preview the booking flow.</p>
+            <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-end" method="get">
+
                 <!-- From -->
                 <div class="relative">
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">From</label>
@@ -211,14 +161,14 @@
                     </div>
                 </div>
 
-                <!-- Return Date -->
-                <div id="return-date-container" class="relative opacity-50">
+                <!-- Return Date (optional) -->
+                <div id="return-date-container" class="relative">
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Return Date</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fa-regular fa-calendar-days text-gray-400"></i>
                         </div>
-                        <input type="date" id="return-date" name="returnDate" disabled class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primaryLight focus:border-primaryLight outline-none transition-all text-sm font-medium text-gray-700 bg-gray-50 cursor-not-allowed">
+                        <input type="date" id="return-date" name="returnDate" class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primaryLight focus:border-primaryLight outline-none transition-all text-sm font-medium text-gray-700">
                     </div>
                 </div>
 
@@ -240,10 +190,7 @@
 
                 <!-- Search Button -->
                 <div>
-                    <button type="submit" class="w-full bg-accent hover:bg-accentHover text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-lg shadow-accent/30 flex items-center justify-center space-x-2 cursor-pointer">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <span>Search Buses</span>
-                    </button>
+                    <a href="schedules.html" class="w-full bg-accent hover:bg-accentHover text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-lg shadow-accent/30 flex items-center justify-center space-x-2 cursor-pointer"><span>View Schedules</span></a>
                 </div>
 
             </form>
@@ -257,13 +204,13 @@
                 <span class="text-accent font-semibold tracking-wider uppercase text-sm">Top Routes</span>
                 <h2 class="text-3xl font-heading font-bold text-primary mt-1">Popular Destinations</h2>
             </div>
-            <a href="schedule-list.html" class="text-primary hover:text-accent font-semibold flex items-center gap-1 transition-colors">
+            <a href="schedules.html" class="text-primary hover:text-accent font-semibold flex items-center gap-1 transition-colors">
                 View all routes <i class="fa-solid fa-arrow-right text-xs"></i>
             </a>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            
+
             <!-- Card 1 -->
             <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 image-zoom border border-gray-100 group">
                 <div class="h-56 overflow-hidden relative">
@@ -280,7 +227,7 @@
                     </div>
                     <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
                         <div class="text-gray-500 text-sm">From <span class="text-xl font-bold text-primary block">RM 38.00</span></div>
-                        <button onclick="window.location.href='seat-selection.html?bus=DEF9012&route=Kuala+Lumpur+%E2%86%92+Penang&price=38.00&time=09%3A15+AM&date=2026-06-01'" class="text-accent font-semibold group-hover:text-primary transition-colors flex items-center gap-2 cursor-pointer">Book Now <i class="fa-solid fa-arrow-right"></i></button>
+                        <a href="schedules.html" class="text-accent font-semibold group-hover:text-primary transition-colors flex items-center gap-2 cursor-pointer">View Schedules <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -300,7 +247,7 @@
                     </div>
                     <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
                         <div class="text-gray-500 text-sm">From <span class="text-xl font-bold text-primary block">RM 22.00</span></div>
-                        <button onclick="window.location.href='seat-selection.html?bus=XYZ5678&route=Johor+Bahru+%E2%86%92+Melaka&price=22.00&time=02%3A30+PM&date=2026-06-02'" class="text-accent font-semibold group-hover:text-primary transition-colors flex items-center gap-2 cursor-pointer">Book Now <i class="fa-solid fa-arrow-right"></i></button>
+                        <a href="schedules.html" class="text-accent font-semibold group-hover:text-primary transition-colors flex items-center gap-2 cursor-pointer">View Schedules <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -320,7 +267,7 @@
                     </div>
                     <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
                         <div class="text-gray-500 text-sm">From <span class="text-xl font-bold text-primary block">RM 25.00</span></div>
-                        <button onclick="window.location.href='seat-selection.html?bus=ABC1234&route=Kuala+Lumpur+%E2%86%92+Ipoh&price=25.00&time=11%3A00+AM&date=2026-06-03'" class="text-accent font-semibold group-hover:text-primary transition-colors flex items-center gap-2 cursor-pointer">Book Now <i class="fa-solid fa-arrow-right"></i></button>
+                        <a href="schedules.html" class="text-accent font-semibold group-hover:text-primary transition-colors flex items-center gap-2 cursor-pointer">View Schedules <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -361,44 +308,18 @@
                         <i class="fa-solid fa-map-location-dot"></i>
                     </div>
                     <h3 class="text-xl font-bold text-gray-800 mb-3">Real-time Tracking</h3>
-                    <p class="text-gray-500">Know exactly where your bus is and the estimated time of arrival through our live GPS integration.</p>
+                    <p class="text-gray-500">Preview the route, vehicle location, and estimated arrival time.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-primary text-white py-12 border-t-4 border-accent">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
-            <div>
-                <div class="flex items-center justify-center md:justify-start mb-4">
-                    <i class="fa-solid fa-bus-simple text-2xl text-accent mr-2"></i>
-                    <span class="font-heading font-bold text-xl text-white tracking-tight">Easy<span class="text-accent">Bus</span></span>
-                </div>
-                <p class="text-blue-200 text-sm max-w-sm">Delivering convenient, reliable, and comfortable bus travels across Malaysia. Your journey begins here.</p>
-            </div>
-            
-            <div class="text-blue-200 text-sm space-y-2 text-center md:text-right">
-                <div class="flex items-center justify-center md:justify-end gap-3 flex-wrap text-xs">
-                    <a href="schedule-list.html" class="hover:text-amber-400 transition">Schedule Manager</a>
-                    <span>&bull;</span>
-                    <a href="financial-dashboard.html" class="hover:text-amber-400 transition">Financial Dashboard</a>
-                    <span>&bull;</span>
-                    <a href="tracking.html" class="hover:text-amber-400 transition">Fleet Live Tracking</a>
-                    <span>&bull;</span>
-                    <a href="booking-management.html" class="hover:text-amber-400 transition">Booking Management</a>
-                </div>
-                <p>&copy; 2026 EasyBus Malaysia. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
     <!-- ========================================================================= -->
     <!-- PASSENGER REGISTRATION FORM MODAL (FUNCTION 3: CREATE PASSENGER ACCOUNT) -->
     <!-- ========================================================================= -->
-    <div id="passengerRegisterModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
-        <div id="registerModalCard" class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-gray-100 overflow-hidden transform scale-95 transition-all duration-300 relative">
-            
+    <section id="register" aria-labelledby="register-title" class="mx-auto max-w-md px-4 my-10">
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+
             <!-- Top Gradient Accent Bar -->
             <div class="h-2 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 w-full"></div>
 
@@ -409,79 +330,76 @@
                         <i id="modalHeaderIcon" class="fa-solid fa-user-plus"></i>
                     </div>
                     <div>
-                        <h3 id="modalHeading" class="font-heading font-extrabold text-xl text-gray-900 tracking-tight">Passenger Registration</h3>
+                        <h2 id="register-title" class="font-heading font-extrabold text-xl text-gray-900 tracking-tight">Passenger Registration</h2>
                         <p id="modalSubheading" class="text-xs text-gray-500 font-medium">Create your account to book &amp; track trips</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeRegisterModal()" class="text-gray-400 hover:text-gray-700 p-2 rounded-xl hover:bg-gray-100 transition-colors focus:outline-none" aria-label="Close Modal">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
+
             </div>
 
             <!-- Registration Form (Matching Storyboard 4.1 Function 3 Specifications) -->
-            <form id="passengerRegisterForm" onsubmit="handleRegisterSubmit(event)" class="p-6 space-y-4">
-                
+            <form id="passengerRegisterForm" method="post" class="p-6 space-y-4">
+                <p class="text-sm text-gray-600">Preview only. This form will submit when the Java servlet is connected.</p>
+
                 <!-- 1. Full Name Field -->
                 <div id="fieldGroupFullName">
-                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Full Name</label>
+                    <label for="regFullName" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Full Name</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
                             <i class="fa-regular fa-user"></i>
                         </span>
-                        <input type="text" id="regFullName" required placeholder="e.g. Ali bin Abu" value="Ali bin Abu"
+                        <input type="text" id="regFullName" name="fullName" required placeholder="e.g. Ali bin Abu" value="Ali bin Abu"
                             class="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition bg-gray-50/50 focus:bg-white text-gray-900 font-medium placeholder-gray-400">
                     </div>
                 </div>
 
                 <!-- 2. Email Address Field -->
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Email Address</label>
+                    <label for="regEmail" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Email Address</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
                             <i class="fa-regular fa-envelope"></i>
                         </span>
-                        <input type="email" id="regEmail" required placeholder="e.g. ali@example.com" value="ali@example.com"
+                        <input type="email" id="regEmail" name="email" required placeholder="e.g. ali@example.com" value="ali@example.com"
                             class="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition bg-gray-50/50 focus:bg-white text-gray-900 font-medium placeholder-gray-400">
                     </div>
                 </div>
 
                 <!-- 3. Contact Phone Field -->
                 <div id="fieldGroupPhone">
-                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Contact Phone</label>
+                    <label for="regPhone" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Contact Phone</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
                             <i class="fa-solid fa-phone"></i>
                         </span>
-                        <input type="tel" id="regPhone" required placeholder="e.g. 011-12345678" value="011-12345678"
+                        <input type="tel" id="regPhone" name="phone" required placeholder="e.g. 011-12345678" value="011-12345678"
                             class="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition bg-gray-50/50 focus:bg-white text-gray-900 font-medium placeholder-gray-400">
                     </div>
                 </div>
 
                 <!-- 4. Password Field (with toggle show/hide) -->
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Password</label>
+                    <label for="regPassword" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Password</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
                             <i class="fa-solid fa-lock"></i>
                         </span>
-                        <input type="password" id="regPassword" required placeholder="Create a strong password" value="Password123!"
+                        <input type="password" id="regPassword" name="password" autocomplete="new-password" required placeholder="Create a strong password"
                             class="w-full pl-10 pr-11 py-2.5 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition bg-gray-50/50 focus:bg-white text-gray-900 font-medium placeholder-gray-400">
-                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-700 focus:outline-none">
-                            <i id="regPasswordEye" class="fa-regular fa-eye"></i>
-                        </button>
+
                     </div>
                 </div>
 
                 <!-- 5. Terms Agreement Checkbox -->
                 <div id="fieldGroupTerms" class="flex items-start gap-2.5 pt-1">
-                    <input type="checkbox" id="regTerms" checked required class="mt-0.5 h-4 w-4 rounded border-gray-300 text-amber-500 focus:ring-amber-400 cursor-pointer">
+                    <input type="checkbox" id="regTerms" name="terms" required class="mt-0.5 h-4 w-4 rounded border-gray-300 text-amber-500 focus:ring-amber-400 cursor-pointer">
                     <label for="regTerms" class="text-xs text-gray-600 leading-tight cursor-pointer select-none">
-                        I agree to the <a href="#" class="text-primary font-semibold hover:underline">Terms of Service</a> &amp; <a href="#" class="text-primary font-semibold hover:underline">Privacy Policy</a>
+                        I agree to the terms of service and privacy policy.
                     </label>
                 </div>
 
                 <!-- 6. Action Button -->
-                <button type="submit" id="submitRegBtn" class="w-full mt-3 py-3 px-5 bg-accent hover:bg-accentHover text-white font-bold rounded-xl shadow-lg shadow-accent/30 transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+                <button type="submit" disabled id="submitRegBtn" class="w-full mt-3 py-3 px-5 bg-accent hover:bg-accentHover text-white font-bold rounded-xl shadow-lg shadow-accent/30 transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
                     <i id="submitRegIcon" class="fa-solid fa-user-check"></i>
                     <span id="submitRegText">Create Account</span>
                 </button>
@@ -490,256 +408,51 @@
 
             <!-- Modal Footer Link / Mode Switcher -->
             <div class="p-4 bg-gray-50 border-t border-gray-100 text-center text-xs text-gray-600">
-                <span id="authSwitchPrompt">Already have an account?</span> 
-                <button type="button" onclick="toggleAuthMode()" id="switchAuthLink" class="text-primary font-bold hover:underline cursor-pointer ml-1">
+                <span id="authSwitchPrompt">Already have an account?</span>
+                <a href="#login" id="switchAuthLink" class="text-primary font-bold hover:underline cursor-pointer ml-1">
                     Log in here
-                </button>
+                </a>
             </div>
 
         </div>
-    </div>
+    </section>
 
     <!-- ========================================================================= -->
-    <!-- INTERACTIVE JAVASCRIPT LOGIC                                             -->
     <!-- ========================================================================= -->
-    <script>
-        let currentAuthMode = 'register'; // 'register' or 'login'
-
-        // Check if URL specifies auto-opening the register modal (e.g. #register or ?register=true)
-        window.addEventListener('DOMContentLoaded', () => {
-            const hash = window.location.hash;
-            const search = window.location.search;
-            if (hash === '#register' || hash === '#signup' || search.includes('register') || search.includes('signup')) {
-                openRegisterModal('register');
-            }
-        });
-
-        // Close on Escape key or backdrop click
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeRegisterModal();
-        });
-        document.getElementById('passengerRegisterModal').addEventListener('click', (e) => {
-            if (e.target.id === 'passengerRegisterModal') closeRegisterModal();
-        });
-
-        // Toggle Trip Type (One-Way vs Round-Trip)
-        function setTripType(type) {
-            const oneWayTab = document.getElementById('tab-one-way');
-            const roundTripTab = document.getElementById('tab-round-trip');
-            const returnContainer = document.getElementById('return-date-container');
-            const returnInput = document.getElementById('return-date');
-
-            if (type === 'one-way') {
-                oneWayTab.classList.add('text-primary', 'border-primary', 'font-semibold');
-                oneWayTab.classList.remove('text-gray-400', 'border-transparent', 'font-medium');
-                roundTripTab.classList.remove('text-primary', 'border-primary', 'font-semibold');
-                roundTripTab.classList.add('text-gray-400', 'border-transparent', 'font-medium');
-                returnContainer.classList.add('opacity-50');
-                returnInput.disabled = true;
-                returnInput.classList.add('bg-gray-50', 'cursor-not-allowed');
-                returnInput.classList.remove('bg-white');
-                returnInput.value = "";
-            } else {
-                roundTripTab.classList.add('text-primary', 'border-primary', 'font-semibold');
-                roundTripTab.classList.remove('text-gray-400', 'border-transparent', 'font-medium');
-                oneWayTab.classList.remove('text-primary', 'border-primary', 'font-semibold');
-                oneWayTab.classList.add('text-gray-400', 'border-transparent', 'font-medium');
-                returnContainer.classList.remove('opacity-50');
-                returnInput.disabled = false;
-                returnInput.classList.remove('bg-gray-50', 'cursor-not-allowed');
-                returnInput.classList.add('bg-white');
-            }
-        }
-
-        // Toggle Mobile Menu
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('hidden');
-        }
-
-        // Open Passenger Registration / Login Modal
-        function openRegisterModal(mode = 'register') {
-            const modal = document.getElementById('passengerRegisterModal');
-            const card = document.getElementById('registerModalCard');
-
-            currentAuthMode = mode;
-            applyAuthModeUI();
-
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            card.classList.remove('scale-95');
-            card.classList.add('scale-100');
-            
-            setTimeout(() => {
-                const focusField = mode === 'register' ? document.getElementById('regFullName') : document.getElementById('regEmail');
-                if (focusField) focusField.focus();
-            }, 150);
-        }
-
-        // Close Passenger Registration Modal
-        function closeRegisterModal() {
-            const modal = document.getElementById('passengerRegisterModal');
-            const card = document.getElementById('registerModalCard');
-
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            card.classList.remove('scale-100');
-            card.classList.add('scale-95');
-        }
-
-        // Switch between Register and Login modes
-        function toggleAuthMode() {
-            currentAuthMode = (currentAuthMode === 'register') ? 'login' : 'register';
-            applyAuthModeUI();
-        }
-
-        function applyAuthModeUI() {
-            const heading = document.getElementById('modalHeading');
-            const subheading = document.getElementById('modalSubheading');
-            const headerIcon = document.getElementById('modalHeaderIcon');
-            const groupName = document.getElementById('fieldGroupFullName');
-            const groupPhone = document.getElementById('fieldGroupPhone');
-            const groupTerms = document.getElementById('fieldGroupTerms');
-            const submitBtnText = document.getElementById('submitRegText');
-            const submitBtnIcon = document.getElementById('submitRegIcon');
-            const switchPrompt = document.getElementById('authSwitchPrompt');
-            const switchLink = document.getElementById('switchAuthLink');
-            const inputName = document.getElementById('regFullName');
-            const inputPhone = document.getElementById('regPhone');
-            const inputTerms = document.getElementById('regTerms');
-
-            if (currentAuthMode === 'register') {
-                heading.innerText = 'Passenger Registration';
-                subheading.innerText = 'Create your account to book & track trips';
-                headerIcon.className = 'fa-solid fa-user-plus';
-                groupName.classList.remove('hidden');
-                groupPhone.classList.remove('hidden');
-                groupTerms.classList.remove('hidden');
-                inputName.required = true;
-                inputPhone.required = true;
-                inputTerms.required = true;
-                submitBtnText.innerText = 'Create Account';
-                submitBtnIcon.className = 'fa-solid fa-user-check';
-                switchPrompt.innerText = 'Already have an account?';
-                switchLink.innerText = 'Log in here';
-            } else {
-                heading.innerText = 'Passenger Log In';
-                subheading.innerText = 'Welcome back! Sign in to manage your tickets';
-                headerIcon.className = 'fa-solid fa-right-to-bracket';
-                groupName.classList.add('hidden');
-                groupPhone.classList.add('hidden');
-                groupTerms.classList.add('hidden');
-                inputName.required = false;
-                inputPhone.required = false;
-                inputTerms.required = false;
-                submitBtnText.innerText = 'Sign In';
-                submitBtnIcon.className = 'fa-solid fa-arrow-right-to-bracket';
-                switchPrompt.innerText = 'New passenger?';
-                switchLink.innerText = 'Create an account';
-            }
-        }
-
-        // Passenger Search Submission Handler
-        function handleSearchSubmit(event) {
-            if (event && event.preventDefault) event.preventDefault();
-
-            const originInput = document.getElementById('searchOrigin');
-            const destInput = document.getElementById('searchDestination');
-            const dateInput = document.getElementById('searchDepartureDate');
-            const paxInput = document.getElementById('searchPassengers');
-
-            const from = originInput ? originInput.value.trim() : '';
-            const to = destInput ? destInput.value.trim() : '';
-            const date = dateInput ? dateInput.value.trim() : '';
-            const pax = paxInput ? paxInput.value.trim() : '1';
-
-            const params = new URLSearchParams();
-            if (from) params.set('from', from);
-            if (to) params.set('to', to);
-            if (date) params.set('date', date);
-            if (pax) params.set('pax', pax);
-
-            window.location.href = 'schedule-list.html?' + params.toString();
-        }
-
-        // Toggle password show/hide
-        function togglePasswordVisibility() {
-            const pwdInput = document.getElementById('regPassword');
-            const eyeIcon = document.getElementById('regPasswordEye');
-            if (pwdInput.type === 'password') {
-                pwdInput.type = 'text';
-                eyeIcon.className = 'fa-regular fa-eye-slash text-accent';
-            } else {
-                pwdInput.type = 'password';
-                eyeIcon.className = 'fa-regular fa-eye text-gray-400';
-            }
-        }
-
-        // Form Submission (Registration)
-        function handleRegisterSubmit(e) {
-            e.preventDefault();
-
-            const fullName = document.getElementById('regFullName').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const phone = document.getElementById('regPhone').value.trim();
-
-            if (currentAuthMode === 'register') {
-                // Save simulated passenger to localStorage
-                const passenger = { fullName, email, phone, registeredAt: new Date().toISOString() };
-                localStorage.setItem('easybus_current_user', JSON.stringify(passenger));
-
-                showToast(`Welcome to EasyBus, <strong>${fullName}</strong>! Account registered successfully.`, 'success');
-            } else {
-                showToast(`Welcome back, <strong>${email.split('@')[0]}</strong>! Successfully logged in.`, 'success');
-            }
-
-            // Update Navbar to show logged in state
-            const authArea = document.getElementById('navAuthArea');
-            const displayName = currentAuthMode === 'register' ? fullName : email.split('@')[0];
-            authArea.innerHTML = `
-                <div class="flex items-center gap-2.5">
-                    <a href="account-settings.html" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 px-3.5 py-1.5 rounded-full text-white text-sm font-semibold shadow-sm transition" title="Passenger Account Settings (Function 4: Update Profile & Password)">
-                        <div class="w-6 h-6 rounded-full bg-accent text-slate-900 flex items-center justify-center text-xs font-bold">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-                        <span>${displayName}</span>
-                        <i class="fa-solid fa-gear text-xs text-amber-400"></i>
-                    </a>
-                    <button onclick="logOutUser()" class="text-white/60 hover:text-white text-xs px-2 py-1.5 rounded-lg hover:bg-white/10 transition" title="Log Out">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </button>
+    <section id="login" aria-labelledby="login-title" class="mx-auto max-w-md px-4 my-10">
+        <form method="post" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 space-y-4">
+            <h2 id="login-title" class="font-heading font-bold text-xl text-gray-900">Passenger Log In</h2>
+            <p class="text-sm text-gray-600">Preview only. This form will submit when the Java servlet is connected.</p>
+            <label class="block text-sm font-semibold">Email
+                <input type="email" name="email" autocomplete="username" required class="block w-full mt-1 p-2.5 border border-gray-300 rounded-xl">
+            </label>
+            <label class="block text-sm font-semibold">Password
+                <input type="password" name="password" autocomplete="current-password" required class="block w-full mt-1 p-2.5 border border-gray-300 rounded-xl">
+            </label>
+            <button type="submit" disabled class="bg-accent text-slate-950 rounded-xl px-5 py-2.5 font-bold">Log In</button>
+            <a href="#register" class="inline-block text-sm text-primary font-semibold ml-3">Create an account</a>
+        </form>
+    </section>
+    <!-- Footer -->
+    <footer class="bg-primary text-white py-12 border-t-4 border-accent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <div class="flex items-center justify-center md:justify-start mb-4">
+                    <i class="fa-solid fa-bus-simple text-2xl text-accent mr-2"></i>
+                    <span class="font-heading font-bold text-xl text-white tracking-tight">Easy<span class="text-accent">Bus</span></span>
                 </div>
-            `;
+                <p class="text-blue-200 text-sm max-w-sm">Delivering convenient, reliable, and comfortable bus travels across Malaysia. Your journey begins here.</p>
+            </div>
 
-            closeRegisterModal();
-        }
-
-        // Log out handler
-        function logOutUser() {
-            localStorage.removeItem('easybus_current_user');
-            window.location.reload();
-        }
-
-        // Toast Notification System
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast-animate pointer-events-auto flex items-center gap-3 p-4 rounded-2xl shadow-2xl border text-white text-sm font-medium ${
-                type === 'success' ? 'bg-slate-900/95 border-amber-500/50 shadow-amber-500/20' : 'bg-slate-900/95 border-red-500/50'
-            }`;
-            toast.innerHTML = `
-                <i class="fa-solid fa-circle-check text-amber-400 text-lg"></i>
-                <div class="flex-1">${message}</div>
-                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white transition">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            `;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateY(-20px)';
-                toast.style.transition = 'all 0.3s ease';
-                setTimeout(() => toast.remove(), 300);
-            }, 3800);
-        }
-    </script>
+            <div class="text-blue-200 text-sm space-y-2 text-center md:text-right">
+                <div class="flex items-center justify-center md:justify-end gap-3 flex-wrap text-xs">
+                    <a href="schedule-list.html" class="hover:text-amber-400 transition">Admin Portal</a>
+                    <span>&bull;</span>
+                    <a href="tracking.html" class="hover:text-amber-400 transition">Tracking Preview</a>
+                </div>
+                <p>&copy; 2026 EasyBus Malaysia. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

@@ -2,11 +2,13 @@
 
 Group project for the **EasyBus** bus schedule and reservation system, compatible with **Eclipse IDE 2022-12 (4.26.0)** (`JavaSE-17`) and **XAMPP / MySQL**.
 
+Note that this project is for CSC584 Cources. So it does not need to be advanced.
+
 ## Project Structure
 
 ```text
 Group Project/
-├── frontend/                  # HTML, CSS, and JS frontend files (index.html, add.html, edit-bus.html, etc.)
+├── frontend/                  # HTML and CSS frontend pages
 ├── sql/
 │   └── easybus_db.sql         # MySQL / phpMyAdmin schema & sample data (7 ERD tables)
 └── src/
@@ -34,4 +36,4 @@ Group Project/
 
 ## Adding Frontend Files
 
-Teammates working on the HTML/Bootstrap frontend can add their `.html`, `.css`, and `.js` files inside the [`frontend/`](frontend/) folder, commit, and push to GitHub.
+Open [the frontend home page](frontend/index.html) to preview the HTML/CSS screens. See [the frontend guide](frontend/README.md) for the passenger and admin flows.

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EasyBus - Add New Bus Schedule</title>
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/easybus.css">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <!-- Google Fonts: Plus Jakarta Sans -->
@@ -13,32 +13,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            orange: '#f59e0b',
-                            amber: '#fbbf24',
-                            darkRed: '#d93844',
-                            glass: 'rgba(255, 255, 255, 0.18)',
-                            glassDark: 'rgba(15, 23, 42, 0.65)',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
         /* Custom Glassmorphism Styles & Background */
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-image: 
+            background-image:
                 linear-gradient(to bottom, rgba(10, 15, 29, 0.78), rgba(15, 23, 42, 0.92)),
                 url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2000&auto=format&fit=crop');
             background-size: cover;
@@ -95,15 +74,12 @@
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-10 text-white selection:bg-amber-500 selection:text-slate-900">
 
-    <!-- Toast Notification Container -->
-    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none"></div>
-
     <!-- Main Outer Wrapper -->
     <main class="w-full max-w-4xl my-auto">
 
         <!-- Glassmorphism Main Card Container -->
         <div class="glass-card rounded-3xl p-6 sm:p-8 md:p-10 relative overflow-hidden">
-            
+
             <!-- Top Subtle Light Accent Line -->
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent"></div>
 
@@ -125,7 +101,8 @@
             </header>
 
             <!-- FORM SECTION -->
-            <form id="addScheduleForm" onsubmit="handleAddSchedule(event)" class="space-y-6">
+            <form id="addScheduleForm" method="post" class="space-y-6">
+                <p class="text-sm text-slate-300">Preview only. Saving will be available when the Java servlet is connected.</p>
 
                 <!-- ROW 1: Bus Number & Route Assignment -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
@@ -196,11 +173,8 @@
                     <div>
                         <label class="block text-xs sm:text-sm font-bold text-slate-200 mb-2 tracking-wide">Departure Date</label>
                         <div class="glass-input rounded-xl px-3 py-3 flex items-center justify-between gap-2">
-                            <input type="text" id="departureDate" name="departureDate" required class="w-full bg-transparent border-none outline-none text-white font-medium text-sm sm:text-base placeholder-white/40" placeholder="DD/MM/YYYY">
-                            <label for="hiddenAddDatePicker" class="cursor-pointer text-slate-300 hover:text-amber-400 transition" title="Pick date">
-                                <i class="fa-regular fa-calendar-days"></i>
-                            </label>
-                            <input type="date" id="hiddenAddDatePicker" class="sr-only" onchange="syncDatePicker(this.value)">
+                            <input type="date" id="departureDate" name="departureDate" required class="w-full bg-transparent border-none outline-none text-white font-medium text-sm sm:text-base placeholder-white/40">
+
                         </div>
                     </div>
 
@@ -208,11 +182,8 @@
                     <div>
                         <label class="block text-xs sm:text-sm font-bold text-slate-200 mb-2 tracking-wide">Time</label>
                         <div class="glass-input rounded-xl px-3 py-3 flex items-center justify-between gap-2">
-                            <input type="text" id="departureTime" name="departureTime" required class="w-full bg-transparent border-none outline-none text-white font-medium text-sm sm:text-base placeholder-white/40" placeholder="08:30 AM">
-                            <label for="hiddenAddTimePicker" class="cursor-pointer text-slate-300 hover:text-amber-400 transition" title="Pick time">
-                                <i class="fa-regular fa-clock"></i>
-                            </label>
-                            <input type="time" id="hiddenAddTimePicker" class="sr-only" onchange="syncTimePicker(this.value)">
+                            <input type="time" id="departureTime" name="departureTime" required class="w-full bg-transparent border-none outline-none text-white font-medium text-sm sm:text-base placeholder-white/40">
+
                         </div>
                     </div>
 
@@ -242,7 +213,7 @@
 
                 <!-- ACTION BUTTONS SECTION -->
                 <div class="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
-                    
+
                     <!-- Back Button (Left) -->
                     <a href="schedule-list.html" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 bg-white/5 hover:bg-white/15 text-white font-semibold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/40">
                         <i class="fa-solid fa-arrow-left text-xs"></i>
@@ -252,13 +223,13 @@
                     <!-- Reset & Add Buttons (Right) -->
                     <div class="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3">
                         <!-- Reset Form Button -->
-                        <button type="button" onclick="resetFormAdd()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 bg-slate-700/60 hover:bg-slate-700 text-slate-200 font-bold text-sm transition-all duration-200 active:scale-95 focus:outline-none">
+                        <button type="reset" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 bg-slate-700/60 hover:bg-slate-700 text-slate-200 font-bold text-sm transition-all duration-200 active:scale-95 focus:outline-none">
                             <i class="fa-solid fa-rotate-right"></i>
                             <span>Reset</span>
                         </button>
 
                         <!-- Add Schedule Button -->
-                        <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 transition-all duration-200 active:scale-95 focus:outline-none">
+                        <button type="submit" disabled class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 transition-all duration-200 active:scale-95 focus:outline-none">
                             <i class="fa-solid fa-plus"></i>
                             <span>Add Schedule</span>
                         </button>
@@ -277,125 +248,5 @@
 
     </main>
 
-    <!-- JAVASCRIPT FOR FORM HANDLING & TOAST NOTIFICATIONS -->
-    <script>
-        // Sync helper for hidden date picker
-        function syncDatePicker(val) {
-            if (!val) return;
-            const parts = val.split('-');
-            if (parts.length === 3) {
-                document.getElementById('departureDate').value = `${parts[2]}/${parts[1]}/${parts[0]}`;
-            }
-        }
-
-        // Sync helper for hidden time picker (12hr format)
-        function syncTimePicker(val) {
-            if (!val) return;
-            const [hStr, mStr] = val.split(':');
-            let h = parseInt(hStr, 10);
-            const period = h >= 12 ? 'PM' : 'AM';
-            h = h % 12 || 12;
-            const displayH = h < 10 ? '0' + h : h;
-            document.getElementById('departureTime').value = `${displayH}:${mStr} ${period}`;
-        }
-
-        /**
-         * Custom Glassmorphism Toast Notification
-         */
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            
-            const toast = document.createElement('div');
-            toast.className = `toast-animate pointer-events-auto flex items-center gap-3 p-4 rounded-xl backdrop-blur-xl border text-white shadow-xl ${
-                type === 'success' 
-                    ? 'bg-slate-900/90 border-amber-500/50 shadow-amber-500/10' 
-                    : type === 'warning' 
-                    ? 'bg-slate-900/90 border-red-500/50 shadow-red-500/10' 
-                    : 'bg-slate-900/90 border-blue-500/50 shadow-blue-500/10'
-            }`;
-
-            const iconClass = type === 'success' ? 'fa-solid fa-circle-check text-amber-400' 
-                            : type === 'warning' ? 'fa-solid fa-arrow-rotate-left text-red-400' 
-                            : 'fa-solid fa-circle-info text-blue-400';
-
-            toast.innerHTML = `
-                <i class="${iconClass} text-xl"></i>
-                <div class="flex-1 text-sm font-semibold">${message}</div>
-                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white transition-colors">
-                    <i class="fa-solid fa-xmark text-sm"></i>
-                </button>
-            `;
-
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateY(-20px)';
-                toast.style.transition = 'all 0.3s ease';
-                setTimeout(() => toast.remove(), 300);
-            }, 3500);
-        }
-
-        /**
-         * Reset form to initial empty state
-         */
-        function resetFormAdd() {
-            document.getElementById('addScheduleForm').reset();
-            document.getElementById('availableSeats').value = '40';
-            document.getElementById('busStatus').value = 'Available';
-
-            const form = document.getElementById('addScheduleForm');
-            form.classList.add('opacity-80');
-            setTimeout(() => form.classList.remove('opacity-80'), 200);
-
-            showToast('Form fields have been reset.', 'warning');
-        }
-
-        /**
-         * Handle Add Schedule Form Submit
-         */
-        function handleAddSchedule(event) {
-            event.preventDefault();
-            
-            const busNo = document.getElementById('busNumber').value.trim();
-            const route = document.getElementById('routeAssignment').value.trim();
-            const driver = document.getElementById('driverName') ? document.getElementById('driverName').value.trim() : 'Assigned Driver';
-            const seats = document.getElementById('availableSeats') ? parseInt(document.getElementById('availableSeats').value.trim(), 10) : 40;
-            const from = document.getElementById('departureLocation') ? document.getElementById('departureLocation').value.trim() : '';
-            const to = document.getElementById('arrivalLocation') ? document.getElementById('arrivalLocation').value.trim() : '';
-            const date = document.getElementById('departureDate') ? document.getElementById('departureDate').value.trim() : '';
-            const time = document.getElementById('departureTime') ? document.getElementById('departureTime').value.trim() : '';
-            const price = document.getElementById('ticketPrice') ? document.getElementById('ticketPrice').value.trim() : '35.00';
-            const status = document.getElementById('busStatus') ? document.getElementById('busStatus').value.trim() : 'Available';
-
-            if (window.EasyBusStore && typeof window.EasyBusStore.addSchedule === 'function') {
-                window.EasyBusStore.addSchedule({
-                    busNumber: busNo,
-                    busPlate: busNo,
-                    route: route,
-                    routeAssignment: route,
-                    driverName: driver,
-                    availableSeats: seats,
-                    from: from,
-                    departureLocation: from,
-                    to: to,
-                    arrivalLocation: to,
-                    departureDate: date,
-                    departureTime: time,
-                    ticketPrice: price,
-                    busStatus: status
-                });
-            }
-
-            showToast(`New schedule for <strong>${busNo}</strong> (${route}) added successfully!`, 'success');
-
-            // Redirect back to dashboard after brief delay
-            setTimeout(() => {
-                window.location.href = 'schedule-list.html';
-            }, 1000);
-        }
-    </script>
-    <script src="assets/js/easybus-store.js"></script>
-    <script src="assets/js/easybus-nav.js"></script>
 </body>
 </html>

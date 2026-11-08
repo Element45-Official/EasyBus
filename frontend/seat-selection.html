@@ -4,13 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EasyBus - VIP Bus Seat Selection</title>
-    
+
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    
+    <link rel="stylesheet" href="assets/css/easybus.css">
+
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
@@ -19,7 +16,6 @@
             font-family: 'Inter', sans-serif;
             background-color: #000;
             margin: 0;
-            overflow: hidden;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -47,11 +43,10 @@
         /* Kerusi & Perspective Styling */
         .seat-marker {
             position: absolute;
-            transform: translate(-50%, -50%) scale(0.5);
-            opacity: 0;
+            transform: translate(-50%, -50%);
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        
+
         .seat-marker.appear {
             opacity: 1;
             transform: translate(-50%, -50%) scale(1);
@@ -61,7 +56,7 @@
             transform: translate(-50%, -55%) scale(1.15);
             z-index: 40;
         }
-        
+
         .seat-marker.appear.is-reserved:hover {
             transform: translate(-50%, -50%) scale(1.05);
         }
@@ -85,7 +80,7 @@
             position: absolute;
             inset: -4px;
             border-radius: 50%;
-            border: 2px solid rgba(252, 211, 77, 0.6); 
+            border: 2px solid rgba(252, 211, 77, 0.6);
             animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
             opacity: 0;
         }
@@ -120,7 +115,7 @@
         .btn-shimmer::after {
             content: '';
             position: absolute;
-            top: -50%; left: -50%; 
+            top: -50%; left: -50%;
             width: 200%; height: 200%;
             background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
             transform: rotate(35deg) translateX(-100%);
@@ -140,651 +135,184 @@
         }
     </style>
 </head>
-<body class="relative h-screen w-full flex flex-col text-white">
-
-    <!-- Toast Notification (Dynamic Success / Error / Warning) -->
-    <div id="toast-container" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-0 translate-y-[-20px] pointer-events-none">
-        <div id="toast-card" class="bg-red-600/95 backdrop-blur-xl text-white px-6 py-3 rounded-full shadow-[0_10px_30px_rgba(220,38,38,0.5)] font-medium text-sm flex items-center gap-2.5 border border-red-400">
-            <i id="toast-icon" class="ph-bold ph-warning-circle text-lg"></i>
-            <span id="toast-message">Kerusi ini telah ditempah!</span>
-        </div>
-    </div>
+<body class="relative min-h-screen w-full flex flex-col text-white">
 
     <!-- 1. Background Interior Layer -->
     <div class="absolute inset-0 z-0">
         <!-- Gunakan imej interior bas tempatan (image_cca655.png) atau fallback URL interior bas -->
-        <img src="assets/images/bus-interior.png" alt="VIP Bus Interior" class="w-full h-full object-cover object-center" onerror="this.src='https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=1000&auto=format&fit=crop'">
+        <img src="assets/images/bus-interior.png" alt="VIP Bus Interior" class="w-full h-full object-cover object-center">
         <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-black/90"></div>
         <div class="ambient-light"></div>
     </div>
 
-    <!-- 2. Interactive AR Seat Markers Overlay -->
+    <!-- Static cabin diagram -->
     <div class="absolute inset-0 z-10 pointer-events-none" id="seat-container">
-        
+
         <!-- ROW 3 (Belakang) -->
         <!-- 3A (Kiri Window) - Pre-reserved -->
-        <button id="btn-seat-3A" class="seat-marker is-reserved pointer-events-auto" style="top: 47%; left: 28%;" onclick="selectSeat(this, '3A', 'Double Seat', 95)">
+        <div id="btn-seat-3A" class="seat-marker is-reserved pointer-events-auto" style="top: 47%; left: 28%;">
             <div class="relative w-7 h-7 rounded-full bg-red-500/20 border border-red-500/50 flex items-center justify-center backdrop-blur-sm shadow-md" id="pin-3A">
                 <span class="text-[9px] font-bold text-red-300">3A</span>
-                <i class="ph-fill ph-lock-key absolute -top-1 -right-1 text-red-400 text-[9px] bg-black/80 rounded-full p-[2px] shadow-lg border border-red-500/40"></i>
+                <i class="fa-solid fa-lock absolute -top-1 -right-1 text-red-400 text-[9px] bg-black/80 rounded-full p-[2px] shadow-lg border border-red-500/40"></i>
             </div>
             <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-md px-2.5 py-1 rounded-lg border border-red-500/30 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-30 shadow-xl" id="tooltip-3A">
-                <span class="text-red-400 font-bold text-[10px] flex items-center gap-1"><i class="ph-bold ph-lock-key"></i> Reserved</span>
+                <span class="text-red-400 font-bold text-[10px] flex items-center gap-1"><i class="fa-solid fa-lock"></i> Reserved</span>
             </div>
-        </button>
+        </div>
 
         <!-- 3B (Kiri Laluan) - Available -->
-        <button id="btn-seat-3B" class="seat-marker pointer-events-auto group" style="top: 45%; left: 38%;" onclick="selectSeat(this, '3B', 'Double Seat', 95)">
+        <div id="btn-seat-3B" class="seat-marker pointer-events-auto group" style="top: 45%; left: 38%;">
             <div class="relative w-7 h-7 rounded-full bg-white/10 border border-white/30 flex items-center justify-center backdrop-blur-md group-hover:bg-amber-400/90 transition-colors shadow-lg" id="pin-3B">
                 <span class="text-[9px] font-bold">3B</span>
             </div>
-        </button>
+        </div>
 
         <!-- 3C (Kanan Laluan) - Available -->
-        <button id="btn-seat-3C" class="seat-marker pointer-events-auto group" style="top: 50%; left: 63%;" onclick="selectSeat(this, '3C', 'VIP Single', 125)">
+        <div id="btn-seat-3C" class="seat-marker pointer-events-auto group" style="top: 50%; left: 63%;">
             <div class="relative w-7 h-7 rounded-full bg-white/10 border border-white/30 flex items-center justify-center backdrop-blur-md group-hover:bg-amber-400/90 transition-colors shadow-lg" id="pin-3C">
                 <span class="text-[9px] font-bold">3C</span>
             </div>
-        </button>
+        </div>
 
         <!-- ROW 2 (Tengah) -->
         <!-- 2A (Kiri Window) - Available -->
-        <button id="btn-seat-2A" class="seat-marker pointer-events-auto group" style="top: 55%; left: 22%;" onclick="selectSeat(this, '2A', 'Double Seat', 95)">
+        <div id="btn-seat-2A" class="seat-marker pointer-events-auto group" style="top: 55%; left: 22%;">
             <div class="relative w-9 h-9 rounded-full bg-white/10 border border-white/30 flex items-center justify-center backdrop-blur-md group-hover:bg-amber-400/90 transition-colors shadow-lg" id="pin-2A">
                 <span class="text-[10px] font-bold">2A</span>
             </div>
-        </button>
-        
+        </div>
+
         <!-- 2B (Kiri Laluan) - Pre-reserved -->
-        <button id="btn-seat-2B" class="seat-marker is-reserved pointer-events-auto" style="top: 54%; left: 35%;" onclick="selectSeat(this, '2B', 'Double Seat', 95)">
+        <div id="btn-seat-2B" class="seat-marker is-reserved pointer-events-auto" style="top: 54%; left: 35%;">
             <div class="relative w-9 h-9 rounded-full bg-red-500/20 border border-red-500/50 flex items-center justify-center backdrop-blur-sm shadow-md" id="pin-2B">
                 <span class="text-[10px] font-bold text-red-300">2B</span>
-                <i class="ph-fill ph-lock-key absolute -top-1 -right-1 text-red-400 text-xs bg-black/80 rounded-full p-[2px] shadow-lg border border-red-500/40"></i>
+                <i class="fa-solid fa-lock absolute -top-1 -right-1 text-red-400 text-xs bg-black/80 rounded-full p-[2px] shadow-lg border border-red-500/40"></i>
             </div>
             <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-md px-2.5 py-1 rounded-lg border border-red-500/30 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-30 shadow-xl" id="tooltip-2B">
-                <span class="text-red-400 font-bold text-[10px] flex items-center gap-1"><i class="ph-bold ph-lock-key"></i> Reserved</span>
+                <span class="text-red-400 font-bold text-[10px] flex items-center gap-1"><i class="fa-solid fa-lock"></i> Reserved</span>
             </div>
-        </button>
+        </div>
 
         <!-- 2C (Kanan Laluan) - Available -->
-        <button id="btn-seat-2C" class="seat-marker pointer-events-auto group" style="top: 59%; left: 65%;" onclick="selectSeat(this, '2C', 'VIP Single', 125)">
+        <div id="btn-seat-2C" class="seat-marker pointer-events-auto group" style="top: 59%; left: 65%;">
             <div class="relative w-9 h-9 rounded-full bg-white/10 border border-white/30 flex items-center justify-center backdrop-blur-md group-hover:bg-amber-400/90 transition-colors shadow-lg" id="pin-2C">
                 <span class="text-[10px] font-bold">2C</span>
             </div>
-        </button>
+        </div>
 
         <!-- ROW 1 (Depan / Target Utama) -->
         <!-- 1A (Depan Kiri Window) - Available -->
-        <button id="btn-seat-1A" class="seat-marker pointer-events-auto group" style="top: 76%; left: 16%;" onclick="selectSeat(this, '1A', 'Double Seat', 95)">
+        <div id="btn-seat-1A" class="seat-marker pointer-events-auto group" style="top: 76%; left: 16%;">
             <div class="relative w-11 h-11 rounded-full bg-white/10 border border-white/30 flex items-center justify-center backdrop-blur-md group-hover:bg-amber-400/90 transition-colors shadow-lg" id="pin-1A">
                 <span class="text-xs font-bold">1A</span>
             </div>
-        </button>
+        </div>
 
         <!-- 1B (Depan Kiri Laluan) - Available -->
-        <button id="btn-seat-1B" class="seat-marker pointer-events-auto group" style="top: 67%; left: 30%;" onclick="selectSeat(this, '1B', 'Double Seat', 95)">
+        <div id="btn-seat-1B" class="seat-marker pointer-events-auto group" style="top: 67%; left: 30%;">
             <div class="relative w-11 h-11 rounded-full bg-white/10 border border-white/30 flex items-center justify-center backdrop-blur-md group-hover:bg-amber-400/90 transition-colors shadow-lg" id="pin-1B">
                 <span class="text-xs font-bold">1B</span>
             </div>
-        </button>
-        
+        </div>
+
         <!-- 1C (Depan Kanan - Default Selected) -->
-        <button id="btn-seat-1C" class="seat-marker pointer-events-auto group z-20" style="top: 70%; left: 68%;" onclick="selectSeat(this, '1C', 'VIP Single', 125)">
+        <div id="btn-seat-1C" class="seat-marker pointer-events-auto group z-20" style="top: 70%; left: 68%;">
             <div class="relative w-11 h-11 rounded-full bg-amber-500 border-2 border-white flex items-center justify-center shadow-[0_0_30px_rgba(245,158,11,0.6)] transition-colors" id="pin-1C">
                 <div class="pulse-ring" id="pulse-1C"></div>
                 <span class="text-xs font-bold text-gray-900" id="text-1C">1C</span>
             </div>
-            <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20 whitespace-nowrap opacity-100 transition-opacity shadow-xl" id="tooltip-1C">
-                <span class="text-amber-400 font-bold text-xs" id="tooltip-text-1C">Selected</span>
-            </div>
-        </button>
+
+        </div>
 
     </div>
 
     <!-- 3. UI Overlay Layer -->
-    <div class="relative z-20 flex flex-col justify-between h-full pointer-events-none p-4 md:p-8">
-        
+    <div class="relative z-20 flex flex-col justify-between min-h-screen pointer-events-none p-4 md:p-8">
+
         <!-- TOP CARD SECTION -->
         <div class="w-full max-w-2xl mx-auto space-y-4 pointer-events-auto animate-slide-down">
-            
+
             <div class="flex items-center justify-between">
-                <button onclick="window.location.href='index.html'" class="w-10 h-10 rounded-full glass-dark flex items-center justify-center hover:bg-white/20 hover:scale-105 transition-all cursor-pointer" title="Back to Home">
-                    <i class="ph ph-arrow-left text-xl"></i>
-                </button>
+                <a href="index.html" class="w-10 h-10 rounded-full glass-dark flex items-center justify-center hover:bg-white/20 hover:scale-105 transition-all cursor-pointer" title="Back to Home">
+                    <i class="fa-solid fa-arrow-left text-xl"></i>
+                </a>
                 <div class="text-center">
                     <h1 class="text-lg font-bold tracking-wide uppercase text-white flex items-center justify-center gap-2">
-                        <i class="ph-bold ph-armchair text-amber-400"></i> EasyBus Seat Selection
+                        <i class="fa-solid fa-couch text-amber-400"></i> EasyBus Seat Selection
                     </h1>
-                    <p class="text-[11px] text-gray-400">Function 2: Update Seat Status Upon Reservation</p>
+                    <p class="text-[11px] text-gray-400">Sample cabin and reservation form</p>
                 </div>
-                <a href="schedule-list.html" class="w-10 h-10 rounded-full glass-dark flex items-center justify-center hover:bg-white/20 hover:scale-105 transition-all text-gray-300 hover:text-white" title="View Schedules & Fleet">
-                    <i class="ph ph-table text-xl"></i>
+                <a href="schedules.html" class="w-10 h-10 rounded-full glass-dark flex items-center justify-center hover:bg-white/20 hover:scale-105 transition-all text-gray-300 hover:text-white" title="Back to Schedules" aria-label="Back to Schedules">
+                    <i class="fa-solid fa-table text-xl"></i>
                 </a>
             </div>
 
             <div class="glass-dark rounded-3xl p-5 relative overflow-hidden group">
                 <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-amber-400 to-amber-600"></div>
-                
+
                 <div class="flex items-center justify-between">
                     <div>
-                        <p id="tripBusBadge" class="text-xs text-amber-400 font-semibold uppercase tracking-widest mb-1 opacity-80">Super VIP Express (Bus DEF9012)</p>
+                        <p id="tripBusBadge" class="text-xs text-amber-400 font-semibold uppercase tracking-widest mb-1 opacity-80">Sample departure · Bus ABC1234</p>
                         <h2 id="tripRouteHeading" class="text-xl md:text-2xl font-bold flex items-center gap-3">
-                            Kuala Lumpur 
-                            <i class="ph-bold ph-arrow-right text-amber-500 text-xl animate-arrow"></i> 
+                            Kuala Lumpur
+                            <i class="fa-solid fa-arrow-right text-amber-500 text-xl animate-arrow"></i>
                             Johor Bahru
                         </h2>
                     </div>
                     <div class="text-right hidden sm:block transform group-hover:rotate-12 transition-transform duration-500">
                         <div class="bg-white/10 border border-white/10 rounded-xl px-4 py-2 shadow-lg">
-                            <i class="ph-fill ph-armchair text-amber-400 text-xl"></i>
+                            <i class="fa-solid fa-couch text-amber-400 text-xl"></i>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-6 mt-4 pt-4 border-t border-white/10 text-xs text-gray-300">
                     <div class="flex items-center gap-2">
-                        <div class="bg-white/5 p-1.5 rounded-lg"><i class="ph ph-calendar-blank text-amber-500"></i></div>
-                        <span id="tripDateDisplay" class="font-medium">26 Oct 2026</span>
+                        <div class="bg-white/5 p-1.5 rounded-lg"><i class="fa-solid fa-calendar text-amber-500"></i></div>
+                        <span id="tripDateDisplay" class="font-medium">1 Jun 2026</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <div class="bg-white/5 p-1.5 rounded-lg"><i class="ph ph-clock text-amber-500"></i></div>
-                        <span id="tripTimeDisplay" class="font-medium">10:00 PM</span>
+                        <div class="bg-white/5 p-1.5 rounded-lg"><i class="fa-solid fa-clock text-amber-500"></i></div>
+                        <span id="tripTimeDisplay" class="font-medium">08:00 AM</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <div class="bg-white/5 p-1.5 rounded-lg"><i class="ph ph-user text-amber-500"></i></div>
+                        <div class="bg-white/5 p-1.5 rounded-lg"><i class="fa-solid fa-user text-amber-500"></i></div>
                         <span id="tripPaxDisplay" class="font-medium text-white">1 Pax</span>
                     </div>
                 </div>
             </div>
-            
+
             <div class="flex justify-center mt-2">
                 <div class="bg-black/60 backdrop-blur-md rounded-full px-5 py-2 border border-white/10 text-xs font-medium text-gray-300 flex items-center gap-2.5 shadow-lg">
                     <span class="flex items-center gap-1.5 text-emerald-400"><span class="w-2.5 h-2.5 rounded-full bg-white/40 border border-white/60 inline-block"></span> Available</span>
                     <span class="text-gray-500">•</span>
-                    <span class="flex items-center gap-1.5 text-amber-400"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> Selected</span>
                     <span class="text-gray-500">•</span>
                     <span class="flex items-center gap-1.5 text-red-400"><span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span> Reserved &amp; Locked</span>
                 </div>
             </div>
         </div>
 
-        <!-- BOTTOM CONFIRMATION SECTION (FUNCTION 2: UPDATE SEAT STATUS UPON RESERVATION) -->
-        <div class="w-full max-w-2xl mx-auto mt-auto pointer-events-auto animate-slide-up">
-            <div class="glass-dark rounded-t-3xl p-6 md:p-8 border-b-0 border-x-0 relative overflow-hidden">
-                <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 w-32 h-32 bg-amber-500/20 blur-3xl rounded-full pointer-events-none"></div>
-
-                <div class="flex items-end justify-between mb-6 relative z-10">
-                    <div>
-                        <div class="flex items-center gap-2.5 mb-1.5">
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Selected Seat</p>
-                            <!-- DYNAMIC SEAT STATUS BADGE (FUNCTION 2) -->
-                            <span id="seat-status-badge" class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-2.5 py-0.5 rounded-full text-xs font-bold flex items-center gap-1">
-                                <i class="ph-bold ph-check-circle"></i> Status: Available
-                            </span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <h3 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-500 drop-shadow-md transition-all" id="display-seat">1C</h3>
-                            <span class="bg-white/10 px-3 py-1 rounded-lg text-sm border border-white/10 font-medium text-gray-200" id="display-type">VIP Single</span>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Total Price</p>
-                        <h3 class="text-2xl font-bold text-white tracking-wide">RM <span id="display-price">125</span></h3>
-                    </div>
-                </div>
-
-                <!-- Action Controls (Confirm Seat vs Reserved Status) -->
-                <div class="flex gap-3 relative z-10" id="action-controls-area">
-                    <!-- Reset / Unreserve Helper Button -->
-                    <button id="btn-reset-seat" onclick="resetCurrentSeatStatus()" class="w-14 h-14 rounded-2xl border border-white/20 flex items-center justify-center bg-white/5 hover:bg-white/10 hover:scale-105 transition-all shadow-lg text-gray-300 hover:text-white" title="Unlock Seat / Reset Selection">
-                        <i class="ph ph-arrow-counter-clockwise text-2xl"></i>
-                    </button>
-
-                    <!-- Primary Confirm Button: Transitions Available -> Reserved (Function 2) -->
-                    <button id="btn-confirm-seat" onclick="confirmSeatReservation()" class="btn-shimmer flex-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-base md:text-lg rounded-2xl shadow-[0_0_20px_rgba(245,158,11,0.4)] hover:shadow-[0_0_30px_rgba(245,158,11,0.6)] transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2 cursor-pointer">
-                        <span>Confirm Seat</span>
-                        <i class="ph-bold ph-check-circle text-xl"></i>
-                    </button>
-                </div>
+        <form method="post" class="w-full max-w-2xl mx-auto mt-auto pointer-events-auto glass-dark rounded-t-3xl p-5 space-y-3">
+            <input type="hidden" name="tripId" value="1">
+            <label for="seatNumber" class="block font-bold">Choose a seat</label>
+            <p class="text-sm text-gray-300">Sample fare: RM 35.00. The Java servlet will confirm availability and save the reservation.</p>
+            <div class="flex flex-wrap items-center gap-3">
+                <select id="seatNumber" name="seatNumber" class="bg-slate-900 border border-white/20 rounded-xl px-4 py-2 text-white" required>
+                    <option value="">Select a seat</option>
+                    <option>1A</option>
+                    <option>1B</option>
+                    <option>1C</option>
+                    <option>2A</option>
+                    <option disabled>2B (reserved)</option>
+                    <option>2C</option>
+                    <option disabled>3A (reserved)</option>
+                    <option>3B</option>
+                    <option>3C</option>
+                </select>
+                <button type="submit" disabled class="bg-amber-500 text-slate-950 px-4 py-2 rounded-xl font-bold">Confirm Seat</button>
+                <a href="tracking.html" class="text-amber-300 underline text-sm">View Tracking Preview</a>
             </div>
-        </div>
+        </form>
     </div>
-
-    <!-- RESERVATION SUCCESS CONFIRMATION MODAL -->
-    <div id="reservationModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 p-4">
-        <div class="glass-dark border border-amber-500/40 rounded-3xl p-6 md:p-8 max-w-md w-full text-center relative overflow-hidden transform scale-95 transition-all duration-300 shadow-2xl" id="reservationModalCard">
-            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 flex items-center justify-center text-3xl mx-auto mb-4 shadow-lg shadow-amber-500/30">
-                <i class="ph-fill ph-lock-key"></i>
-            </div>
-            
-            <span class="bg-amber-500/20 text-amber-400 border border-amber-500/40 px-3 py-1 rounded-full text-xs font-bold inline-block mb-3">
-                Function 2: Status Transition Completed
-            </span>
-            
-            <h3 class="text-2xl font-black text-white mb-2">Seat Reserved &amp; Locked!</h3>
-            <p class="text-sm text-gray-300 mb-6 leading-relaxed">
-                Seat <strong class="text-amber-400 font-bold text-base" id="modal-seat-id">1C</strong> status has transitioned from <span class="text-emerald-400 font-semibold">Available</span> to <span class="text-red-400 font-semibold">Reserved &amp; Locked</span>.
-                No other passenger can book this seat simultaneously.
-            </p>
-
-            <div class="bg-white/5 rounded-2xl p-4 border border-white/10 mb-6 text-left space-y-2 text-xs">
-                <div class="flex justify-between text-gray-400">
-                    <span>Route:</span>
-                    <span id="modal-route-display" class="text-white font-medium">Kuala Lumpur → Johor Bahru</span>
-                </div>
-                <div class="flex justify-between text-gray-400">
-                    <span>Seat Type:</span>
-                    <span class="text-white font-medium" id="modal-seat-type">VIP Single</span>
-                </div>
-                <div class="flex justify-between text-gray-400">
-                    <span>Status:</span>
-                    <span class="text-red-400 font-bold flex items-center gap-1"><i class="ph-fill ph-lock-key"></i> Locked (Reserved)</span>
-                </div>
-            </div>
-
-            <div class="flex flex-col sm:flex-row gap-3">
-                <button type="button" onclick="closeReservationModal()" class="w-full sm:w-1/2 py-3 px-4 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-white font-semibold text-sm transition">
-                    Keep Viewing
-                </button>
-                <button type="button" id="modalTrackingBtn" onclick="window.location.href='tracking.html'" class="w-full sm:w-1/2 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/30 transition flex items-center justify-center gap-2 cursor-pointer">
-                    <span>Live Tracking</span>
-                    <i class="ph-bold ph-arrow-right"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Set of reserved seats in the bus
-        const reservedSeats = new Set(['3A', '2B']);
-        let currentSelected = '1C';
-        let currentSelectedType = 'VIP Single';
-        let currentSelectedPrice = 125;
-        let isCurrentSeatLocked = false;
-        let toastTimeout;
-        let activeBus = 'DEF9012';
-        let activeRoute = 'Kuala Lumpur → Johor Bahru';
-        let activeDate = '2026-10-26';
-        let activeTime = '10:00 PM';
-        let activeBookingId = 'BK-89244';
-
-        function applySeatReservedStyle(seatId) {
-            const pin = document.getElementById('pin-' + seatId);
-            if (pin) {
-                pin.className = 'relative rounded-full border flex items-center justify-center transition-all duration-300 ' + getPinBaseSize(seatId) + ' bg-red-500/25 border-red-500/60 text-red-200 shadow-[0_0_25px_rgba(239,68,68,0.5)] z-20';
-                pin.innerHTML = `
-                    <span class="${getTextSize(seatId)} font-bold text-red-300">${seatId}</span>
-                    <i class="ph-fill ph-lock-key absolute -top-1 -right-1 text-red-400 text-xs bg-black/90 rounded-full p-[2px] shadow-lg border border-red-500/50"></i>
-                `;
-
-                const tooltip = document.getElementById('tooltip-' + seatId);
-                if (tooltip) {
-                    tooltip.innerHTML = `<span class="text-red-400 font-bold text-xs flex items-center gap-1"><i class="ph-bold ph-lock-key"></i> Reserved &amp; Locked</span>`;
-                    tooltip.className = 'absolute -top-10 left-1/2 -translate-x-1/2 bg-red-950/90 backdrop-blur-md px-3 py-1 rounded-lg border border-red-500/40 whitespace-nowrap opacity-100 z-30 shadow-xl';
-                }
-
-                const btn = pin.parentElement;
-                if (btn) btn.classList.add('is-reserved');
-            }
-        }
-
-        // Entrance Animation & Context Population
-        window.addEventListener('DOMContentLoaded', () => {
-            const seats = document.querySelectorAll('.seat-marker');
-            const seatsArray = Array.from(seats).reverse(); 
-            
-            seatsArray.forEach((seat, index) => {
-                setTimeout(() => {
-                    seat.classList.add('appear');
-                }, 100 + (index * 80));
-            });
-
-            // Parse URL parameters
-            if (typeof window !== 'undefined' && window.location && window.location.search) {
-                const escapeHtml = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-                const params = new URLSearchParams(window.location.search);
-                if (params.get('bus')) activeBus = params.get('bus');
-                if (params.get('route')) activeRoute = params.get('route');
-                if (params.get('date')) activeDate = params.get('date');
-                if (params.get('time')) activeTime = params.get('time');
-                if (params.get('price')) {
-                    const cleanP = parseFloat(params.get('price').replace(/[^0-9.]/g, ''));
-                    if (!isNaN(cleanP)) {
-                        currentSelectedPrice = cleanP;
-                        const dispPrice = document.getElementById('display-price');
-                        if (dispPrice) dispPrice.innerText = cleanP;
-                    }
-                }
-
-                // Update UI displays
-                const busBadge = document.getElementById('tripBusBadge');
-                if (busBadge) busBadge.innerText = `Super VIP Express (Bus ${activeBus})`;
-
-                const routeHeading = document.getElementById('tripRouteHeading');
-                if (routeHeading) {
-                    const sep = activeRoute.includes('→') ? '→' : (activeRoute.includes('->') ? '->' : 'to');
-                    const parts = activeRoute.split(sep);
-                    if (parts.length >= 2) {
-                        routeHeading.innerHTML = `${escapeHtml(parts[0].trim())} <i class="ph-bold ph-arrow-right text-amber-500 text-xl animate-arrow"></i> ${escapeHtml(parts[1].trim())}`;
-                    } else {
-                        routeHeading.innerText = activeRoute;
-                    }
-                }
-
-                const dateDisp = document.getElementById('tripDateDisplay');
-                if (dateDisp) dateDisp.innerText = activeDate;
-
-                const timeDisp = document.getElementById('tripTimeDisplay');
-                if (timeDisp) timeDisp.innerText = activeTime;
-
-                if (params.get('pax')) {
-                    const paxDisp = document.getElementById('tripPaxDisplay');
-                    if (paxDisp) paxDisp.innerText = `${params.get('pax')} Pax`;
-                }
-
-                const modalRoute = document.getElementById('modal-route-display');
-                if (modalRoute) modalRoute.innerText = activeRoute;
-            }
-
-            // Pre-populate reserved seats from EasyBusStore
-            if (typeof window !== 'undefined' && window.EasyBusStore && typeof window.EasyBusStore.getReservedSeats === 'function') {
-                const storeSeats = window.EasyBusStore.getReservedSeats(activeBus);
-                if (Array.isArray(storeSeats)) {
-                    storeSeats.forEach(seatId => {
-                        reservedSeats.add(seatId);
-                        applySeatReservedStyle(seatId);
-                    });
-                }
-            } else {
-                ['3A', '2B'].forEach(s => applySeatReservedStyle(s));
-            }
-
-            // Check if initial selection is already reserved
-            const isInitialReserved = reservedSeats.has(currentSelected) || (
-                typeof window !== 'undefined' && window.EasyBusStore && typeof window.EasyBusStore.isSeatReserved === 'function' && window.EasyBusStore.isSeatReserved(currentSelected, activeBus)
-            );
-            if (isInitialReserved) {
-                isCurrentSeatLocked = true;
-                updateBottomPanelStatus(true);
-            }
-        });
-
-        // Toast Notification Function (Supports 'success', 'error', 'warning', 'info')
-        function showToast(message, type = 'error') {
-            const container = document.getElementById('toast-container');
-            const card = document.getElementById('toast-card');
-            const icon = document.getElementById('toast-icon');
-            const msg = document.getElementById('toast-message');
-
-            msg.innerText = message;
-
-            if (type === 'success') {
-                card.className = 'bg-emerald-600/95 backdrop-blur-xl text-white px-6 py-3 rounded-full shadow-[0_10px_30px_rgba(16,185,129,0.5)] font-medium text-sm flex items-center gap-2.5 border border-emerald-400';
-                icon.className = 'ph-bold ph-check-circle text-lg text-emerald-200';
-            } else if (type === 'warning') {
-                card.className = 'bg-amber-600/95 backdrop-blur-xl text-white px-6 py-3 rounded-full shadow-[0_10px_30px_rgba(245,158,11,0.5)] font-medium text-sm flex items-center gap-2.5 border border-amber-400';
-                icon.className = 'ph-bold ph-lock-key text-lg text-amber-200';
-            } else {
-                card.className = 'bg-red-600/95 backdrop-blur-xl text-white px-6 py-3 rounded-full shadow-[0_10px_30px_rgba(220,38,38,0.5)] font-medium text-sm flex items-center gap-2.5 border border-red-400';
-                icon.className = 'ph-bold ph-warning-circle text-lg text-red-200';
-            }
-            
-            container.classList.remove('opacity-0', 'translate-y-[-20px]');
-            container.classList.add('opacity-100', 'translate-y-0');
-
-            clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => {
-                container.classList.remove('opacity-100', 'translate-y-0');
-                container.classList.add('opacity-0', 'translate-y-[-20px]');
-            }, 3000);
-        }
-
-        /**
-         * Logic Pemilihan Kerusi (Select Seat)
-         */
-        function selectSeat(buttonElement, seatId, type, price) {
-            // Check if seat is already reserved/locked
-            const isSeatUnavailable = reservedSeats.has(seatId) || (
-                typeof window !== 'undefined' && window.EasyBusStore && typeof window.EasyBusStore.isSeatReserved === 'function' && window.EasyBusStore.isSeatReserved(seatId, activeBus)
-            );
-            if (isSeatUnavailable) {
-                const pin = document.getElementById('pin-' + seatId);
-                if (pin && pin.parentElement) {
-                    pin.parentElement.classList.add('shake-seat');
-                    setTimeout(() => { pin.parentElement.classList.remove('shake-seat'); }, 400);
-                }
-                showToast(`Maaf, kerusi ${seatId} telah ditempah dan dikunci oleh penumpang lain!`, 'error');
-                return;
-            }
-
-            if (currentSelected === seatId && !isCurrentSeatLocked) return;
-
-            // 1. Reset kerusi terdahulu jika kerusi tersebut belum di-lock
-            if (!reservedSeats.has(currentSelected)) {
-                const prevPin = document.getElementById('pin-' + currentSelected);
-                const prevTooltip = document.getElementById('tooltip-' + currentSelected);
-                
-                if (prevPin) {
-                    prevPin.className = 'relative rounded-full border flex items-center justify-center backdrop-blur-md transition-all duration-300 ' + getPinBaseSize(currentSelected) + ' bg-white/10 border-white/30 group-hover:bg-amber-400/90 text-white shadow-lg';
-                    prevPin.innerHTML = `<span class="${getTextSize(currentSelected)} font-bold">${currentSelected}</span>`;
-                }
-                if (prevTooltip) prevTooltip.remove();
-            }
-
-            // 2. Animasikan kerusi baru yang dipilih
-            const newPin = document.getElementById('pin-' + seatId);
-            if (newPin) {
-                const burst = document.createElement('div');
-                burst.className = 'burst-ring';
-                newPin.appendChild(burst);
-                setTimeout(() => burst.remove(), 600);
-
-                newPin.className = 'relative rounded-full border flex items-center justify-center transition-all duration-300 ' + getPinBaseSize(seatId) + ' bg-amber-500 border-white shadow-[0_0_30px_rgba(245,158,11,0.6)] text-gray-900 border-2 z-20';
-                newPin.innerHTML = `
-                    <div class="pulse-ring"></div>
-                    <span class="${getTextSize(seatId)} font-bold">${seatId}</span>
-                `;
-
-                const btn = newPin.parentElement;
-                btn.classList.add('z-20');
-                
-                // Clear any existing tooltip
-                const oldTooltip = document.getElementById('tooltip-' + seatId);
-                if (oldTooltip) oldTooltip.remove();
-
-                const tooltipHtml = `
-                    <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20 whitespace-nowrap opacity-100 z-30 shadow-xl" id="tooltip-${seatId}">
-                        <span class="text-amber-400 font-bold text-xs">Selected</span>
-                    </div>
-                `;
-                btn.insertAdjacentHTML('beforeend', tooltipHtml);
-            }
-
-            // 3. Kemaskini Panel Bawah & State
-            currentSelected = seatId;
-            currentSelectedType = type;
-            currentSelectedPrice = price;
-            isCurrentSeatLocked = false;
-
-            const displaySeat = document.getElementById('display-seat');
-            const displayPrice = document.getElementById('display-price');
-            
-            displaySeat.style.transform = 'scale(1.2)';
-            displayPrice.style.transform = 'scale(1.2)';
-            
-            setTimeout(() => {
-                displaySeat.innerText = seatId;
-                document.getElementById('display-type').innerText = type;
-                displayPrice.innerText = price;
-                
-                displaySeat.style.transform = 'scale(1)';
-                displayPrice.style.transform = 'scale(1)';
-            }, 150);
-
-            // Set status badge to Available
-            updateBottomPanelStatus(false);
-        }
-
-        /**
-         * =========================================================================
-         * FUNCTION 2 (UPDATE): UPDATE SEAT STATUS UPON RESERVATION
-         * Transitions chosen seat status from Available to Reserved immediately after
-         * booking confirmation, locking the seat so no concurrent passenger can book it.
-         * =========================================================================
-         */
-        function confirmSeatReservation() {
-            const isAlreadyBooked = reservedSeats.has(currentSelected) || (
-                typeof window !== 'undefined' && window.EasyBusStore && typeof window.EasyBusStore.isSeatReserved === 'function' && window.EasyBusStore.isSeatReserved(currentSelected, activeBus)
-            );
-            if (isAlreadyBooked) {
-                showToast(`Seat ${currentSelected} is already reserved and locked!`, 'warning');
-                return;
-            }
-
-            // 1. Mark seat as reserved in state & persist in EasyBusStore
-            reservedSeats.add(currentSelected);
-            isCurrentSeatLocked = true;
-            if (typeof window !== 'undefined' && window.EasyBusStore && typeof window.EasyBusStore.reserveSeat === 'function') {
-                window.EasyBusStore.reserveSeat(currentSelected, activeBus);
-            }
-
-            // 2. Visually transition seat pin to Reserved & Locked
-            applySeatReservedStyle(currentSelected);
-
-            // 3. Create booking record and persist in EasyBusStore
-            const currentUser = (typeof window !== 'undefined' && window.EasyBusStore && window.EasyBusStore.getCurrentUser()) || {};
-            activeBookingId = 'BK-' + Math.floor(10000 + Math.random() * 90000);
-            const formattedPrice = 'RM ' + (typeof currentSelectedPrice === 'number' ? currentSelectedPrice.toFixed(2) : currentSelectedPrice);
-            const bookingRecord = {
-                id: activeBookingId,
-                passenger: currentUser.fullName || 'Ali bin Abu',
-                phone: currentUser.phone || '011-99887766',
-                email: currentUser.email || 'ali@example.com',
-                route: activeRoute,
-                bus: activeBus,
-                seat: `${currentSelected} (${currentSelectedType})`,
-                date: `${activeDate} ${activeTime}`,
-                amount: formattedPrice,
-                fare: formattedPrice,
-                fareNumeric: Number(currentSelectedPrice) || 35.0,
-                gateway: 'FPX Online Banking',
-                paymentNote: 'Payment Verified via Portal Checkout',
-                note: 'Booked via passenger seat selection portal',
-                status: 'Confirmed'
-            };
-            if (typeof window !== 'undefined' && window.EasyBusStore && typeof window.EasyBusStore.addBooking === 'function') {
-                window.EasyBusStore.addBooking(bookingRecord);
-            }
-
-            // 4. Update tracking navigation target with parameters
-            const trackingUrl = `tracking.html?bus=${encodeURIComponent(activeBus)}&route=${encodeURIComponent(activeRoute)}&seat=${encodeURIComponent(currentSelected)}&booking=${encodeURIComponent(activeBookingId)}`;
-            const modalTrackBtn = document.getElementById('modalTrackingBtn');
-            if (modalTrackBtn) {
-                modalTrackBtn.onclick = function() { window.location.href = trackingUrl; };
-            }
-
-            // 5. Update Bottom Confirmation Panel Controls
-            updateBottomPanelStatus(true);
-            const confirmBtn = document.getElementById('btn-confirm-seat');
-            if (confirmBtn) {
-                confirmBtn.onclick = function() { window.location.href = trackingUrl; };
-            }
-
-            // 6. Show success toast notification
-            showToast(`Seat ${currentSelected} successfully locked! Status updated: Available → Reserved.`, 'success');
-
-            // 7. Open Reservation Confirmation Modal
-            document.getElementById('modal-seat-id').innerText = currentSelected;
-            document.getElementById('modal-seat-type').innerText = currentSelectedType;
-            showReservationModal();
-        }
-
-        /**
-         * Update Bottom Panel Status Badge and Action Buttons
-         */
-        function updateBottomPanelStatus(isReserved) {
-            const badge = document.getElementById('seat-status-badge');
-            const confirmBtn = document.getElementById('btn-confirm-seat');
-
-            if (isReserved) {
-                badge.className = 'bg-red-500/20 text-red-400 border border-red-500/50 px-2.5 py-0.5 rounded-full text-xs font-bold flex items-center gap-1 animate-pulse';
-                badge.innerHTML = '<i class="ph-bold ph-lock-key text-red-400"></i> Status: Reserved &amp; Locked';
-
-                const trackingUrl = `tracking.html?bus=${encodeURIComponent(activeBus)}&route=${encodeURIComponent(activeRoute)}&seat=${encodeURIComponent(currentSelected)}&booking=${encodeURIComponent(activeBookingId)}`;
-                confirmBtn.className = 'btn-shimmer flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-base md:text-lg rounded-2xl shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2 cursor-pointer';
-                confirmBtn.innerHTML = '<span>Proceed to Live Tracking</span> <i class="ph-bold ph-arrow-right text-xl"></i>';
-                confirmBtn.onclick = function() { window.location.href = trackingUrl; };
-            } else {
-                badge.className = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-2.5 py-0.5 rounded-full text-xs font-bold flex items-center gap-1';
-                badge.innerHTML = '<i class="ph-bold ph-check-circle"></i> Status: Available';
-
-                confirmBtn.className = 'btn-shimmer flex-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-base md:text-lg rounded-2xl shadow-[0_0_20px_rgba(245,158,11,0.4)] hover:shadow-[0_0_30px_rgba(245,158,11,0.6)] transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2 cursor-pointer';
-                confirmBtn.innerHTML = '<span>Confirm Seat</span> <i class="ph-bold ph-check-circle text-xl"></i>';
-                confirmBtn.onclick = confirmSeatReservation;
-            }
-        }
-
-        /**
-         * Reset / Unlock Seat for Testing Function 2 Repeatedly
-         */
-        function resetCurrentSeatStatus() {
-            if (reservedSeats.has(currentSelected)) {
-                reservedSeats.delete(currentSelected);
-                isCurrentSeatLocked = false;
-                
-                if (typeof window !== 'undefined' && window.EasyBusStore && typeof window.EasyBusStore.releaseSeat === 'function') {
-                    window.EasyBusStore.releaseSeat(currentSelected, activeBus);
-                }
-
-                const pin = document.getElementById('pin-' + currentSelected);
-                if (pin) {
-                    const btn = pin.parentElement;
-                    btn.classList.remove('is-reserved');
-                }
-                
-                selectSeat(null, currentSelected, currentSelectedType, currentSelectedPrice);
-                showToast(`Seat ${currentSelected} unlocked and transitioned back to Available.`, 'warning');
-            } else {
-                showToast(`Seat ${currentSelected} is currently Available. Click "Confirm Seat" to reserve it.`, 'info');
-            }
-        }
-
-        /**
-         * Reservation Modal Management
-         */
-        function showReservationModal() {
-            const modal = document.getElementById('reservationModal');
-            const card = document.getElementById('reservationModalCard');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            card.classList.remove('scale-95');
-            card.classList.add('scale-100');
-        }
-
-        function closeReservationModal() {
-            const modal = document.getElementById('reservationModal');
-            const card = document.getElementById('reservationModalCard');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            card.classList.remove('scale-100');
-            card.classList.add('scale-95');
-        }
-
-        function getPinBaseSize(seatId) {
-            if (seatId.startsWith('1')) return 'w-11 h-11';
-            if (seatId.startsWith('2')) return 'w-9 h-9';
-            if (seatId.startsWith('3')) return 'w-7 h-7';
-            return 'w-9 h-9';
-        }
-
-        function getTextSize(seatId) {
-            if (seatId.startsWith('1')) return 'text-xs';
-            if (seatId.startsWith('2')) return 'text-[10px]';
-            if (seatId.startsWith('3')) return 'text-[9px]';
-            return 'text-xs';
-        }
-    </script>
-
-    <!-- EasyBus State Store & Unified Navigation -->
-    <script src="assets/js/easybus-store.js"></script>
-    <script src="assets/js/easybus-nav.js"></script>
 </body>
 </html>
