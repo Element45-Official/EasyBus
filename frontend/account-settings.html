@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyBus - Passenger Account Settings &amp; Password Reset</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at 50% 10%, #1e293b 0%, #0f172a 60%, #020617 100%);
+            min-height: 100vh;
+            color: #f8fafc;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .dark-input {
+            background-color: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #f8fafc;
+            transition: all 0.2s ease;
+        }
+
+        .dark-input:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+            background-color: rgba(15, 23, 42, 0.95);
+        }
+
+        .btn-shimmer {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-shimmer::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; 
+            width: 200%; height: 200%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(35deg) translateX(-100%);
+            animation: shimmer 4s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: rotate(35deg) translateX(-150%); }
+            100% { transform: rotate(35deg) translateX(150%); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .toast-animate {
+            animation: slideDown 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="py-6 px-3 sm:px-6 md:px-10 flex flex-col justify-between">
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed top-6 right-6 z-50 flex flex-col gap-3 pointer-events-none max-w-md"></div>
+
+    <main class="max-w-4xl mx-auto w-full space-y-6">
+
+        <!-- BRAND & NAVIGATION HEADER -->
+        <header class="glass-card rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <a href="index.html" class="flex items-center gap-3 hover:opacity-90 transition">
+                <div class="w-12 h-12 rounded-xl bg-amber-500 flex items-center justify-center text-slate-950 font-black text-2xl shadow-lg shadow-amber-500/25">
+                    <i class="fa-solid fa-bus"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl font-extrabold text-white tracking-tight">Easy<span class="text-amber-400">Bus</span></span>
+                        <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 rounded-full text-xs font-bold">Passenger Portal</span>
+                    </div>
+                    <h1 class="text-sm font-semibold text-slate-300">Passenger Account Settings Page</h1>
+                    <p class="text-xs text-slate-400">  </p>
+                </div>
+            </a>
+
+            <!-- Quick Action Links -->
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+                <a href="index.html" class="inline-flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-semibold text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-700 transition">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Home</span>
+                </a>
+                <a href="seat-selection.html" class="inline-flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-semibold text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-700 transition">
+                    <i class="fa-solid fa-chair text-amber-400"></i>
+                    <span>Seat Selection</span>
+                </a>
+                <a href="tracking.html" class="inline-flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-semibold text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-700 transition">
+                    <i class="fa-solid fa-location-crosshairs text-amber-400"></i>
+                    <span>Tracking</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- MAIN ACCOUNT SETTINGS FORM CARD -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl">
+            
+            <!-- Profile Identity Banner -->
+            <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-6 sm:p-8 border-b border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 flex items-center justify-center font-extrabold text-2xl shadow-xl shadow-amber-500/20" id="avatarInitial">
+                            A
+                        </div>
+                        <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-slate-900 flex items-center justify-center text-[10px] text-white" title="Active & Verified">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-xl font-bold text-white" id="headerProfileName">Ali bin Abu</h2>
+                            <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                Verified Passenger
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-0.5" id="headerProfileEmail">ali@example.com</p>
+                        <p class="text-[11px] text-amber-400 font-semibold mt-1 flex items-center gap-1">
+                            <i class="fa-solid fa-phone text-[10px]"></i>
+                            <span id="headerProfilePhone">011-99887766</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                    <button type="button" onclick="loadDefaultProfile()" class="text-xs font-semibold text-slate-400 hover:text-amber-400 underline transition">
+                        <i class="fa-solid fa-rotate-left mr-1"></i>Load Default Data (Ali / 011-99887766)
+                    </button>
+                </div>
+            </div>
+
+            <!-- FORM START (FUNCTION 4: EDITABLE FIELDS) -->
+            <form onsubmit="handleProfileUpdate(event)" class="p-6 sm:p-8 space-y-8">
+                
+                <!-- SECTION 1: PASSENGER CONTACT & PROFILE (EDITABLE) -->
+                <div>
+                    <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-700/60">
+                        <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-user-pen"></i>
+                            <span>1. Passenger Contact Information</span>
+                        </h3>
+                        <span class="text-[11px] text-slate-400">Editable Profile Fields</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <!-- Full Name -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1.5" for="profileFullName">
+                                Full Name <span class="text-amber-400">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none text-xs">
+                                    <i class="fa-solid fa-user"></i>
+                                </span>
+                                <input type="text" id="profileFullName" value="Ali bin Abu" required 
+                                    class="w-full pl-9 pr-3.5 py-2.5 text-xs sm:text-sm dark-input rounded-xl"
+                                    placeholder="e.g. Ali bin Abu">
+                            </div>
+                        </div>
+
+                        <!-- Email Address (Editable Field) -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1.5" for="profileEmail">
+                                Email Address <span class="text-amber-400">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none text-xs">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </span>
+                                <input type="email" id="profileEmail" value="ali@example.com" required 
+                                    class="w-full pl-9 pr-3.5 py-2.5 text-xs sm:text-sm dark-input rounded-xl"
+                                    placeholder="e.g. ali@example.com">
+                            </div>
+                        </div>
+
+                        <!-- Phone Number (Editable Field - Specified: 011-99887766) -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1.5" for="profilePhone">
+                                Contact Telephone Number <span class="text-amber-400">*</span>
+                                <span class="text-[10px] text-amber-400 font-normal ml-1">(Function 4: 011-99887766)</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none text-xs">
+                                    <i class="fa-solid fa-phone"></i>
+                                </span>
+                                <input type="tel" id="profilePhone" value="011-99887766" required 
+                                    class="w-full pl-9 pr-3.5 py-2.5 text-xs sm:text-sm dark-input rounded-xl border-amber-500/40"
+                                    placeholder="e.g. 011-99887766">
+                            </div>
+                            <p class="text-[11px] text-slate-400 mt-1">SMS notifications and booking confirmations will be dispatched here.</p>
+                        </div>
+
+                        <!-- Identification / Passport (Readonly Info) -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1.5">
+                                MyKad / Passport Number
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none text-xs">
+                                    <i class="fa-solid fa-id-card"></i>
+                                </span>
+                                <input type="text" value="980512-14-5541" readonly 
+                                    class="w-full pl-9 pr-3.5 py-2.5 text-xs sm:text-sm dark-input rounded-xl opacity-75 cursor-not-allowed">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: PASSWORD RESET (EDITABLE) -->
+                <div>
+                    <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-700/60">
+                        <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-key"></i>
+                            <span>2. Reset Account Password</span>
+                        </h3>
+                        <span class="text-[11px] text-slate-400">Function 4 Security Controls</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <!-- Current Password -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1.5" for="currentPassword">
+                                Current Password
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none text-xs">
+                                    <i class="fa-solid fa-lock"></i>
+                                </span>
+                                <input type="password" id="currentPassword" value="oldPass@123" placeholder="Enter current password" 
+                                    class="w-full pl-9 pr-10 py-2.5 text-xs sm:text-sm dark-input rounded-xl">
+                                <button type="button" onclick="toggleVisibility('currentPassword', 'eyeCurrent')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition">
+                                    <i class="fa-regular fa-eye" id="eyeCurrent"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- New Password (Editable) -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1.5" for="newPassword">
+                                New Password <span class="text-amber-400">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none text-xs">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </span>
+                                <input type="password" id="newPassword" placeholder="Min. 8 characters" 
+                                    class="w-full pl-9 pr-10 py-2.5 text-xs sm:text-sm dark-input rounded-xl"
+                                    oninput="checkPasswordMatch()">
+                                <button type="button" onclick="toggleVisibility('newPassword', 'eyeNew')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition">
+                                    <i class="fa-regular fa-eye" id="eyeNew"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Confirm Password (Editable) -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1.5" for="confirmPassword">
+                                Confirm Password <span class="text-amber-400">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none text-xs">
+                                    <i class="fa-solid fa-shield-check"></i>
+                                </span>
+                                <input type="password" id="confirmPassword" placeholder="Re-enter new password" 
+                                    class="w-full pl-9 pr-10 py-2.5 text-xs sm:text-sm dark-input rounded-xl"
+                                    oninput="checkPasswordMatch()">
+                                <button type="button" onclick="toggleVisibility('confirmPassword', 'eyeConfirm')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition">
+                                    <i class="fa-regular fa-eye" id="eyeConfirm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Password Feedback -->
+                    <div id="passwordMatchFeedback" class="hidden text-xs mt-2 font-medium"></div>
+                </div>
+
+                <!-- SUBMIT ACTIONS -->
+                <div class="pt-6 border-t border-slate-700/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="text-xs text-slate-400">
+                        <i class="fa-solid fa-shield-heart text-amber-400 mr-1"></i>
+                        Profile updates are encrypted and synchronized instantly across your bookings.
+                    </div>
+
+                    <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                        <a href="index.html" class="px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-300 hover:bg-slate-800 rounded-xl transition border border-slate-700 text-center">
+                            Back to Home
+                        </a>
+                        <button type="submit" 
+                            class="btn-shimmer inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs sm:text-sm font-bold text-slate-950 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 rounded-xl shadow-lg shadow-amber-500/25 transition active:scale-95 cursor-pointer">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Save Profile &amp; Reset Password</span>
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="text-center text-slate-400 text-xs sm:text-sm py-4 font-medium">
+            &copy; 2026 EasyBus Reservation System. Function 4: Update Passenger Profile &amp; Password Reset.
+        </footer>
+    </main>
+
+    <script>
+        // Toggle password show/hide
+        function toggleVisibility(inputId, eyeIconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(eyeIconId);
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Check if passwords match
+        function checkPasswordMatch() {
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+            const feedback = document.getElementById('passwordMatchFeedback');
+
+            if (!newPass && !confirmPass) {
+                feedback.classList.add('hidden');
+                return true;
+            }
+
+            feedback.classList.remove('hidden');
+
+            if (newPass === confirmPass) {
+                feedback.innerHTML = '<span class="text-emerald-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> Passwords match correctly!</span>';
+                return true;
+            } else {
+                feedback.innerHTML = '<span class="text-red-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-xmark"></i> Passwords do not match yet.</span>';
+                return false;
+            }
+        }
+
+        // Load Default Specification Data
+        function loadDefaultProfile() {
+            document.getElementById('profileFullName').value = 'Ali bin Abu';
+            document.getElementById('profileEmail').value = 'ali@example.com';
+            document.getElementById('profilePhone').value = '011-99887766';
+            document.getElementById('currentPassword').value = 'oldPass@123';
+            document.getElementById('newPassword').value = 'newSecure@2026';
+            document.getElementById('confirmPassword').value = 'newSecure@2026';
+            
+            updateHeaderDisplay('Ali bin Abu', 'ali@example.com', '011-99887766');
+            checkPasswordMatch();
+            showToast('Default profile loaded: Ali bin Abu with contact 011-99887766.', 'info');
+        }
+
+        function updateHeaderDisplay(name, email, phone) {
+            document.getElementById('headerProfileName').innerText = name;
+            document.getElementById('headerProfileEmail').innerText = email;
+            document.getElementById('headerProfilePhone').innerText = phone;
+            document.getElementById('avatarInitial').innerText = (name.trim().charAt(0) || 'A').toUpperCase();
+        }
+
+        /**
+         * =========================================================================
+         * FUNCTION 4 (UPDATE): UPDATE PASSENGER PROFILE & PASSWORD RESET
+         * Allows passengers to update their contact telephone number or reset their login account password.
+         * Editable Fields: Phone Number (011-99887766), Email Address, New Password, Confirm Password.
+         * =========================================================================
+         */
+        function handleProfileUpdate(e) {
+            e.preventDefault();
+
+            const fullName = document.getElementById('profileFullName').value.trim();
+            const email = document.getElementById('profileEmail').value.trim();
+            const phone = document.getElementById('profilePhone').value.trim();
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+
+            // Password verification check
+            if (newPass || confirmPass) {
+                if (newPass.length < 6) {
+                    showToast('New password must be at least 6 characters long.', 'error');
+                    return;
+                }
+                if (newPass !== confirmPass) {
+                    showToast('New password and confirm password do not match!', 'error');
+                    return;
+                }
+            }
+
+            // Save updated profile to EasyBusStore / localStorage
+            const userProfile = {
+                fullName: fullName,
+                email: email,
+                phone: phone,
+                updatedAt: new Date().toISOString()
+            };
+
+            if (window.EasyBusStore && typeof window.EasyBusStore.setCurrentUser === 'function') {
+                window.EasyBusStore.setCurrentUser(userProfile);
+            } else {
+                localStorage.setItem('easybus_current_user', JSON.stringify(userProfile));
+            }
+
+            // Synchronize Header
+            updateHeaderDisplay(fullName, email, phone);
+
+            // Clear password fields for safety
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            document.getElementById('passwordMatchFeedback').classList.add('hidden');
+
+            // Success feedback
+            const toastMsg = `Profile updated successfully! Contact telephone number set to <strong>${phone}</strong> and password reset confirmed.`;
+            showToast(toastMsg, 'success');
+        }
+
+        // Toast Notification System
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            let bgClass = 'bg-slate-900/95 border-amber-500/50 shadow-amber-500/20';
+            let iconClass = 'fa-solid fa-circle-check text-amber-400';
+
+            if (type === 'success') {
+                bgClass = 'bg-slate-900/95 border-emerald-500/50 shadow-emerald-500/20';
+                iconClass = 'fa-solid fa-circle-check text-emerald-400';
+            } else if (type === 'error') {
+                bgClass = 'bg-slate-900/95 border-red-500/50 shadow-red-500/20';
+                iconClass = 'fa-solid fa-triangle-exclamation text-red-400';
+            } else if (type === 'info') {
+                bgClass = 'bg-slate-900/95 border-blue-500/50 shadow-blue-500/20';
+                iconClass = 'fa-solid fa-circle-info text-blue-400';
+            }
+
+            toast.className = `toast-animate pointer-events-auto flex items-center gap-3 p-4 rounded-2xl shadow-2xl border text-white text-xs sm:text-sm font-medium ${bgClass}`;
+            toast.innerHTML = `
+                <i class="${iconClass} text-lg"></i>
+                <div class="flex-1">${message}</div>
+                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white transition ml-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-10px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 4500);
+        }
+
+        // On Load
+        window.addEventListener('DOMContentLoaded', () => {
+            let u = null;
+            if (window.EasyBusStore && typeof window.EasyBusStore.getCurrentUser === 'function') {
+                u = window.EasyBusStore.getCurrentUser();
+            } else {
+                const saved = localStorage.getItem('easybus_current_user');
+                if (saved) {
+                    try {
+                        u = JSON.parse(saved);
+                    } catch(e) {}
+                }
+            }
+            if (u) {
+                if (u.fullName) document.getElementById('profileFullName').value = u.fullName;
+                if (u.email) document.getElementById('profileEmail').value = u.email;
+                if (u.phone) document.getElementById('profilePhone').value = u.phone;
+                updateHeaderDisplay(u.fullName || 'Ali bin Abu', u.email || 'ali@example.com', u.phone || '011-99887766');
+            }
+        });
+    </script>
+    <script src="assets/js/easybus-store.js"></script>
+    <script src="assets/js/easybus-nav.js"></script>
+</body>
+</html>

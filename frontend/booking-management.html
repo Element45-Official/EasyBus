@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyBus - Admin Booking Management Panel</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at 50% 10%, #1e293b 0%, #0f172a 60%, #020617 100%);
+            min-height: 100vh;
+            color: #f8fafc;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .dark-input {
+            background-color: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #f8fafc;
+        }
+
+        .dark-input:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+
+        .btn-shimmer {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-shimmer::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; 
+            width: 200%; height: 200%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(35deg) translateX(-100%);
+            animation: shimmer 4s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: rotate(35deg) translateX(-150%); }
+            100% { transform: rotate(35deg) translateX(150%); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .row-animate {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="py-6 px-3 sm:px-6 md:px-10">
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed top-6 right-6 z-50 flex flex-col gap-3 pointer-events-none max-w-md"></div>
+
+    <main class="max-w-7xl mx-auto space-y-6">
+
+        <!-- NAVIGATION & BRAND HEADER -->
+        <header class="glass-card rounded-2xl p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="flex items-center gap-3">
+                <a href="schedule-list.html" class="w-12 h-12 rounded-xl bg-amber-500 flex items-center justify-center text-slate-950 font-black text-2xl shadow-lg shadow-amber-500/25 hover:scale-105 transition">
+                    <i class="fa-solid fa-bus"></i>
+                </a>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl font-extrabold text-white tracking-tight">Easy<span class="text-amber-400">Bus</span></span>
+                        <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 rounded-full text-xs font-bold">Admin Portal</span>
+                    </div>
+                    <h1 class="text-sm font-semibold text-slate-300">Admin Booking Management Panel</h1>
+                    <p class="text-xs text-slate-400"></p>
+                </div>
+            </div>
+
+            <!-- Header Quick Links -->
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+                <a href="index.html" class="inline-flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-semibold text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-700 transition">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Home</span>
+                </a>
+                <a href="schedule-list.html" class="inline-flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-semibold text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-700 transition">
+                    <i class="fa-solid fa-table-list text-amber-400"></i>
+                    <span>Schedules &amp; Fleet</span>
+                </a>
+                <a href="financial-dashboard.html" class="inline-flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-semibold text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-700 transition" title="Feature 2: Daily Bookings & Revenue Summary Dashboard">
+                    <i class="fa-solid fa-chart-pie text-amber-400"></i>
+                    <span>Financial Dashboard</span>
+                </a>
+                <a href="tracking.html" class="inline-flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-semibold text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-700 transition">
+                    <i class="fa-solid fa-location-crosshairs text-amber-400"></i>
+                    <span>Live Tracking</span>
+                </a>
+                <a href="account-settings.html" class="inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <span>Passenger Profile</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- FEATURE 2: DAILY FINANCIAL SUMMARY QUICK BAR -->
+        <div class="glass-card rounded-2xl p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border border-emerald-500/20 bg-gradient-to-r from-slate-900/90 via-slate-850/80 to-slate-900/90">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-coins"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider block">4.5 Feature 2: Daily Bookings &amp; Revenue Summary</span>
+                    <span class="text-xs text-slate-300">Audited ticket volume and daily collections across Malaysia</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4 sm:gap-6 flex-wrap font-mono text-xs">
+                <div>
+                    <span class="text-slate-400 text-[10px] block uppercase">Tickets Sold Today</span>
+                    <span class="text-white font-extrabold text-sm sm:text-base">142 Tickets</span>
+                </div>
+                <div>
+                    <span class="text-slate-400 text-[10px] block uppercase">Total Revenue</span>
+                    <span class="text-emerald-400 font-extrabold text-sm sm:text-base">RM 4,970.00</span>
+                </div>
+                <div>
+                    <span class="text-slate-400 text-[10px] block uppercase">Avg Ticket Value</span>
+                    <span class="text-amber-400 font-extrabold text-sm sm:text-base">RM 35.00</span>
+                </div>
+                <a href="financial-dashboard.html" class="px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-bold rounded-lg border border-emerald-500/30 transition text-xs flex items-center gap-1">
+                    <span>Full Analytics</span>
+                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- KPI SUMMARY METRIC CARDS -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Total Bookings -->
+            <div class="glass-card rounded-2xl p-5 border-l-4 border-l-blue-500 relative overflow-hidden">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Bookings</p>
+                <div class="flex items-end justify-between mt-2">
+                    <h3 class="text-3xl font-black text-white" id="statTotal">4</h3>
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-receipt"></i>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-2">All routes &amp; active passengers</p>
+            </div>
+
+            <!-- Pending Verification -->
+            <div class="glass-card rounded-2xl p-5 border-l-4 border-l-amber-500 relative overflow-hidden">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pending Verification</p>
+                <div class="flex items-end justify-between mt-2">
+                    <h3 class="text-3xl font-black text-amber-400" id="statPending">2</h3>
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-hourglass-half animate-pulse"></i>
+                    </div>
+                </div>
+                <p class="text-[11px] text-amber-300/80 mt-2">Requires payment verification</p>
+            </div>
+
+            <!-- Confirmed -->
+            <div class="glass-card rounded-2xl p-5 border-l-4 border-l-emerald-500 relative overflow-hidden">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Confirmed Bookings</p>
+                <div class="flex items-end justify-between mt-2">
+                    <h3 class="text-3xl font-black text-emerald-400" id="statConfirmed">1</h3>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-check-double"></i>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-2">Verified &amp; seat locked</p>
+            </div>
+
+            <!-- Cancelled -->
+            <div class="glass-card rounded-2xl p-5 border-l-4 border-l-red-500 relative overflow-hidden">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cancelled Bookings</p>
+                <div class="flex items-end justify-between mt-2">
+                    <h3 class="text-3xl font-black text-red-400" id="statCancelled">1</h3>
+                    <div class="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-ban"></i>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-2">Rejected or refunded</p>
+            </div>
+        </section>
+
+        <!-- BOOKING MANAGEMENT MAIN PANEL -->
+        <section class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+
+            <!-- Controls: Filter & Search -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-slate-700/60">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-amber-400"></i>
+                        Booking Payment &amp; Execution Status Management
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5">
+                        Update booking status from <strong>Pending</strong> to <strong>Confirmed</strong>, <strong>Completed</strong>, or <strong>Cancelled</strong> following payment verification.
+                    </p>
+                </div>
+
+                <!-- Status Filter Pills -->
+                <div class="flex items-center gap-1.5 bg-slate-900/80 p-1.5 rounded-xl border border-slate-700/80 text-xs font-semibold overflow-x-auto w-full md:w-auto">
+                    <button onclick="setFilter('All')" id="filter-All" class="px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold transition">All</button>
+                    <button onclick="setFilter('Pending')" id="filter-Pending" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">Pending</button>
+                    <button onclick="setFilter('Confirmed')" id="filter-Confirmed" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">Confirmed</button>
+                    <button onclick="setFilter('Completed')" id="filter-Completed" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">Completed</button>
+                    <button onclick="setFilter('Cancelled')" id="filter-Cancelled" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">Cancelled</button>
+                </div>
+            </div>
+
+            <!-- Search and Action Bar -->
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div class="relative w-full sm:w-80">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="bookingSearchInput" oninput="filterBookings()" placeholder="Search Booking ID, passenger, phone..." 
+                        class="w-full pl-9 pr-4 py-2 text-xs sm:text-sm dark-input rounded-xl transition">
+                </div>
+
+                <div class="flex items-center gap-3 text-xs font-semibold text-slate-400 w-full sm:w-auto justify-between sm:justify-end">
+                    <span id="bookingCountText">Showing 4 bookings</span>
+                    <button onclick="resetDefaultBookings()" class="text-amber-400 hover:text-amber-300 underline font-semibold transition cursor-pointer">
+                        <i class="fa-solid fa-rotate-left mr-1"></i>Reset Demo Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- BOOKINGS TABLE -->
+            <div class="overflow-x-auto rounded-xl border border-slate-700/60">
+                <table class="w-full text-left text-xs sm:text-sm">
+                    <thead class="bg-slate-900/90 text-slate-400 text-[11px] uppercase tracking-wider border-b border-slate-700/60">
+                        <tr>
+                            <th class="py-3.5 px-4 font-bold">Booking ID</th>
+                            <th class="py-3.5 px-4 font-bold">Passenger Details</th>
+                            <th class="py-3.5 px-4 font-bold">Route &amp; Seat</th>
+                            <th class="py-3.5 px-4 font-bold">Fare &amp; Payment Gateway</th>
+                            <th class="py-3.5 px-4 font-bold">Current Status</th>
+                            <th class="py-3.5 px-4 font-bold text-center">Editable Control (Status Dropdown)</th>
+                            <th class="py-3.5 px-4 font-bold text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTableBody" class="divide-y divide-slate-800">
+                        <!-- Rows rendered dynamically by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div id="bookingEmptyState" class="hidden py-12 text-center">
+                <div class="w-16 h-16 bg-slate-800/80 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-400 text-2xl border border-slate-700">
+                    <i class="fa-solid fa-inbox"></i>
+                </div>
+                <h3 class="text-base font-bold text-slate-200">No Bookings Found</h3>
+                <p class="text-xs text-slate-400 mt-1 mb-4">No records match the current filter criteria.</p>
+                <button onclick="setFilter('All')" class="inline-flex items-center gap-2 bg-amber-500 text-slate-950 text-xs font-bold px-4 py-2 rounded-xl hover:bg-amber-400 transition cursor-pointer">
+                    <i class="fa-solid fa-eye"></i> View All Bookings
+                </button>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="text-center text-slate-400 text-xs sm:text-sm py-4 font-medium">
+            &copy; 2026 EasyBus Reservation System. Function 3: Update Booking Payment &amp; Execution Status.
+        </footer>
+    </main>
+
+    <script>
+        // Initial Bookings Data Matching Requirements
+        const defaultBookings = [
+            {
+                id: 'BK-89244',
+                passenger: 'Ali bin Abu',
+                phone: '011-99887766',
+                email: 'ali@example.com',
+                route: 'Kuala Lumpur → Johor Bahru',
+                bus: 'DEF9012',
+                seat: '1C (VIP Single)',
+                date: '2026-10-26 10:00 PM',
+                amount: 'RM 125.00',
+                gateway: 'FPX Online Banking',
+                paymentNote: 'Payment Slip Attached (Ref: FPX-99214)',
+                status: 'Pending'
+            },
+            {
+                id: 'BK-77102',
+                passenger: 'Siti Nurhaliza',
+                phone: '012-3456789',
+                email: 'siti@example.com',
+                route: 'Kuala Lumpur → Penang',
+                bus: 'ABC1234',
+                seat: '2A (Double Seat)',
+                date: '2026-11-01 08:30 AM',
+                amount: 'RM 45.00',
+                gateway: 'Cash on Board',
+                paymentNote: 'Driver verified via ticket collector',
+                status: 'Confirmed'
+            },
+            {
+                id: 'BK-65041',
+                passenger: 'Tan Ah Seng',
+                phone: '019-8765432',
+                email: 'tan@example.com',
+                route: 'Melaka → Johor Bahru',
+                bus: 'XYZ5678',
+                seat: '1A (Double Seat)',
+                date: '2026-11-05 02:30 PM',
+                amount: 'RM 18.00',
+                gateway: 'Credit Card (Visa)',
+                paymentNote: 'Awaiting 3D-Secure confirmation',
+                status: 'Pending'
+            },
+            {
+                id: 'BK-54912',
+                passenger: 'Muthu A/L Raman',
+                phone: '017-6543210',
+                email: 'muthu@example.com',
+                route: 'Kuala Lumpur → Penang',
+                bus: 'DEF9012',
+                seat: '3B (Double Seat)',
+                date: '2026-10-20 09:15 AM',
+                amount: 'RM 95.00',
+                gateway: 'Touch \'n Go eWallet',
+                paymentNote: 'Refund issued per passenger request',
+                status: 'Cancelled'
+            }
+        ];
+
+        let bookings = [];
+        let currentFilter = 'All';
+
+        // Initialize from EasyBusStore / localStorage or defaults
+        function initBookings() {
+            if (window.EasyBusStore && typeof window.EasyBusStore.getBookings === 'function') {
+                bookings = window.EasyBusStore.getBookings();
+            } else {
+                const saved = localStorage.getItem('easybus_admin_bookings');
+                if (saved) {
+                    try {
+                        bookings = JSON.parse(saved);
+                    } catch(e) {
+                        bookings = [...defaultBookings];
+                    }
+                } else {
+                    bookings = [...defaultBookings];
+                    saveBookings();
+                }
+            }
+            renderTable();
+            updateStats();
+        }
+
+        function saveBookings() {
+            if (window.EasyBusStore && typeof window.EasyBusStore.saveBookings === 'function') {
+                window.EasyBusStore.saveBookings(bookings);
+            } else {
+                localStorage.setItem('easybus_admin_bookings', JSON.stringify(bookings));
+            }
+        }
+
+        function resetDefaultBookings() {
+            if (window.EasyBusStore && typeof window.EasyBusStore.resetDemoData === 'function') {
+                window.EasyBusStore.resetDemoData();
+                bookings = window.EasyBusStore.getBookings();
+            } else {
+                bookings = JSON.parse(JSON.stringify(defaultBookings));
+                saveBookings();
+            }
+            renderTable();
+            updateStats();
+            showToast('Bookings reset to default system state.', 'info');
+        }
+
+        // Render Bookings Table
+        function renderTable() {
+            const tbody = document.getElementById('bookingsTableBody');
+            const search = document.getElementById('bookingSearchInput') ? document.getElementById('bookingSearchInput').value.toLowerCase() : '';
+            
+            tbody.innerHTML = '';
+
+            const filtered = bookings.filter(b => {
+                const matchFilter = (currentFilter === 'All') || (b.status === currentFilter);
+                const matchSearch = b.id.toLowerCase().includes(search) || 
+                                    b.passenger.toLowerCase().includes(search) || 
+                                    b.phone.includes(search) || 
+                                    b.route.toLowerCase().includes(search);
+                return matchFilter && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                document.getElementById('bookingEmptyState').classList.remove('hidden');
+            } else {
+                document.getElementById('bookingEmptyState').classList.add('hidden');
+            }
+
+            document.getElementById('bookingCountText').innerText = `Showing ${filtered.length} booking${filtered.length !== 1 ? 's' : ''}`;
+
+            filtered.forEach(b => {
+                const tr = document.createElement('tr');
+                tr.id = `booking-row-${b.id}`;
+                tr.className = 'hover:bg-slate-800/50 transition-colors row-animate';
+                
+                tr.innerHTML = `
+                    <td class="py-4 px-4 font-bold text-amber-400">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-ticket text-xs text-slate-500"></i>
+                            <span>${b.id}</span>
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-normal block">${b.date}</span>
+                    </td>
+                    <td class="py-4 px-4">
+                        <div class="font-bold text-white">${b.passenger}</div>
+                        <div class="text-xs text-slate-300 flex items-center gap-1.5 mt-0.5">
+                            <i class="fa-solid fa-phone text-[10px] text-slate-400"></i>
+                            <span>${b.phone}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400">${b.email}</div>
+                    </td>
+                    <td class="py-4 px-4">
+                        <div class="font-semibold text-slate-200">${b.route}</div>
+                        <div class="text-xs text-amber-300 font-medium mt-0.5">
+                            <i class="fa-solid fa-chair text-[11px] mr-1"></i>Seat: ${b.seat}
+                        </div>
+                        <div class="text-[10px] text-slate-400">Bus: ${b.bus}</div>
+                    </td>
+                    <td class="py-4 px-4">
+                        <div class="font-bold text-emerald-400">${b.amount}</div>
+                        <div class="text-xs text-slate-300">${b.gateway}</div>
+                        <div class="text-[10px] text-slate-400 italic">${b.paymentNote}</div>
+                    </td>
+                    <td class="py-4 px-4" id="badge-col-${b.id}">
+                        ${getStatusBadgeHtml(b.status)}
+                    </td>
+                    <!-- EDITABLE CONTROL: Booking Status Dropdown (Function 3) -->
+                    <td class="py-4 px-4 text-center">
+                        <select id="status-select-${b.id}" onchange="handleDropdownChange('${b.id}', this.value)" 
+                            class="px-3 py-1.5 text-xs font-semibold rounded-xl dark-input cursor-pointer border ${getStatusBorderClass(b.status)}">
+                            <option value="Pending" ${b.status === 'Pending' ? 'selected' : ''}>Pending (Verification)</option>
+                            <option value="Confirmed" ${b.status === 'Confirmed' ? 'selected' : ''}>Confirmed (Verified)</option>
+                            <option value="Completed" ${b.status === 'Completed' ? 'selected' : ''}>Completed (Executed)</option>
+                            <option value="Cancelled" ${b.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                        </select>
+                    </td>
+                    <!-- ACTION BUTTON -->
+                    <td class="py-4 px-4 text-center">
+                        <button onclick="triggerUpdateStatus('${b.id}')" 
+                            class="inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3.5 py-1.5 rounded-lg shadow-md shadow-amber-500/20 transition active:scale-95 cursor-pointer"
+                            title="Verify and update booking execution status">
+                            <i class="fa-solid fa-check"></i>
+                            <span>Update</span>
+                        </button>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        /**
+         * Return HTML Badge for given status
+         */
+        function getStatusBadgeHtml(status) {
+            switch(status) {
+                case 'Pending':
+                    return `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                                <i class="fa-solid fa-hourglass-half text-[10px] animate-pulse"></i> Pending
+                            </span>`;
+                case 'Confirmed':
+                    return `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                                <i class="fa-solid fa-check-circle text-[10px]"></i> Confirmed
+                            </span>`;
+                case 'Completed':
+                    return `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40">
+                                <i class="fa-solid fa-flag-checkered text-[10px]"></i> Completed
+                            </span>`;
+                case 'Cancelled':
+                    return `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-500/20 text-red-300 border border-red-500/40">
+                                <i class="fa-solid fa-ban text-[10px]"></i> Cancelled
+                            </span>`;
+                default:
+                    return `<span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-slate-600/40 text-slate-300">${status}</span>`;
+            }
+        }
+
+        function getStatusBorderClass(status) {
+            switch(status) {
+                case 'Pending': return 'border-amber-500/50';
+                case 'Confirmed': return 'border-emerald-500/50';
+                case 'Completed': return 'border-blue-500/50';
+                case 'Cancelled': return 'border-red-500/50';
+                default: return 'border-slate-600';
+            }
+        }
+
+        /**
+         * =========================================================================
+         * FUNCTION 3 (UPDATE): UPDATE BOOKING PAYMENT & EXECUTION STATUS
+         * Updates booking status from Pending to Confirmed or Cancelled following payment verification.
+         * =========================================================================
+         */
+        function handleDropdownChange(bookingId, newStatus) {
+            updateBookingStatus(bookingId, newStatus);
+        }
+
+        function triggerUpdateStatus(bookingId) {
+            const select = document.getElementById(`status-select-${bookingId}`);
+            if (select) {
+                updateBookingStatus(bookingId, select.value, true);
+            }
+        }
+
+        function updateBookingStatus(bookingId, newStatus, explicitButtonClick = false) {
+            const booking = bookings.find(b => b.id === bookingId);
+            if (!booking) return;
+
+            const oldStatus = booking.status;
+            booking.status = newStatus;
+
+            // If updating from Pending to Confirmed, update note
+            if (oldStatus === 'Pending' && newStatus === 'Confirmed') {
+                booking.paymentNote = 'Payment Verified by Admin on ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            } else if (newStatus === 'Cancelled') {
+                booking.paymentNote = 'Booking cancelled / payment voided';
+            }
+
+            if (window.EasyBusStore && typeof window.EasyBusStore.updateBookingStatus === 'function') {
+                window.EasyBusStore.updateBookingStatus(bookingId, newStatus, booking.paymentNote);
+            } else {
+                saveBookings();
+            }
+
+            // Update badge immediately in DOM
+            const badgeCol = document.getElementById(`badge-col-${bookingId}`);
+            if (badgeCol) {
+                badgeCol.innerHTML = getStatusBadgeHtml(newStatus);
+            }
+
+            // Update border of dropdown
+            const select = document.getElementById(`status-select-${bookingId}`);
+            if (select) {
+                select.className = `px-3 py-1.5 text-xs font-semibold rounded-xl dark-input cursor-pointer border ${getStatusBorderClass(newStatus)}`;
+            }
+
+            updateStats();
+
+            // Notify user with clear prompt
+            let alertMsg = `Booking <strong>${bookingId}</strong> (${booking.passenger}): Status updated from <strong>${oldStatus}</strong> to <strong>${newStatus}</strong>`;
+            if (newStatus === 'Confirmed') {
+                alertMsg += ' following payment verification!';
+            } else if (newStatus === 'Cancelled') {
+                alertMsg += ' following verification cancellation.';
+            } else {
+                alertMsg += ' successfully.';
+            }
+
+            showToast(alertMsg, newStatus === 'Confirmed' ? 'success' : (newStatus === 'Cancelled' ? 'error' : 'info'));
+        }
+
+        // Update Summary KPI Statistics
+        function updateStats() {
+            const total = bookings.length;
+            const pending = bookings.filter(b => b.status === 'Pending').length;
+            const confirmed = bookings.filter(b => b.status === 'Confirmed').length;
+            const cancelled = bookings.filter(b => b.status === 'Cancelled').length;
+
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statPending').innerText = pending;
+            document.getElementById('statConfirmed').innerText = confirmed;
+            document.getElementById('statCancelled').innerText = cancelled;
+        }
+
+        // Filter and Search
+        function setFilter(filter) {
+            currentFilter = filter;
+            ['All', 'Pending', 'Confirmed', 'Completed', 'Cancelled'].forEach(f => {
+                const btn = document.getElementById(`filter-${f}`);
+                if (btn) {
+                    if (f === filter) {
+                        btn.className = 'px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold transition';
+                    } else {
+                        btn.className = 'px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition';
+                    }
+                }
+            });
+            renderTable();
+        }
+
+        function filterBookings() {
+            renderTable();
+        }
+
+        // Toast Notification System
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            let bgClass = 'bg-slate-900/95 border-amber-500/50 shadow-amber-500/20';
+            let iconClass = 'fa-solid fa-circle-check text-amber-400';
+
+            if (type === 'success') {
+                bgClass = 'bg-slate-900/95 border-emerald-500/50 shadow-emerald-500/20';
+                iconClass = 'fa-solid fa-circle-check text-emerald-400';
+            } else if (type === 'error') {
+                bgClass = 'bg-slate-900/95 border-red-500/50 shadow-red-500/20';
+                iconClass = 'fa-solid fa-triangle-exclamation text-red-400';
+            } else if (type === 'info') {
+                bgClass = 'bg-slate-900/95 border-blue-500/50 shadow-blue-500/20';
+                iconClass = 'fa-solid fa-circle-info text-blue-400';
+            }
+
+            toast.className = `pointer-events-auto flex items-center gap-3 p-4 rounded-2xl shadow-2xl border text-white text-xs sm:text-sm font-medium ${bgClass} transition-all duration-300 opacity-0 translate-y-[-10px]`;
+            toast.innerHTML = `
+                <i class="${iconClass} text-lg"></i>
+                <div class="flex-1">${message}</div>
+                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white transition ml-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-0', 'translate-y-[-10px]');
+                toast.classList.add('opacity-100', 'translate-y-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[-10px]');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // Run on load
+        window.addEventListener('DOMContentLoaded', () => {
+            initBookings();
+        });
+    </script>
+    <script src="assets/js/easybus-store.js"></script>
+    <script src="assets/js/easybus-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>4. Flow of Application - EasyBus Storyboard</title>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.6;
+        color: #1a1a1a;
+        max-width: 850px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    h1 {
+        color: #0f2c59;
+        font-size: 26pt;
+        border-bottom: 2px solid #0f2c59;
+        padding-bottom: 8px;
+        margin-top: 20px;
+    }
+    h2 {
+        color: #1e3a8a;
+        font-size: 18pt;
+        border-bottom: 1px solid #cbd5e1;
+        padding-bottom: 6px;
+        margin-top: 30px;
+    }
+    h3 {
+        color: #b45309;
+        font-size: 14pt;
+        margin-top: 22px;
+        margin-bottom: 6px;
+    }
+    p, li {
+        font-size: 11pt;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        font-size: 10.5pt;
+    }
+    th, td {
+        border: 1px solid #94a3b8;
+        padding: 10px 12px;
+        text-align: left;
+    }
+    th {
+        background-color: #f1f5f9;
+        color: #0f172a;
+        font-weight: bold;
+    }
+    tr:nth-child(even) td {
+        background-color: #f8fafc;
+    }
+    .screenshot-box {
+        background-color: #f8fafc;
+        border: 2px dashed #94a3b8;
+        border-radius: 8px;
+        padding: 18px;
+        text-align: center;
+        margin: 14px 0 22px 0;
+        color: #475569;
+        font-size: 10.5pt;
+    }
+    .badge {
+        display: inline-block;
+        background-color: #fef3c7;
+        color: #92400e;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 9pt;
+    }
+</style>
+</head>
+<body>
+
+<h1>4. Flow of Application — EasyBus Online Bus Reservation System</h1>
+
+<p><strong>Project Name:</strong> EasyBus Online Bus Reservation System<br>
+<strong>Document Section:</strong> 4.0 Flow of Application (Storyboard &amp; CRUD Operations)</p>
+
+<hr>
+
+<h2>4.0 Overview of Application Flow &amp; CRUD Plan</h2>
+<p>The EasyBus system manages intercity bus ticketing and operational logistics across Malaysia. The system accommodates two main user groups:</p>
+<ul>
+    <li><strong>Passengers (Public Users):</strong> Search available trips, view seat availability via an interactive cabin map, book seats, and track live bus status via GPS.</li>
+    <li><strong>Administrators &amp; Bus Operators:</strong> Manage trip schedules, ticket prices, driver assignments, and monitor fleet statistics through analytical dashboards.</li>
+</ul>
+
+<p>The application flow is organized into five structured sections: <strong>Create</strong>, <strong>Read</strong>, <strong>Update</strong>, <strong>Delete</strong>, and <strong>Dashboard</strong>.</p>
+
+<hr>
+
+<h2>4.1 CREATE Operations</h2>
+<p>Create operations allow operators to register new bus schedules and passengers to book tickets and create accounts.</p>
+
+<h3>Function 1: Register New Bus Schedule</h3>
+<ul>
+    <li><strong>Description:</strong> Enables administrators to register a new bus trip between two terminals with assigned departure times, ticket fares, and bus drivers.</li>
+    <li><strong>User Interface:</strong> Add Schedule Form Page (<code>add-schedule.html</code>) and Quick-Add Modal (<code>schedule-list.html</code>).</li>
+    <li><strong>Form Fields &amp; Input Controls:</strong>
+        <ul>
+            <li><strong>Bus Number:</strong> Text input (e.g., <em>ABC1234</em> / <em>VJE 9021</em>)</li>
+            <li><strong>Route Assignment:</strong> Text input (e.g., <em>Kuala Lumpur to Penang</em>)</li>
+            <li><strong>Driver Name:</strong> Text input (e.g., <em>Ahmad Albab</em>)</li>
+            <li><strong>Available Seats:</strong> Number input (e.g., <em>40</em>)</li>
+            <li><strong>Departure Location:</strong> Text input (e.g., <em>Terminal Bersepadu Selatan - TBS</em>)</li>
+            <li><strong>Arrival Location:</strong> Text input (e.g., <em>Penang Sentral</em>)</li>
+            <li><strong>Departure Date:</strong> HTML Date Picker (e.g., <em>2026-06-01</em>)</li>
+            <li><strong>Departure Time:</strong> HTML Time Picker (e.g., <em>08:00 AM</em>)</li>
+            <li><strong>Ticket Price:</strong> Currency input (e.g., <em>RM 35.00</em>)</li>
+            <li><strong>Trip Status:</strong> Dropdown selection (<em>Available / Full / Cancelled</em>)</li>
+        </ul>
+    </li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Add New Schedule Form from <code>frontend/add-schedule.html</code> ]</strong><br>
+    <em>Showing the form inputs for Bus Number, Route, Driver, Date, Time, Price, and the "Save Schedule" button.</em>
+</div>
+
+<h3>Function 2: Book Bus Ticket &amp; Passenger Seat Reservation</h3>
+<ul>
+    <li><strong>Description:</strong> Enables passengers to select their preferred seat on an interactive VIP bus cabin map and submit a confirmed booking reservation.</li>
+    <li><strong>User Interface:</strong> VIP Cabin Seat Selection Page (<code>seat-selection.html</code>).</li>
+    <li><strong>Form Controls &amp; Input Actions:</strong>
+        <ul>
+            <li><strong>Seat Selection Markers:</strong> Interactive seat buttons (e.g., <em>1A, 1B, 1C, 2A, 2B, 2C</em>)</li>
+            <li><strong>Seat Type Indicator:</strong> VIP Single Seat vs. Double Seat</li>
+            <li><strong>Passenger Count:</strong> Selected number of passengers (e.g., <em>1 Pax</em>)</li>
+            <li><strong>Dynamic Fare Calculation:</strong> Real-time total price tally (e.g., <em>RM 125.00</em>)</li>
+            <li><strong>Confirm Seat Button:</strong> Final action button to submit reservation and proceed to tracking</li>
+        </ul>
+    </li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: VIP Seat Selection Screen from <code>frontend/seat-selection.html</code> ]</strong><br>
+    <em>Showing the luxury coach cabin layout with seat 1C selected in amber and the total fare confirmation bar.</em>
+</div>
+
+<h3>Function 3: Register New Passenger Account</h3>
+<ul>
+    <li><strong>Description:</strong> Allows new travelers to register a customer account for managing ticket bookings and tracking travel history.</li>
+    <li><strong>User Interface:</strong> Passenger Registration Form Modal (<code>index.html</code>).</li>
+    <li><strong>Form Fields:</strong>
+        <ul>
+            <li><strong>Full Name:</strong> Text input (e.g., <em>Ali bin Abu</em>)</li>
+            <li><strong>Email Address:</strong> Email input (e.g., <em>ali@example.com</em>)</li>
+            <li><strong>Contact Phone:</strong> Tel input (e.g., <em>011-12345678</em>)</li>
+            <li><strong>Password:</strong> Password input</li>
+            <li><strong>Sign Up Button:</strong> Action button to create account</li>
+        </ul>
+    </li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Passenger Registration Modal from <code>frontend/index.html</code> ]</strong>
+</div>
+
+<h3>Function 4: Onboard New Bus Vehicle &amp; Driver</h3>
+<ul>
+    <li><strong>Description:</strong> Allows fleet supervisors to onboard a newly acquired bus vehicle and register licensed bus drivers.</li>
+    <li><strong>User Interface:</strong> Admin Fleet &amp; Driver Registration Panel.</li>
+    <li><strong>Form Fields:</strong> Bus Plate Number (<em>DEF9012</em>), Total Seat Capacity (<em>40</em>), Driver Name (<em>Lim</em>), License Number (<em>LIC-1003</em>), and Driver Contact Phone (<em>016-2233445</em>).</li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Fleet &amp; Driver Registration Interface ]</strong>
+</div>
+
+<hr>
+
+<h2>4.2 READ (Retrieve) Operations</h2>
+<p>Read operations display records in structured data tables, interactive seat maps, and live GPS tracking dashboards.</p>
+
+<h3>Function 1: Display Master Bus Schedule Table with Live Search Filter</h3>
+<ul>
+    <li><strong>Description:</strong> Displays all active bus departures in a searchable administrative table with real-time text filtering.</li>
+    <li><strong>User Interface:</strong> Schedule Management Table Page (<code>schedule-list.html</code>).</li>
+    <li><strong>Table Columns &amp; Display Elements:</strong>
+        <ul>
+            <li><strong>Search Bar:</strong> Instant text search filter by bus number or destination route</li>
+            <li><strong>Bus Number:</strong> Shows vehicle registration plate (<em>ABC1234, XYZ5678, DEF9012</em>)</li>
+            <li><strong>Route:</strong> Shows departure and arrival terminals (<em>Kuala Lumpur &rarr; Johor Bahru</em>)</li>
+            <li><strong>Date &amp; Time:</strong> Departure timestamps (<em>2026-06-01, 08:00 AM</em>)</li>
+            <li><strong>Price:</strong> Formatted ticket price tag (<em>RM35.00, RM18.00, RM45.00</em>)</li>
+            <li><strong>Status Badges:</strong> Color-coded badges (<em>Available [Green], Full [Amber], Cancelled [Gray]</em>)</li>
+            <li><strong>Action Column:</strong> Quick "Edit" and "Delete" buttons for each record</li>
+        </ul>
+    </li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Bus Schedule Table from <code>frontend/schedule-list.html</code> ]</strong><br>
+    <em>Showing the table rows with ABC1234, XYZ5678, DEF9012 and the search input bar.</em>
+</div>
+
+<h3>Function 2: Passenger Trip Search by Route &amp; Travel Date</h3>
+<ul>
+    <li><strong>Description:</strong> Allows passengers to find bus trips matching their departure terminal, destination city, and date.</li>
+    <li><strong>User Interface:</strong> Search Banner &amp; Destination Cards (<code>index.html</code>).</li>
+    <li><strong>Search Controls:</strong> Origin Terminal (<em>TBS Kuala Lumpur</em>), Destination Terminal (<em>Larkin Sentral, JB</em>), Date Picker, Trip Type (<em>One-way / Round-trip</em>), and Passenger Count selector.</li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Search Bar &amp; Popular Destination Cards from <code>frontend/index.html</code> ]</strong>
+</div>
+
+<h3>Function 3: Interactive Cabin Seat Matrix &amp; Availability View</h3>
+<ul>
+    <li><strong>Description:</strong> Visualizes the bus interior showing available, selected, and reserved seats in real time.</li>
+    <li><strong>User Interface:</strong> Interactive Cabin View (<code>seat-selection.html</code>).</li>
+    <li><strong>Visual Indicators:</strong>
+        <ul>
+            <li><strong>Available Seat:</strong> Translucent circular marker with hover effect</li>
+            <li><strong>Selected Seat:</strong> Amber highlighted marker with pulsing glow and "Selected" tooltip</li>
+            <li><strong>Reserved / Occupied Seat:</strong> Locked marker displaying a padlock icon (cannot be clicked)</li>
+            <li><strong>Trip Information Bar:</strong> Displays route, travel date, departure time, and passenger count</li>
+        </ul>
+    </li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Interactive Seat Layout from <code>frontend/seat-selection.html</code> ]</strong><br>
+    <em>Showing available seats vs locked reserved seats on the bus interior view.</em>
+</div>
+
+<h3>Function 4: Real-Time Bus Live GPS Tracking &amp; Route Milestones</h3>
+<ul>
+    <li><strong>Description:</strong> Provides passengers with live trip tracking, highway GPS coordinates, speed, and ETA milestones.</li>
+    <li><strong>User Interface:</strong> Live GPS Tracking Dashboard (<code>tracking.html</code>).</li>
+    <li><strong>Display Components:</strong>
+        <ul>
+            <li><strong>Interactive Highway Map:</strong> Leaflet GPS map showing live bus location along PLUS Highway</li>
+            <li><strong>Journey Milestones:</strong> 1. Ticket Booked &rarr; 2. Departed TBS &rarr; 3. In Transit (Current) &rarr; 4. Approaching Skudai &rarr; 5. Arrived at Larkin Sentral</li>
+            <li><strong>Live Telematics:</strong> Speed gauge (<em>82 km/h</em>), Estimated Arrival (<em>01:15 PM</em>), Remaining Distance (<em>135 km</em>)</li>
+        </ul>
+    </li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Live Tracking &amp; Milestone Timeline from <code>frontend/tracking.html</code> ]</strong>
+</div>
+
+<hr>
+
+<h2>4.3 UPDATE Operations</h2>
+<p>Update operations allow administrators to modify schedules and prices, and update seat statuses upon passenger reservation.</p>
+
+<h3>Function 1: Update Bus Schedule Details &amp; Fares</h3>
+<ul>
+    <li><strong>Description:</strong> Allows administrators to edit departure dates, times, ticket prices, assigned drivers, and trip status.</li>
+    <li><strong>User Interface:</strong> Edit Schedule Page (<code>edit-schedule.html</code>) and Edit Modal (<code>schedule-list.html</code>).</li>
+    <li><strong>Editable Form Fields:</strong>
+        <ul>
+            <li><strong>Bus Number:</strong> Pre-filled text input (e.g., <em>ABC1234</em>)</li>
+            <li><strong>Route:</strong> Route assignment (e.g., <em>Kuala Lumpur &rarr; Johor Bahru</em>)</li>
+            <li><strong>Departure Date:</strong> Date selector (e.g., <em>2026-06-01</em>)</li>
+            <li><strong>Departure Time:</strong> Time selector (e.g., <em>08:00 AM</em>)</li>
+            <li><strong>Ticket Price:</strong> Fare input (e.g., <em>RM 35.00</em>)</li>
+            <li><strong>Trip Status:</strong> Dropdown options (<em>Available, Full, Cancelled</em>)</li>
+            <li><strong>Action Buttons:</strong> "Update Schedule" and "Back to Dashboard / Cancel"</li>
+        </ul>
+    </li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Edit Schedule Form from <code>frontend/edit-schedule.html</code> ]</strong><br>
+    <em>Showing pre-populated schedule attributes ready for modification.</em>
+</div>
+
+<h3>Function 2: Update Seat Status Upon Reservation</h3>
+<ul>
+    <li><strong>Description:</strong> Transitions a chosen seat status from <em>Available</em> to <em>Reserved</em> immediately after booking confirmation.</li>
+    <li><strong>User Interface:</strong> Bottom confirmation panel in <code>seat-selection.html</code>.</li>
+    <li><strong>Operational Steps:</strong> Passenger selects seat &rarr; clicks "Confirm Seat" &rarr; system marks seat locked so no other passenger can book it simultaneously.</li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Seat Selection Confirmation State from <code>frontend/seat-selection.html</code> ]</strong>
+</div>
+
+<h3>Function 3: Update Booking Payment &amp; Execution Status</h3>
+<ul>
+    <li><strong>Description:</strong> Updates booking status from <em>Pending</em> to <em>Confirmed</em> or <em>Cancelled</em> following payment verification.</li>
+    <li><strong>User Interface:</strong> Admin Booking Management Panel.</li>
+    <li><strong>Editable Controls:</strong> Booking Status dropdown (<em>Pending, Confirmed, Completed, Cancelled</em>).</li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Booking Status Update Interface ]</strong>
+</div>
+
+<h3>Function 4: Update Passenger Profile &amp; Password Reset</h3>
+<ul>
+    <li><strong>Description:</strong> Allows passengers to update their contact telephone number or reset their login account password.</li>
+    <li><strong>User Interface:</strong> Passenger Account Settings Page.</li>
+    <li><strong>Editable Fields:</strong> Phone Number (<em>011-99887766</em>), Email Address, New Password, Confirm Password.</li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Passenger Profile &amp; Password Reset Form ]</strong>
+</div>
+
+<hr>
+
+<h2>4.4 DELETE Operations</h2>
+<p>Delete operations remove obsolete schedules, cancelled reservations, and decommissioned assets with user confirmation guards.</p>
+
+<h3>Function 1: Delete Bus Schedule Record with Confirmation Dialog</h3>
+<ul>
+    <li><strong>Description:</strong> Allows operations staff to permanently delete a cancelled or obsolete bus trip from the schedule table.</li>
+    <li><strong>User Interface:</strong> Red "Delete" action button in <code>schedule-list.html</code>.</li>
+    <li><strong>Confirmation Guard &amp; Flow:</strong>
+        <ol>
+            <li>Operator clicks the red trash can "Delete" button next to a schedule row.</li>
+            <li>Browser displays a JavaScript confirmation dialog: <em>"Are you sure you want to delete this bus schedule?"</em></li>
+            <li>Upon clicking <strong>OK</strong>, an alert confirms deletion: <em>"Bus schedule has been deleted successfully."</em></li>
+            <li>The row smoothly slides out, is removed from the table, and the schedule counter updates automatically.</li>
+        </ol>
+    </li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Delete Confirmation Popup from <code>frontend/schedule-list.html</code> ]</strong><br>
+    <em>Showing the browser alert prompt "Are you sure you want to delete this bus schedule?" on the table row.</em>
+</div>
+
+<h3>Function 2: Cancel Passenger Booking &amp; Release Seat</h3>
+<ul>
+    <li><strong>Description:</strong> Allows customers or ticketing agents to cancel an existing booking and instantly restore the seat back to available inventory.</li>
+    <li><strong>User Interface:</strong> Passenger "My Bookings" page or Customer Support portal.</li>
+    <li><strong>Operational Action:</strong> Cancel reservation &rarr; confirms cancellation &rarr; seat marker reverts to available status.</li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Booking Cancellation Screen ]</strong>
+</div>
+
+<h3>Function 3: Remove Decommissioned Bus or Resigned Driver</h3>
+<ul>
+    <li><strong>Description:</strong> Allows administrators to remove decommissioned buses or inactive drivers from the active fleet database.</li>
+    <li><strong>User Interface:</strong> Fleet Management Roster view.</li>
+    <li><strong>Safety Control:</strong> Action confirmation prompt to prevent accidental removal of active fleet resources.</li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Fleet Roster Deletion Control ]</strong>
+</div>
+
+<h3>Function 4: Purge Expired Booking Sessions</h3>
+<ul>
+    <li><strong>Description:</strong> Automatically cleans up temporary 10-minute seat reservations that were abandoned prior to payment completion.</li>
+    <li><strong>User Interface:</strong> Automated background session manager.</li>
+</ul>
+
+<hr>
+
+<h2>4.5 DASHBOARD &amp; Data Presentation</h2>
+<p>The Dashboard displays key operational metrics, live fleet telemetry, and analytical charts for business decision-making.</p>
+
+<h3>Feature 1: Operations Overview KPI Metric Cards</h3>
+<ul>
+    <li><strong>Description:</strong> Provides top-level statistical summary cards showing fleet capacity and schedule statuses at a glance.</li>
+    <li><strong>User Interface:</strong> Reports Overview Modal in <code>schedule-list.html</code> (accessed via top "View Reports" button).</li>
+    <li><strong>KPI Metric Displays:</strong>
+        <ul>
+            <li><strong>Total Buses:</strong> <strong>3</strong> (Active fleet vehicles: ABC1234, XYZ5678, DEF9012)</li>
+            <li><strong>Available Schedules:</strong> <strong>1</strong> (Active departures open for booking)</li>
+            <li><strong>Booked / Full / Other:</strong> <strong>2</strong> (Fully booked or completed trips)</li>
+        </ul>
+    </li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Schedule Reports Overview Modal from <code>frontend/schedule-list.html</code> ]</strong><br>
+    <em>Showing the three metric cards for Total Buses (3), Available (1), and Booked/Other (2).</em>
+</div>
+
+<h3>Feature 2: Daily Bookings &amp; Revenue Summary</h3>
+<ul>
+    <li><strong>Description:</strong> Summarizes daily ticket sales volume, passenger counts, and cumulative ticket revenue.</li>
+    <li><strong>User Interface:</strong> Daily Financial Summary Dashboard (<code>frontend/financial-dashboard.html</code>).</li>
+    <li><strong>Metrics Displayed:</strong> Total tickets sold today (e.g., <em>142 Tickets</em>), Total Revenue (e.g., <em>RM 4,970.00</em>), and Average Ticket Value (e.g., <em>RM 35.00</em>).</li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Daily Revenue &amp; Ticket Sales Dashboard ]</strong>
+</div>
+
+<h3>Feature 3: Real-Time Fleet Live Tracking Dashboard</h3>
+<ul>
+    <li><strong>Description:</strong> Live fleet control screen displaying en-route buses across Malaysia with speed telemetry and trip progress.</li>
+    <li><strong>User Interface:</strong> Fleet Tracking Dashboard (<code>tracking.html</code>).</li>
+    <li><strong>Dashboard Components:</strong>
+        <ul>
+            <li><strong>Interactive GPS Map:</strong> Real-time map displaying highway location with pulsing bus marker</li>
+            <li><strong>Trip Telematics:</strong> Live speed (<em>82 km/h</em>), Estimated Time of Arrival (<em>01:15 PM</em>), Remaining Distance (<em>135 km</em>)</li>
+            <li><strong>Assigned Driver Details:</strong> Driver Name (<em>Ahmad Albab</em>), Vehicle Plate (<em>ABC1234</em>), and Trip Status (<em>On Time</em>)</li>
+        </ul>
+    </li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Real-Time GPS Tracking Dashboard from <code>frontend/tracking.html</code> ]</strong>
+</div>
+
+<h3>Feature 4: Seat Occupancy &amp; Route Popularity Charts</h3>
+<ul>
+    <li><strong>Description:</strong> Graphical charts illustrating passenger demand and cabin occupancy across intercity routes.</li>
+    <li><strong>User Interface:</strong> Route Analytics &amp; Reports view.</li>
+    <li><strong>Visual Data Presentations:</strong>
+        <ul>
+            <li><strong>Popular Routes Bar Chart:</strong> Kuala Lumpur &rarr; Johor Bahru (48%), Kuala Lumpur &rarr; Penang (32%), Melaka &rarr; Johor Bahru (20%)</li>
+            <li><strong>Fleet Load Factor Gauge:</strong> Average 82% cabin occupancy rate</li>
+        </ul>
+    </li>
+</ul>
+<div class="screenshot-box">
+    <strong>[ PASTE SCREENSHOT HERE: Route Popularity &amp; Seat Occupancy Charts ]</strong>
+</div>
+
+<hr>
+
+<h2>4.6 Summary Table of CRUD Operations &amp; Dashboard Features</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>CRUD Category</th>
+            <th>Function / Feature Name</th>
+            <th>User Interface / HTML File</th>
+            <th>Key Form / Table Controls</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>CREATE</strong></td>
+            <td>1. Register New Bus Schedule</td>
+            <td><code>add-schedule.html</code> / <code>schedule-list.html</code></td>
+            <td>Bus No, Route, Driver, Date, Time, Price inputs</td>
+        </tr>
+        <tr>
+            <td><strong>CREATE</strong></td>
+            <td>2. Book Bus Ticket &amp; Reserve Seat</td>
+            <td><code>seat-selection.html</code></td>
+            <td>Interactive seat pins (1C), Fare tally, Confirm button</td>
+        </tr>
+        <tr>
+            <td><strong>CREATE</strong></td>
+            <td>3. Register Passenger Account</td>
+            <td><code>index.html</code> (Sign-up Modal)</td>
+            <td>Full Name, Email, Phone, Password inputs</td>
+        </tr>
+        <tr>
+            <td><strong>CREATE</strong></td>
+            <td>4. Onboard Bus &amp; Driver</td>
+            <td>Fleet Management Panel</td>
+            <td>Plate number, capacity, driver license inputs</td>
+        </tr>
+        <tr>
+            <td><strong>READ</strong></td>
+            <td>1. Master Schedule Table with Filter</td>
+            <td><code>schedule-list.html</code></td>
+            <td>Live search box, bus plate, route, fare &amp; status badges</td>
+        </tr>
+        <tr>
+            <td><strong>READ</strong></td>
+            <td>2. Passenger Trip Search by Route</td>
+            <td><code>index.html</code></td>
+            <td>Origin, Destination, Date picker, Book Now cards</td>
+        </tr>
+        <tr>
+            <td><strong>READ</strong></td>
+            <td>3. Interactive Cabin Seat Matrix</td>
+            <td><code>seat-selection.html</code></td>
+            <td>Visual cabin layout (Available, Selected, Reserved)</td>
+        </tr>
+        <tr>
+            <td><strong>READ</strong></td>
+            <td>4. Live GPS Tracking &amp; Milestones</td>
+            <td><code>tracking.html</code></td>
+            <td>Journey milestone checklist + Leaflet highway map</td>
+        </tr>
+        <tr>
+            <td><strong>UPDATE</strong></td>
+            <td>1. Edit Bus Schedule Details</td>
+            <td><code>edit-schedule.html</code></td>
+            <td>Pre-filled form modifying time, date, fare, and status</td>
+        </tr>
+        <tr>
+            <td><strong>UPDATE</strong></td>
+            <td>2. Update Seat Status to Reserved</td>
+            <td><code>seat-selection.html</code></td>
+            <td>Instant status update to locked upon seat confirmation</td>
+        </tr>
+        <tr>
+            <td><strong>UPDATE</strong></td>
+            <td>3. Update Booking Payment Status</td>
+            <td>Admin Booking Manager</td>
+            <td>Status dropdown (Pending &rarr; Confirmed / Cancelled)</td>
+        </tr>
+        <tr>
+            <td><strong>UPDATE</strong></td>
+            <td>4. Passenger Profile &amp; Password Reset</td>
+            <td>Passenger Profile Settings</td>
+            <td>Phone number edit &amp; new password fields</td>
+        </tr>
+        <tr>
+            <td><strong>DELETE</strong></td>
+            <td>1. Delete Bus Schedule Record</td>
+            <td><code>schedule-list.html</code></td>
+            <td>Delete button with JavaScript confirmation dialog</td>
+        </tr>
+        <tr>
+            <td><strong>DELETE</strong></td>
+            <td>2. Cancel Booking &amp; Release Seat</td>
+            <td>Booking Management</td>
+            <td>Cancellation button with automatic seat release</td>
+        </tr>
+        <tr>
+            <td><strong>DELETE</strong></td>
+            <td>3. Remove Decommissioned Bus / Driver</td>
+            <td>Fleet Roster Table</td>
+            <td>Asset removal button with safety confirmation</td>
+        </tr>
+        <tr>
+            <td><strong>DELETE</strong></td>
+            <td>4. Purge Expired Booking Holds</td>
+            <td>Booking Session Manager</td>
+            <td>Automatic expiration of abandoned 10-min seat holds</td>
+        </tr>
+        <tr>
+            <td><strong>DASHBOARD</strong></td>
+            <td>1. Operations Overview KPI Tiles</td>
+            <td><code>schedule-list.html</code> (View Reports)</td>
+            <td>Modal showing Total Buses (3), Available (1), Booked (2)</td>
+        </tr>
+        <tr>
+            <td><strong>DASHBOARD</strong></td>
+            <td>2. Daily Bookings &amp; Revenue Summary</td>
+            <td><code>financial-dashboard.html</code></td>
+            <td>Total tickets sold today (142), Total Revenue (RM 4,970.00), ATV (RM 35.00)</td>
+        </tr>
+        <tr>
+            <td><strong>DASHBOARD</strong></td>
+            <td>3. Real-Time Fleet Live Tracking</td>
+            <td><code>tracking.html</code></td>
+            <td>Live GPS map, current speed (82 km/h), ETA, driver info</td>
+        </tr>
+        <tr>
+            <td><strong>DASHBOARD</strong></td>
+            <td>4. Seat Occupancy &amp; Route Chart</td>
+            <td>Reports &amp; Analytics Dashboard</td>
+            <td>Bar/Pie charts of popular routes and load factor %</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

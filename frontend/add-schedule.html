@@ -3,227 +3,399 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New Schedule - EasyBus Premium</title>
+    <title>EasyBus - Add New Bus Schedule</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Poppins', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                     },
                     colors: {
-                        ebOrange: '#F59E0B', /* Brand Orange matching the logo */
-                        ebBlue: '#2c4a87',   /* Matching the logo background reference roughly */
+                        brand: {
+                            orange: '#f59e0b',
+                            amber: '#fbbf24',
+                            darkRed: '#d93844',
+                            glass: 'rgba(255, 255, 255, 0.18)',
+                            glassDark: 'rgba(15, 23, 42, 0.65)',
+                        }
                     }
                 }
             }
         }
     </script>
-    
+
     <style>
-        /* Custom scrollbar for better UI */
-        ::-webkit-scrollbar {
-            width: 8px;
+        /* Custom Glassmorphism Styles & Background */
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-image: 
+                linear-gradient(to bottom, rgba(10, 15, 29, 0.78), rgba(15, 23, 42, 0.92)),
+                url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
         }
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.1);
+
+        /* Backdrop Glass Card */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65);
         }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
+
+        /* Glass Input Fields */
+        .glass-input {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            transition: all 0.2s ease-in-out;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
+
+        .glass-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
-        
-        /* Adjust native date/time picker icons to be visible */
-        input[type="date"]::-webkit-calendar-picker-indicator,
-        input[type="time"]::-webkit-calendar-picker-indicator {
-            cursor: pointer;
-            filter: invert(0.2);
-            transition: 0.2s;
+
+        .glass-input:focus-within {
+            background: rgba(255, 255, 255, 0.22);
+            border-color: #f59e0b;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
         }
-        
-        /* Glass input styling focus state tweaks */
-        .glass-input:focus {
-            background-color: rgba(255, 255, 255, 0.95);
+
+        /* Select option elements styling */
+        select option {
+            background-color: #1e293b;
+            color: #ffffff;
+        }
+
+        /* Toast animation */
+        @keyframes slideIn {
+            from { transform: translateY(-100%) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .toast-animate {
+            animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
     </style>
 </head>
-<body class="relative min-h-screen flex items-center justify-center py-10 px-4 antialiased selection:bg-ebOrange selection:text-white">
+<body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-10 text-white selection:bg-amber-500 selection:text-slate-900">
 
-    <!-- Background Image -->
-    <div class="fixed inset-0 z-0">
-        <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2560&auto=format&fit=crop" 
-             alt="Highway Background" 
-             class="w-full h-full object-cover object-center" />
-    </div>
-    
-    <!-- Dark Blue Overlay -->
-    <div class="fixed inset-0 z-0 bg-blue-900/70 mix-blend-multiply pointer-events-none"></div>
-    <div class="fixed inset-0 z-0 bg-gradient-to-t from-gray-900/80 to-transparent pointer-events-none"></div>
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none"></div>
 
-    <!-- Main Container -->
-    <main class="relative z-10 w-full max-w-5xl">
-        
-        <!-- Glassmorphism Card -->
-        <div class="bg-white/10 backdrop-blur-xl border border-white/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] rounded-3xl overflow-hidden">
+    <!-- Main Outer Wrapper -->
+    <main class="w-full max-w-4xl my-auto">
+
+        <!-- Glassmorphism Main Card Container -->
+        <div class="glass-card rounded-3xl p-6 sm:p-8 md:p-10 relative overflow-hidden">
             
-            <!-- Header Section inside Card -->
-            <div class="border-b border-white/20 px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-4 bg-white/5">
-                <!-- Recreated Logo -->
-                <a href="index.html" class="flex items-center text-4xl font-extrabold tracking-tight drop-shadow-md hover:opacity-90 transition">
-                    <i class="fa-solid fa-bus text-ebOrange mr-2"></i>
-                    <span class="text-white">Easy</span><span class="text-ebOrange">Bus</span>
+            <!-- Top Subtle Light Accent Line -->
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent"></div>
+
+            <!-- HEADER SECTION -->
+            <header class="flex flex-row justify-between items-center mb-8 pb-4 border-b border-white/10">
+                <!-- Brand Title -->
+                <a href="index.html" class="flex items-center gap-3 hover:opacity-90 transition">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-400 flex items-center justify-center shadow-lg shadow-amber-500/20 text-slate-950 font-bold text-xl">
+                        <i class="fa-solid fa-bus"></i>
+                    </div>
+                    <span class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm">Easy<span class="text-amber-400">Bus</span></span>
+                </a>
+
+                <!-- Page Header Title -->
+                <div class="flex items-center gap-2 text-slate-200 font-semibold text-sm sm:text-base">
+                    <i class="fa-solid fa-circle-plus text-amber-400"></i>
+                    <span>Add New Schedule</span>
                 </div>
-                
-                <h1 class="text-white/90 text-lg md:text-xl font-medium flex items-center gap-2 drop-shadow-sm">
-                    <i class="fa-solid fa-calendar-plus text-ebOrange"></i> Add New Schedule
-                </h1>
-            </div>
+            </header>
 
-            <!-- Form Section -->
-            <div class="p-8 md:p-10">
-                <form action="#" method="POST">
+            <!-- FORM SECTION -->
+            <form id="addScheduleForm" onsubmit="handleAddSchedule(event)" class="space-y-6">
+
+                <!-- ROW 1: Bus Number & Route Assignment -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                    <!-- Bus Number -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-200 mb-2 tracking-wide">Bus Number</label>
+                        <div class="glass-input rounded-xl px-4 py-3 flex items-center gap-3">
+                            <span class="text-slate-300 font-bold text-lg select-none">#</span>
+                            <input type="text" id="busNumber" name="busNumber" required class="w-full bg-transparent border-none outline-none text-white font-medium placeholder-white/40 text-sm sm:text-base" placeholder="e.g. VJE 9021">
+                        </div>
+                    </div>
+
+                    <!-- Route Assignment -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-200 mb-2 tracking-wide">Route Assignment</label>
+                        <div class="glass-input rounded-xl px-4 py-3 flex items-center gap-3">
+                            <i class="fa-solid fa-route text-slate-300 text-sm"></i>
+                            <input type="text" id="routeAssignment" name="routeAssignment" required class="w-full bg-transparent border-none outline-none text-white font-medium placeholder-white/40 text-sm sm:text-base" placeholder="e.g. Kuala Lumpur to Penang">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW 2: Driver Name & Available Seats -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                    <!-- Driver Name -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-200 mb-2 tracking-wide">Driver Name</label>
+                        <div class="glass-input rounded-xl px-4 py-3 flex items-center gap-3">
+                            <i class="fa-regular fa-address-card text-slate-300"></i>
+                            <input type="text" id="driverName" name="driverName" required class="w-full bg-transparent border-none outline-none text-white font-medium placeholder-white/40 text-sm sm:text-base" placeholder="e.g. Ahmad Albab">
+                        </div>
+                    </div>
+
+                    <!-- Available Seats -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-200 mb-2 tracking-wide">Available Seats</label>
+                        <div class="glass-input rounded-xl px-4 py-3 flex items-center gap-3">
+                            <i class="fa-solid fa-chair text-slate-300"></i>
+                            <input type="number" id="availableSeats" name="availableSeats" value="40" min="1" max="80" required class="w-full bg-transparent border-none outline-none text-white font-medium placeholder-white/40 text-sm sm:text-base" placeholder="e.g. 40">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW 3: Departure Location & Arrival Location -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                    <!-- Departure Location -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-200 mb-2 tracking-wide">Departure Location</label>
+                        <div class="glass-input rounded-xl px-4 py-3 flex items-center gap-3">
+                            <i class="fa-solid fa-location-dot text-rose-400"></i>
+                            <input type="text" id="departureLocation" name="departureLocation" required class="w-full bg-transparent border-none outline-none text-white font-medium placeholder-white/40 text-sm sm:text-base" placeholder="e.g. Terminal Bersepadu Selatan (TBS)">
+                        </div>
+                    </div>
+
+                    <!-- Arrival Location -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-200 mb-2 tracking-wide">Arrival Location</label>
+                        <div class="glass-input rounded-xl px-4 py-3 flex items-center gap-3">
+                            <i class="fa-solid fa-location-dot text-amber-400"></i>
+                            <input type="text" id="arrivalLocation" name="arrivalLocation" required class="w-full bg-transparent border-none outline-none text-white font-medium placeholder-white/40 text-sm sm:text-base" placeholder="e.g. Penang Sentral">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW 4: Departure Date, Time, Ticket Price, Status (4 cols on desktop) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-4">
+                    <!-- Departure Date -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-200 mb-2 tracking-wide">Departure Date</label>
+                        <div class="glass-input rounded-xl px-3 py-3 flex items-center justify-between gap-2">
+                            <input type="text" id="departureDate" name="departureDate" required class="w-full bg-transparent border-none outline-none text-white font-medium text-sm sm:text-base placeholder-white/40" placeholder="DD/MM/YYYY">
+                            <label for="hiddenAddDatePicker" class="cursor-pointer text-slate-300 hover:text-amber-400 transition" title="Pick date">
+                                <i class="fa-regular fa-calendar-days"></i>
+                            </label>
+                            <input type="date" id="hiddenAddDatePicker" class="sr-only" onchange="syncDatePicker(this.value)">
+                        </div>
+                    </div>
+
+                    <!-- Time -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-200 mb-2 tracking-wide">Time</label>
+                        <div class="glass-input rounded-xl px-3 py-3 flex items-center justify-between gap-2">
+                            <input type="text" id="departureTime" name="departureTime" required class="w-full bg-transparent border-none outline-none text-white font-medium text-sm sm:text-base placeholder-white/40" placeholder="08:30 AM">
+                            <label for="hiddenAddTimePicker" class="cursor-pointer text-slate-300 hover:text-amber-400 transition" title="Pick time">
+                                <i class="fa-regular fa-clock"></i>
+                            </label>
+                            <input type="time" id="hiddenAddTimePicker" class="sr-only" onchange="syncTimePicker(this.value)">
+                        </div>
+                    </div>
+
+                    <!-- Ticket Price -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-200 mb-2 tracking-wide">Ticket Price</label>
+                        <div class="glass-input rounded-xl px-4 py-3 flex items-center gap-2">
+                            <span class="text-amber-400 font-bold text-sm select-none">RM</span>
+                            <input type="text" id="ticketPrice" name="ticketPrice" required class="w-full bg-transparent border-none outline-none text-white font-medium text-sm sm:text-base placeholder-white/40" placeholder="45.00">
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-200 mb-2 tracking-wide">Status</label>
+                        <div class="glass-input rounded-xl px-3 py-3 flex items-center justify-between relative">
+                            <select id="busStatus" name="busStatus" class="w-full bg-transparent border-none outline-none text-white font-medium text-sm sm:text-base cursor-pointer appearance-none pr-6">
+                                <option value="Available" selected>Available</option>
+                                <option value="Full">Full</option>
+                                <option value="Delayed">Delayed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down text-slate-300 text-xs pointer-events-none absolute right-3"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACTION BUTTONS SECTION -->
+                <div class="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                        
-                        <!-- Bus Number -->
-                        <div>
-                            <label class="block text-white text-sm font-semibold mb-2 drop-shadow-sm">Bus Number</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-500 pointer-events-none">
-                                    <i class="fa-solid fa-hashtag"></i>
-                                </span>
-                                <input type="text" placeholder="e.g. VJE 9021" class="glass-input block w-full pl-11 pr-4 py-3 bg-white/60 border border-white/50 rounded-xl text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-ebOrange transition-all shadow-inner">
-                            </div>
-                        </div>
+                    <!-- Back Button (Left) -->
+                    <a href="schedule-list.html" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 bg-white/5 hover:bg-white/15 text-white font-semibold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/40">
+                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                        <span>Back to Dashboard</span>
+                    </a>
 
-                        <!-- Route -->
-                        <div>
-                            <label class="block text-white text-sm font-semibold mb-2 drop-shadow-sm">Route Assignment</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-500 pointer-events-none">
-                                    <i class="fa-solid fa-route"></i>
-                                </span>
-                                <input type="text" placeholder="e.g. Kuala Lumpur to Penang" class="glass-input block w-full pl-11 pr-4 py-3 bg-white/60 border border-white/50 rounded-xl text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-ebOrange transition-all shadow-inner">
-                            </div>
-                        </div>
+                    <!-- Reset & Add Buttons (Right) -->
+                    <div class="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3">
+                        <!-- Reset Form Button -->
+                        <button type="button" onclick="resetFormAdd()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 bg-slate-700/60 hover:bg-slate-700 text-slate-200 font-bold text-sm transition-all duration-200 active:scale-95 focus:outline-none">
+                            <i class="fa-solid fa-rotate-right"></i>
+                            <span>Reset</span>
+                        </button>
 
-                        <!-- Driver Name -->
-                        <div>
-                            <label class="block text-white text-sm font-semibold mb-2 drop-shadow-sm">Driver Name</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-500 pointer-events-none">
-                                    <i class="fa-regular fa-id-card"></i>
-                                </span>
-                                <input type="text" placeholder="e.g. Ahmad Albab" class="glass-input block w-full pl-11 pr-4 py-3 bg-white/60 border border-white/50 rounded-xl text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-ebOrange transition-all shadow-inner">
-                            </div>
-                        </div>
-
-                        <!-- Available Seats -->
-                        <div>
-                            <label class="block text-white text-sm font-semibold mb-2 drop-shadow-sm">Available Seats</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-500 pointer-events-none">
-                                    <i class="fa-solid fa-chair"></i>
-                                </span>
-                                <input type="number" placeholder="40" class="glass-input block w-full pl-11 pr-4 py-3 bg-white/60 border border-white/50 rounded-xl text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-ebOrange transition-all shadow-inner">
-                            </div>
-                        </div>
-
-                        <!-- Departure Location -->
-                        <div>
-                            <label class="block text-white text-sm font-semibold mb-2 drop-shadow-sm">Departure Location</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-500 pointer-events-none">
-                                    <i class="fa-solid fa-map-pin"></i>
-                                </span>
-                                <input type="text" placeholder="Terminal Bersepadu Selatan (TBS)" class="glass-input block w-full pl-11 pr-4 py-3 bg-white/60 border border-white/50 rounded-xl text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-ebOrange transition-all shadow-inner">
-                            </div>
-                        </div>
-
-                        <!-- Arrival Location -->
-                        <div>
-                            <label class="block text-white text-sm font-semibold mb-2 drop-shadow-sm">Arrival Location</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-ebOrange pointer-events-none">
-                                    <i class="fa-solid fa-location-dot"></i>
-                                </span>
-                                <input type="text" placeholder="Penang Sentral" class="glass-input block w-full pl-11 pr-4 py-3 bg-white/60 border border-white/50 rounded-xl text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-ebOrange transition-all shadow-inner">
-                            </div>
-                        </div>
-
-                        <!-- Date & Time Row -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-white text-sm font-semibold mb-2 drop-shadow-sm">Departure Date</label>
-                                <input type="date" class="glass-input block w-full px-4 py-3 bg-white/60 border border-white/50 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-ebOrange transition-all shadow-inner">
-                            </div>
-                            <div>
-                                <label class="block text-white text-sm font-semibold mb-2 drop-shadow-sm">Time</label>
-                                <input type="time" class="glass-input block w-full px-4 py-3 bg-white/60 border border-white/50 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-ebOrange transition-all shadow-inner">
-                            </div>
-                        </div>
-
-                        <!-- Price & Status Row -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-white text-sm font-semibold mb-2 drop-shadow-sm">Ticket Price</label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-700 font-bold pointer-events-none">
-                                        RM
-                                    </span>
-                                    <input type="number" step="0.01" placeholder="45.00" class="glass-input block w-full pl-12 pr-4 py-3 bg-white/60 border border-white/50 rounded-xl text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-ebOrange transition-all shadow-inner">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-white text-sm font-semibold mb-2 drop-shadow-sm">Status</label>
-                                <select class="glass-input block w-full px-4 py-3 bg-white/60 border border-white/50 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-ebOrange transition-all shadow-inner cursor-pointer appearance-none">
-                                    <option value="available" selected>Available</option>
-                                    <option value="full">Full</option>
-                                    <option value="cancelled">Cancelled</option>
-                                </select>
-                            </div>
-                        </div>
+                        <!-- Add Schedule Button -->
+                        <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 transition-all duration-200 active:scale-95 focus:outline-none">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add Schedule</span>
+                        </button>
                     </div>
 
-                    <!-- Actions -->
-                    <div class="mt-10 pt-6 border-t border-white/20 flex flex-col-reverse md:flex-row items-center justify-between gap-4">
-                        
-                        <a href="schedule-list.html" class="w-full md:w-auto px-6 py-3 rounded-xl border border-white/40 text-white hover:bg-white/10 transition-all font-medium flex items-center justify-center gap-2 backdrop-blur-sm">
-                            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
-                        </a>
+                </div>
 
-                        <div class="flex flex-col sm:flex-row w-full md:w-auto gap-4">
-                            <button type="reset" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-white/20 text-white hover:bg-white/30 border border-transparent transition-all font-medium flex items-center justify-center gap-2 backdrop-blur-sm">
-                                <i class="fa-solid fa-rotate-right"></i> Reset
-                            </button>
-                            
-                            <button type="submit" class="w-full sm:w-auto px-8 py-3 rounded-xl bg-ebOrange text-white hover:bg-orange-600 shadow-[0_4px_14px_0_rgba(245,158,11,0.39)] transition-all font-bold flex items-center justify-center gap-2 transform hover:-translate-y-1">
-                                <i class="fa-solid fa-plus"></i> Add Schedule
-                            </button>
-                        </div>
-                    </div>
+            </form>
 
-                </form>
-            </div>
-            
         </div>
-        
-        <!-- Footer Info -->
-        <p class="text-center text-white/50 text-sm mt-6 font-medium">
+
+        <!-- FOOTER COPYRIGHT SECTION -->
+        <footer class="text-center text-slate-400/80 text-xs sm:text-sm mt-6 font-medium tracking-wide">
             &copy; 2026 EasyBus System. All rights reserved.
-        </p>
+        </footer>
 
     </main>
 
+    <!-- JAVASCRIPT FOR FORM HANDLING & TOAST NOTIFICATIONS -->
+    <script>
+        // Sync helper for hidden date picker
+        function syncDatePicker(val) {
+            if (!val) return;
+            const parts = val.split('-');
+            if (parts.length === 3) {
+                document.getElementById('departureDate').value = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+        }
+
+        // Sync helper for hidden time picker (12hr format)
+        function syncTimePicker(val) {
+            if (!val) return;
+            const [hStr, mStr] = val.split(':');
+            let h = parseInt(hStr, 10);
+            const period = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+            const displayH = h < 10 ? '0' + h : h;
+            document.getElementById('departureTime').value = `${displayH}:${mStr} ${period}`;
+        }
+
+        /**
+         * Custom Glassmorphism Toast Notification
+         */
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            
+            const toast = document.createElement('div');
+            toast.className = `toast-animate pointer-events-auto flex items-center gap-3 p-4 rounded-xl backdrop-blur-xl border text-white shadow-xl ${
+                type === 'success' 
+                    ? 'bg-slate-900/90 border-amber-500/50 shadow-amber-500/10' 
+                    : type === 'warning' 
+                    ? 'bg-slate-900/90 border-red-500/50 shadow-red-500/10' 
+                    : 'bg-slate-900/90 border-blue-500/50 shadow-blue-500/10'
+            }`;
+
+            const iconClass = type === 'success' ? 'fa-solid fa-circle-check text-amber-400' 
+                            : type === 'warning' ? 'fa-solid fa-arrow-rotate-left text-red-400' 
+                            : 'fa-solid fa-circle-info text-blue-400';
+
+            toast.innerHTML = `
+                <i class="${iconClass} text-xl"></i>
+                <div class="flex-1 text-sm font-semibold">${message}</div>
+                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-20px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        /**
+         * Reset form to initial empty state
+         */
+        function resetFormAdd() {
+            document.getElementById('addScheduleForm').reset();
+            document.getElementById('availableSeats').value = '40';
+            document.getElementById('busStatus').value = 'Available';
+
+            const form = document.getElementById('addScheduleForm');
+            form.classList.add('opacity-80');
+            setTimeout(() => form.classList.remove('opacity-80'), 200);
+
+            showToast('Form fields have been reset.', 'warning');
+        }
+
+        /**
+         * Handle Add Schedule Form Submit
+         */
+        function handleAddSchedule(event) {
+            event.preventDefault();
+            
+            const busNo = document.getElementById('busNumber').value.trim();
+            const route = document.getElementById('routeAssignment').value.trim();
+            const driver = document.getElementById('driverName') ? document.getElementById('driverName').value.trim() : 'Assigned Driver';
+            const seats = document.getElementById('availableSeats') ? parseInt(document.getElementById('availableSeats').value.trim(), 10) : 40;
+            const from = document.getElementById('departureLocation') ? document.getElementById('departureLocation').value.trim() : '';
+            const to = document.getElementById('arrivalLocation') ? document.getElementById('arrivalLocation').value.trim() : '';
+            const date = document.getElementById('departureDate') ? document.getElementById('departureDate').value.trim() : '';
+            const time = document.getElementById('departureTime') ? document.getElementById('departureTime').value.trim() : '';
+            const price = document.getElementById('ticketPrice') ? document.getElementById('ticketPrice').value.trim() : '35.00';
+            const status = document.getElementById('busStatus') ? document.getElementById('busStatus').value.trim() : 'Available';
+
+            if (window.EasyBusStore && typeof window.EasyBusStore.addSchedule === 'function') {
+                window.EasyBusStore.addSchedule({
+                    busNumber: busNo,
+                    busPlate: busNo,
+                    route: route,
+                    routeAssignment: route,
+                    driverName: driver,
+                    availableSeats: seats,
+                    from: from,
+                    departureLocation: from,
+                    to: to,
+                    arrivalLocation: to,
+                    departureDate: date,
+                    departureTime: time,
+                    ticketPrice: price,
+                    busStatus: status
+                });
+            }
+
+            showToast(`New schedule for <strong>${busNo}</strong> (${route}) added successfully!`, 'success');
+
+            // Redirect back to dashboard after brief delay
+            setTimeout(() => {
+                window.location.href = 'schedule-list.html';
+            }, 1000);
+        }
+    </script>
+    <script src="assets/js/easybus-store.js"></script>
+    <script src="assets/js/easybus-nav.js"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EasyBus - Live Tracking</title>
+    <title>EasyBus - Real-Time Fleet Live Tracking Dashboard</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,33 +12,18 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     
-    <!-- Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Prevent body scrolling for a dashboard feel */
-        }
-        
-        /* Custom Map Styles */
-        .leaflet-control-zoom {
-            border: none !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-            border-radius: 0.5rem !important;
             overflow: hidden;
-        }
-        
-        .leaflet-control-zoom a {
-            color: #475e92 !important;
-            width: 36px !important;
-            height: 36px !important;
-            line-height: 36px !important;
         }
 
         /* Bus Marker Animation Pulse */
@@ -50,20 +35,19 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 48px;
-            height: 48px;
-            background-color: rgba(245, 158, 11, 0.4);
+            width: 50px;
+            height: 50px;
+            background-color: rgba(245, 158, 11, 0.45);
             border-radius: 50%;
             z-index: -1;
-            animation: pulse 2s infinite;
+            animation: pulseRing 2s infinite;
         }
 
-        @keyframes pulse {
-            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+        @keyframes pulseRing {
+            0% { transform: translate(-50%, -50%) scale(0.7); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
         }
 
-        /* Hide scrollbar for timeline but allow scroll */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -73,158 +57,201 @@
         }
     </style>
 </head>
-<body class="flex flex-col h-screen bg-gray-50">
+<body class="flex flex-col h-screen bg-slate-900 text-slate-100">
 
-    <!-- Header / Navbar -->
-    <!-- Using #475e92 to roughly match the desaturated dark blue from the logo image -->
-    <header class="bg-[#475e92] text-white py-3 px-6 shadow-md flex items-center justify-between z-20 shrink-0">
-        <div class="flex items-center gap-3">
-            <!-- Bus Logo Icon -->
-            <i class="ph-fill ph-bus text-[32px] text-[#f59e0b]"></i>
-            <!-- Brand Text -->
-            <h1 class="text-2xl font-bold tracking-tight">
-                <span class="text-white">Easy</span><span class="text-[#f59e0b]">Bus</span>
-            </h1>
-        </div>
-        <div class="flex items-center gap-4 text-sm font-medium">
-            <button class="hidden md:flex items-center gap-2 hover:text-[#f59e0b] transition-colors">
-                <i class="ph ph-question text-xl"></i> Help
-            </button>
-            <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center border border-white/30 cursor-pointer hover:bg-white/30 transition-colors">
-                <i class="ph ph-user text-white"></i>
-            </div>
-        </div>
-    </header>
+    <!-- UNIFIED HEADER -->
+    <header id="easybus-unified-nav" class="shrink-0 z-30"></header>
 
-    <!-- Main Content Area -->
+    <!-- MAIN TRACKING AREA -->
     <main class="flex flex-col md:flex-row flex-1 overflow-hidden relative">
         
-        <!-- Left Sidebar: Timeline -->
-        <aside class="w-full md:w-[380px] bg-white shadow-[4px_0_24px_rgba(0,0,0,0.05)] z-10 flex flex-col shrink-0">
-            <div class="p-6 border-b border-gray-100 bg-gray-50/50">
+        <!-- LEFT SIDEBAR -->
+        <aside class="w-full md:w-[360px] bg-slate-900 border-r border-slate-800 flex flex-col shrink-0 overflow-y-auto no-scrollbar z-10">
+            
+            <!-- FLEET VEHICLE SWITCHER -->
+            <div class="p-4 border-b border-slate-800 bg-slate-950/80">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-satellite-dish"></i> Active Fleet Switcher
+                    </span>
+                    <span id="fleetLiveCount" class="text-[10px] text-slate-400 bg-slate-800 border border-slate-700 px-2 py-0.5 rounded-full font-mono">3 Active</span>
+                </div>
+                <div id="fleetSwitcherTabs" class="flex flex-wrap gap-1.5">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- PASSENGER SEAT BADGE (Hidden until URL params present) -->
+            <div id="passengerSeatBadge" class="hidden p-4 border-b border-amber-500/30 bg-amber-500/10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 flex items-center justify-center text-lg font-black shrink-0 shadow-lg shadow-amber-500/10">
+                        <i class="fa-solid fa-couch"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                            <span>Your Reserved Seat:</span>
+                            <span id="trackingSeatNumber" class="text-amber-400 font-extrabold text-sm">--</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400 truncate">
+                            Booking Ref: <span id="trackingBookingRef" class="font-mono font-semibold text-slate-300">--</span>
+                        </div>
+                    </div>
+                    <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[10px] font-bold rounded-full">Active</span>
+                </div>
+            </div>
+
+            <!-- Route & Status Header -->
+            <div class="p-5 border-b border-slate-800 bg-slate-950/50">
                 <div class="flex items-center justify-between mb-1">
-                    <h2 class="text-lg font-bold text-gray-800">Trip Status</h2>
-                    <span class="px-2.5 py-1 bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wider rounded-md">On Time</span>
+                    <span class="text-xs text-slate-400 font-semibold uppercase">Route</span>
+                    <span id="trackingTripStatusBadge" class="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-bold rounded-full flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                        <span id="trackingStatusText">On Time</span>
+                    </span>
                 </div>
-                <p class="text-sm text-gray-500">Route: Kuala Lumpur → Johor Bahru</p>
+                <h2 id="trackingRouteHeader" class="text-sm font-bold text-white">Kuala Lumpur (TBS) &rarr; Johor Bahru (Larkin)</h2>
+                <p id="trackingRouteSub" class="text-xs text-slate-400 mt-0.5">PLUS Highway (E2 Southbound)</p>
             </div>
 
-            <!-- Timeline Scrollable Area -->
-            <div class="p-6 flex-1 overflow-y-auto no-scrollbar">
-                <div class="relative">
-                    <!-- Vertical Track Line -->
-                    <div class="absolute top-2 left-[19px] bottom-6 w-0.5 bg-gray-200"></div>
-                    <!-- Completed Vertical Line Overlay -->
-                    <div class="absolute top-2 left-[19px] h-[55%] w-0.5 bg-[#f59e0b]"></div>
+            <!-- ASSIGNED DRIVER DETAILS -->
+            <div class="p-5 border-b border-slate-800">
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block mb-2.5">
+                    <i class="fa-solid fa-id-card mr-1"></i> Assigned Driver Details
+                </span>
 
-                    <!-- Step 1: Booked -->
-                    <div class="relative flex gap-5 mb-8">
-                        <div class="w-10 h-10 rounded-full bg-[#f59e0b] text-white flex items-center justify-center shadow-sm shrink-0 z-10 ring-4 ring-white">
-                            <i class="ph-bold ph-check text-lg"></i>
-                        </div>
-                        <div class="pt-2">
-                            <h3 class="font-semibold text-gray-800 leading-none">Ticket Booked</h3>
-                            <p class="text-sm text-gray-500 mt-1">Confirmed online</p>
-                            <span class="text-xs text-gray-400 mt-1 block">Today, 08:15 AM</span>
-                        </div>
+                <div class="bg-slate-800/80 rounded-xl p-3.5 border border-slate-700 space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-400">Driver Name:</span>
+                        <strong id="trackingDriverName" class="text-white text-sm">Ahmad Albab</strong>
                     </div>
-
-                    <!-- Step 2: Departed -->
-                    <div class="relative flex gap-5 mb-8">
-                        <div class="w-10 h-10 rounded-full bg-[#f59e0b] text-white flex items-center justify-center shadow-sm shrink-0 z-10 ring-4 ring-white">
-                            <i class="ph-bold ph-check text-lg"></i>
-                        </div>
-                        <div class="pt-2">
-                            <h3 class="font-semibold text-gray-800 leading-none">Departed KL (TBS)</h3>
-                            <p class="text-sm text-gray-500 mt-1">Bus left the terminal successfully.</p>
-                            <span class="text-xs text-gray-400 mt-1 block">Today, 09:30 AM</span>
-                        </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-400">Vehicle Plate:</span>
+                        <span id="trackingVehiclePlate" class="bg-amber-400/10 text-amber-300 border border-amber-400/30 px-2 py-0.5 rounded font-mono font-bold">ABC1234</span>
                     </div>
-
-                    <!-- Step 3: In Transit (Current) -->
-                    <div class="relative flex gap-5 mb-8">
-                        <!-- Pulsing current marker -->
-                        <div class="w-10 h-10 rounded-full bg-white border-2 border-[#f59e0b] text-[#f59e0b] flex items-center justify-center shadow-md shrink-0 z-10 ring-4 ring-white relative">
-                            <div class="absolute inset-0 rounded-full border-2 border-[#f59e0b] animate-ping opacity-50"></div>
-                            <i class="ph-fill ph-bus text-xl"></i>
-                        </div>
-                        <div class="pt-2">
-                            <h3 class="font-bold text-[#f59e0b] leading-none">In Transit</h3>
-                            <p class="text-sm text-gray-600 mt-1">Currently travelling along PLUS Highway.</p>
-                            <span class="text-xs font-medium text-gray-500 mt-1 block">Updated just now</span>
-                        </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-400">Trip Status:</span>
+                        <span id="trackingTripStatus" class="text-emerald-400 font-bold">On Time</span>
                     </div>
-
-                    <!-- Step 4: Arriving -->
-                    <div class="relative flex gap-5 mb-8">
-                        <div class="w-10 h-10 rounded-full bg-gray-100 border-2 border-gray-200 text-gray-400 flex items-center justify-center shrink-0 z-10 ring-4 ring-white">
-                            <i class="ph-bold ph-map-pin text-lg"></i>
-                        </div>
-                        <div class="pt-2">
-                            <h3 class="font-semibold text-gray-500 leading-none">Approaching Drop-off</h3>
-                            <p class="text-sm text-gray-400 mt-1">Skudai Toll Plaza</p>
-                            <span class="text-xs text-gray-400 mt-1 block">Est. 12:45 PM</span>
-                        </div>
-                    </div>
-
-                    <!-- Step 5: Arrived -->
-                    <div class="relative flex gap-5">
-                        <div class="w-10 h-10 rounded-full bg-gray-100 border-2 border-gray-200 text-gray-400 flex items-center justify-center shrink-0 z-10 ring-4 ring-white">
-                            <i class="ph-bold ph-flag-checkered text-lg"></i>
-                        </div>
-                        <div class="pt-2">
-                            <h3 class="font-semibold text-gray-500 leading-none">Arrived at Johor Bahru</h3>
-                            <p class="text-sm text-gray-400 mt-1">Larkin Sentral Terminal</p>
-                            <span class="text-xs text-gray-400 mt-1 block">Est. 01:15 PM</span>
-                        </div>
+                    <div class="flex justify-between items-center text-xs pt-1 border-t border-slate-700/60">
+                        <span class="text-slate-400">Contact:</span>
+                        <a id="trackingDriverPhone" href="tel:016-2233445" class="text-amber-400 font-mono hover:underline">016-2233445</a>
                     </div>
                 </div>
             </div>
+
+            <!-- TRIP TELEMATICS -->
+            <div class="p-5 border-b border-slate-800 bg-slate-950/30">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2.5">
+                    <i class="fa-solid fa-gauge-high mr-1 text-blue-400"></i> Trip Telematics
+                </span>
+
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <!-- Live Speed -->
+                    <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700">
+                        <span class="text-[10px] text-slate-400 font-bold uppercase block">Live Speed</span>
+                        <span id="trackingLiveSpeed" class="text-xl font-extrabold text-amber-400 font-mono mt-1 block">82 <span class="text-[10px] font-normal text-slate-400">km/h</span></span>
+                    </div>
+
+                    <!-- ETA -->
+                    <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700">
+                        <span class="text-[10px] text-slate-400 font-bold uppercase block">Est. Arrival</span>
+                        <span id="trackingEta" class="text-lg font-extrabold text-emerald-400 font-mono mt-1 block">01:15 <span class="text-[10px] font-normal text-emerald-400">PM</span></span>
+                    </div>
+
+                    <!-- Distance -->
+                    <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700">
+                        <span class="text-[10px] text-slate-400 font-bold uppercase block">Distance</span>
+                        <span id="trackingDistance" class="text-xl font-extrabold text-blue-400 font-mono mt-1 block">135 <span class="text-[10px] font-normal text-slate-400">km</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SIMPLE TIMELINE -->
+            <div class="p-5 flex-1">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-3">
+                    <i class="fa-solid fa-timeline mr-1 text-amber-400"></i> Trip Milestones
+                </span>
+
+                <div class="relative pl-6 space-y-5 text-xs">
+                    <div class="absolute left-2.5 top-2 bottom-2 w-0.5 bg-slate-800"></div>
+
+                    <!-- 1 -->
+                    <div class="relative">
+                        <div class="absolute -left-6 top-0 w-5 h-5 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center text-[10px] font-bold">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <span class="font-bold text-white block">Ticket Booked</span>
+                        <span class="text-[11px] text-slate-400">Today, 08:15 AM</span>
+                    </div>
+
+                    <!-- 2 -->
+                    <div class="relative">
+                        <div class="absolute -left-6 top-0 w-5 h-5 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center text-[10px] font-bold">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <span class="font-bold text-white block">Departed KL (TBS)</span>
+                        <span class="text-[11px] text-slate-400">Today, 09:30 AM</span>
+                    </div>
+
+                    <!-- 3 -->
+                    <div class="relative">
+                        <div class="absolute -left-6 top-0 w-5 h-5 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-[10px] font-bold animate-pulse">
+                            <i class="fa-solid fa-bus"></i>
+                        </div>
+                        <span class="font-bold text-amber-400 block">In Transit (Current)</span>
+                        <span class="text-[11px] text-slate-300">Cruising along PLUS Highway at 82 km/h</span>
+                    </div>
+
+                    <!-- 4 -->
+                    <div class="relative">
+                        <div class="absolute -left-6 top-0 w-5 h-5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center justify-center text-[10px]">
+                            <i class="fa-solid fa-flag-checkered"></i>
+                        </div>
+                        <span class="font-semibold text-slate-400 block">Arriving at Johor Bahru</span>
+                        <span class="text-[11px] text-slate-500">Larkin Sentral &bull; Est. 01:15 PM</span>
+                    </div>
+                </div>
+            </div>
+
         </aside>
 
-        <!-- Right Side: Map Area -->
-        <div class="flex-1 relative h-[50vh] md:h-full shrink-0">
-            <!-- Map Container -->
+        <!-- RIGHT SIDE: INTERACTIVE MAP -->
+        <div class="flex-1 relative h-[50vh] md:h-full bg-slate-950">
             <div id="map" class="absolute inset-0 z-0"></div>
 
-            <!-- Floating Tracking Card -->
-            <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-[90%] md:w-auto bg-white rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] z-10 flex flex-col md:flex-row p-1 overflow-hidden border border-gray-100">
-                <!-- Info block -->
-                <div class="flex items-center gap-4 px-5 py-3 border-b md:border-b-0 md:border-r border-gray-100">
-                    <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-[#475e92]">
-                        <i class="ph-fill ph-barcode text-2xl"></i>
-                    </div>
+            <!-- FLOATING SUMMARY CARD OVER MAP -->
+            <div class="absolute bottom-5 left-1/2 transform -translate-x-1/2 w-[90%] max-w-lg bg-slate-900/90 backdrop-blur-md rounded-2xl shadow-2xl z-10 p-4 border border-slate-700">
+                <div class="flex items-center justify-between text-xs">
                     <div>
-                        <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block">Tracking ID</span>
-                        <span class="font-bold text-gray-900 text-lg">#EB-89244</span>
+                        <div class="flex items-center gap-2">
+                            <span id="cardVehiclePlate" class="font-mono font-bold text-white text-sm">Bus ABC1234</span>
+                            <span id="cardTripStatus" class="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full">On Time</span>
+                        </div>
+                        <p class="text-slate-400 text-[11px] mt-0.5">Driver: <strong id="cardDriverName" class="text-white">Ahmad Albab</strong></p>
                     </div>
-                </div>
 
-                <!-- Info block -->
-                <div class="flex items-center gap-4 px-5 py-3 border-b md:border-b-0 md:border-r border-gray-100">
-                    <div>
-                        <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest block">Plate No.</span>
-                        <span class="font-bold text-gray-700 text-md">JVV 9012</span>
-                    </div>
-                </div>
-
-                <!-- Info block (Highlight) -->
-                <div class="flex items-center gap-4 px-6 py-3 bg-[#fffaf0]">
-                    <div>
-                        <span class="text-[10px] text-[#b47101] font-bold uppercase tracking-widest block">Est. Arrival</span>
-                        <span class="font-bold text-[#f59e0b] text-xl">1h 24m</span>
+                    <div class="flex items-center gap-4 text-center font-mono">
+                        <div>
+                            <span class="text-[10px] text-slate-400 block uppercase">Speed</span>
+                            <span id="cardSpeed" class="text-amber-400 font-extrabold text-sm">82 km/h</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 block uppercase">ETA</span>
+                            <span id="cardEta" class="text-emerald-400 font-extrabold text-sm">01:15 PM</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 block uppercase">Distance</span>
+                            <span id="cardDistance" class="text-blue-400 font-extrabold text-sm">135 km</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Map Gradient Fade (Top) to blend with header -->
-            <div class="absolute top-0 left-0 w-full h-8 bg-gradient-to-b from-gray-900/10 to-transparent pointer-events-none z-10"></div>
         </div>
 
     </main>
 
+    <!-- SCRIPT FOR LEAFLET MAP & PULSING BUS -->
     <script>
-        // Define route coordinates simulating a highway path from KL to JB
         const routePath = [
             [3.1390, 101.6869],   // KL (TBS)
             [2.9818, 101.7820],   // Kajang
@@ -235,124 +262,223 @@
             [1.4927, 103.7414]    // JB (Larkin)
         ];
 
-        // Initialize Map
-        // Using a modern, clean light basemap (CartoDB Positron) which looks great for dashboards
-        const map = L.map('map', {
-            zoomControl: false // We'll add it manually to reposition if needed
-        }).setView([2.3, 102.7], 8); 
+        // Map setup
+        const map = L.map('map', { zoomControl: false }).setView([2.3, 102.7], 8);
+        L.control.zoom({ position: 'topright' }).addTo(map);
 
-        L.control.zoom({
-            position: 'topright'
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; Esri &mdash; PLUS Highway',
+            maxZoom: 18
         }).addTo(map);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-            subdomains: 'abcd',
-            maxZoom: 20
-        }).addTo(map);
-
-        // Draw the full route path
+        // Highway Route Lines
         const routeLine = L.polyline(routePath, {
-            color: '#475e92', 
-            weight: 5,
-            opacity: 0.6,
-            dashArray: '10, 10', // dashed line for pending route
-            lineJoin: 'round'
+            color: '#3b82f6',
+            weight: 4,
+            opacity: 0.5,
+            dashArray: '6, 6'
         }).addTo(map);
 
-        // Fit map bounds to show the whole route initially
-        map.fitBounds(routeLine.getBounds(), { padding: [50, 50] });
+        const completedRouteLine = L.polyline([], {
+            color: '#f59e0b',
+            weight: 5,
+            opacity: 0.95
+        }).addTo(map);
 
-        // Add Start (KL) and End (JB) Markers
+        map.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
+
+        // Terminals
         const dotIcon = (color) => L.divIcon({
-            className: 'custom-div-icon',
-            html: `<div style="background-color:${color}; width:14px; height:14px; border-radius:50%; border:3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
+            className: 'custom-dot',
+            html: `<div style="background-color:${color}; width:14px; height:14px; border-radius:50%; border:3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.4);"></div>`,
             iconSize: [14, 14],
             iconAnchor: [7, 7]
         });
 
-        L.marker(routePath[0], {icon: dotIcon('#475e92')}).addTo(map).bindPopup('<b>Kuala Lumpur</b><br>TBS Terminal');
-        L.marker(routePath[routePath.length - 1], {icon: dotIcon('#475e92')}).addTo(map).bindPopup('<b>Johor Bahru</b><br>Larkin Sentral');
+        L.marker(routePath[0], { icon: dotIcon('#1e293b') }).addTo(map).bindPopup('<b>Kuala Lumpur (TBS)</b>');
+        L.marker(routePath[routePath.length - 1], { icon: dotIcon('#10b981') }).addTo(map).bindPopup('<b>Johor Bahru (Larkin)</b>');
 
-        // Create the Bus Marker (Animated)
-        const busIconHtml = `
-            <div class="bus-marker-wrapper">
-                <div class="bus-pulse"></div>
-                <div class="bg-[#f59e0b] text-white w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shadow-lg relative z-10">
-                    <i class="ph-fill ph-bus text-xl"></i>
-                </div>
-            </div>
-        `;
+        // Pulsing Bus Marker
         const busIcon = L.divIcon({
             className: 'bg-transparent',
-            html: busIconHtml,
+            html: `
+                <div class="bus-marker-wrapper">
+                    <div class="bus-pulse"></div>
+                    <div class="bg-amber-500 text-slate-950 w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shadow-xl relative z-10 font-bold">
+                        <i class="fa-solid fa-bus text-base"></i>
+                    </div>
+                </div>
+            `,
             iconSize: [40, 40],
             iconAnchor: [20, 20]
         });
 
-        // Initialize bus marker somewhere in the middle (e.g. Ayer Keroh area)
-        let busMarker = L.marker(routePath[3], {icon: busIcon, zIndexOffset: 1000}).addTo(map);
+        let busMarker = L.marker(routePath[3], { icon: busIcon, zIndexOffset: 1000 }).addTo(map);
+        busMarker.bindPopup('<b>Bus ABC1234</b><br>Driver: Ahmad Albab<br>Speed: 82 km/h<br>Status: <span style="color:#10b981;font-weight:bold;">On Time</span><br>ETA: 01:15 PM');
 
-        // ---- Animation Logic for Demo ----
-        // We will animate the bus moving along the routePath array.
-        let progress = 0.45; // Start around 45% of the trip
-        const animationSpeed = 0.0003; // Adjust for faster/slower movement
-
-        // Draw a solid line behind the bus to show completed route
-        let completedRouteLine = L.polyline([], {
-            color: '#f59e0b', // Orange completed path
-            weight: 5,
-            opacity: 1,
-            lineJoin: 'round'
-        }).addTo(map);
-
+        // Smooth Animation along highway
+        let progress = 0.46;
         function animateBus() {
-            progress += animationSpeed;
-            if (progress > 0.95) {
-                // Loop back for demo purposes
-                progress = 0.1; 
-            }
+            progress += 0.00015;
+            if (progress > 0.95) progress = 0.15;
 
             const totalSegments = routePath.length - 1;
             const scaledProgress = progress * totalSegments;
-            const currentIndex = Math.floor(scaledProgress);
-            const segmentProgress = scaledProgress - currentIndex;
+            const idx = Math.floor(scaledProgress);
+            const segProgress = scaledProgress - idx;
 
-            let currentLat, currentLng;
+            const startNode = routePath[idx];
+            const endNode = routePath[idx + 1] || routePath[idx];
+            const lat = startNode[0] + (endNode[0] - startNode[0]) * segProgress;
+            const lng = startNode[1] + (endNode[1] - startNode[1]) * segProgress;
 
-            if (currentIndex >= totalSegments) {
-                currentLat = routePath[totalSegments][0];
-                currentLng = routePath[totalSegments][1];
-            } else {
-                const startNode = routePath[currentIndex];
-                const endNode = routePath[currentIndex + 1];
-                
-                // Linear interpolation between the two points
-                currentLat = startNode[0] + (endNode[0] - startNode[0]) * segmentProgress;
-                currentLng = startNode[1] + (endNode[1] - startNode[1]) * segmentProgress;
-            }
+            const pos = [lat, lng];
+            busMarker.setLatLng(pos);
 
-            // Update bus position
-            const newPos = [currentLat, currentLng];
-            busMarker.setLatLng(newPos);
+            const completed = routePath.slice(0, idx + 1);
+            completed.push(pos);
+            completedRouteLine.setLatLngs(completed);
 
-            // Update the completed solid line up to the bus's current position
-            const completedCoords = routePath.slice(0, currentIndex + 1);
-            completedCoords.push(newPos);
-            completedRouteLine.setLatLngs(completedCoords);
-
-            // Keep animating
             requestAnimationFrame(animateBus);
         }
-
-        // Start animation
         requestAnimationFrame(animateBus);
 
-        // Slight map pan interaction to follow bus on initial load
-        setTimeout(() => {
-            map.panTo(busMarker.getLatLng(), {animate: true, duration: 1.5});
-        }, 1000);
+        // URL Parameter handling & Fleet switching logic
+        function initFleetTracking() {
+            const params = new URLSearchParams(window.location.search);
+            const busParam = params.get('bus') || '';
+            const routeParam = params.get('route') || '';
+            const seatParam = params.get('seat') || '';
+            const bookingParam = params.get('booking') || '';
 
+            // Handle Passenger Seat Badge
+            if (seatParam) {
+                const badgeEl = document.getElementById('passengerSeatBadge');
+                const seatEl = document.getElementById('trackingSeatNumber');
+                const bookEl = document.getElementById('trackingBookingRef');
+                if (badgeEl) badgeEl.classList.remove('hidden');
+                if (seatEl) seatEl.textContent = seatParam.startsWith('Seat') ? seatParam : 'Seat ' + seatParam;
+                if (bookEl) bookEl.textContent = bookingParam || 'EB-CONFIRMED';
+            }
+
+            // Get fleet from EasyBusStore (fallback if not present)
+            let fleet = (window.EasyBusStore && typeof window.EasyBusStore.getFleet === 'function')
+                ? window.EasyBusStore.getFleet()
+                : [
+                    { plate: 'ABC1234', model: 'Scania K360IB', capacity: 44, status: 'Active', driver: 'Ahmad Albab', phone: '016-2233445', route: 'Kuala Lumpur (TBS) → Johor Bahru (Larkin)', speed: '82 km/h', eta: '01:15 PM', dist: '135 km' },
+                    { plate: 'XYZ5678', model: 'Volvo B11R', capacity: 36, status: 'Active', driver: 'Siti Sarah', phone: '019-8765432', route: 'Kuala Lumpur → Penang', speed: '78 km/h', eta: '12:45 PM', dist: '94 km' },
+                    { plate: 'DEF9012', model: 'Mercedes-Benz OC500', capacity: 40, status: 'Active', driver: 'Tan Ah Kow', phone: '012-3456789', route: 'Kuala Lumpur → Melaka', speed: '85 km/h', eta: '02:30 PM', dist: '62 km' }
+                ];
+
+            const getPlate = (v) => v ? (v.plate || v.busPlate || v.busPlateNum || '') : '';
+            const getDriver = (v) => v ? (v.driver || v.driverName || 'Ahmad Albab') : 'Ahmad Albab';
+            const getPhone = (v) => v ? (v.phone || v.contactPhone || '016-2233445') : '016-2233445';
+
+            // Render fleet switcher tabs
+            const tabsContainer = document.getElementById('fleetSwitcherTabs');
+            let activePlate = busParam ? busParam.toUpperCase() : (fleet[0] ? getPlate(fleet[0]).toUpperCase() : 'ABC1234');
+            // Check if activePlate exists in fleet; if not, use fleet[0]
+            if (!fleet.some(v => getPlate(v).toUpperCase() === activePlate)) {
+                if (fleet.length > 0) activePlate = getPlate(fleet[0]).toUpperCase();
+            }
+
+            function selectVehicle(plate) {
+                activePlate = (plate || '').toUpperCase();
+                const vehicle = fleet.find(v => getPlate(v).toUpperCase() === activePlate) || fleet[0];
+                if (!vehicle) return;
+
+                const vPlate = getPlate(vehicle) || plate;
+                const vDriver = getDriver(vehicle);
+                const vPhone = getPhone(vehicle);
+
+                // Update tab styles
+                if (tabsContainer) {
+                    const buttons = tabsContainer.querySelectorAll('button[data-plate]');
+                    buttons.forEach(btn => {
+                        const isCurrent = (btn.getAttribute('data-plate') || '').toUpperCase() === activePlate;
+                        btn.className = isCurrent
+                            ? 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 transition'
+                            : 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700 transition';
+                    });
+                }
+
+                // Update vehicle details in sidebar
+                const elPlate = document.getElementById('trackingVehiclePlate');
+                const elDriver = document.getElementById('trackingDriverName');
+                const elPhone = document.getElementById('trackingDriverPhone');
+                const elSpeed = document.getElementById('trackingLiveSpeed');
+                const elEta = document.getElementById('trackingEta');
+                const elDist = document.getElementById('trackingDistance');
+                const elRoute = document.getElementById('trackingRouteHeader');
+
+                if (elPlate) elPlate.textContent = vPlate;
+                if (elDriver) elDriver.textContent = vDriver;
+                if (elPhone) {
+                    elPhone.textContent = vPhone;
+                    elPhone.href = 'tel:' + vPhone;
+                }
+                const spd = vehicle.speed || '82 km/h';
+                if (elSpeed) elSpeed.innerHTML = spd.includes('km/h') ? spd : spd + ' <span class="text-[10px] font-normal text-slate-400">km/h</span>';
+                const arr = vehicle.eta || '01:15 PM';
+                if (elEta) elEta.innerHTML = arr;
+                const dst = vehicle.dist || '135 km';
+                if (elDist) elDist.innerHTML = dst.includes('km') ? dst : dst + ' <span class="text-[10px] font-normal text-slate-400">km</span>';
+
+                // Route header
+                if (elRoute) {
+                    if (routeParam && vPlate.toUpperCase() === busParam.toUpperCase()) {
+                        elRoute.textContent = routeParam;
+                    } else if (vehicle.route) {
+                        elRoute.textContent = vehicle.route;
+                    }
+                }
+
+                // Update floating card
+                const cPlate = document.getElementById('cardVehiclePlate');
+                const cDriver = document.getElementById('cardDriverName');
+                const cSpeed = document.getElementById('cardSpeed');
+                const cEta = document.getElementById('cardEta');
+                const cDist = document.getElementById('cardDistance');
+
+                if (cPlate) cPlate.textContent = 'Bus ' + vPlate;
+                if (cDriver) cDriver.textContent = vDriver;
+                if (cSpeed) cSpeed.textContent = vehicle.speed || '82 km/h';
+                if (cEta) cEta.textContent = vehicle.eta || '01:15 PM';
+                if (cDist) cDist.textContent = vehicle.dist || '135 km';
+
+                // Update map popup
+                if (typeof busMarker !== 'undefined' && busMarker && busMarker.setPopupContent) {
+                    busMarker.setPopupContent(`<b>Bus ${vPlate}</b><br>Driver: ${vDriver}<br>Speed: ${vehicle.speed || '82 km/h'}<br>Status: <span style="color:#10b981;font-weight:bold;">On Time</span><br>ETA: ${vehicle.eta || '01:15 PM'}`);
+                }
+            }
+
+            if (tabsContainer) {
+                tabsContainer.innerHTML = '';
+                fleet.forEach(v => {
+                    const p = getPlate(v);
+                    if (!p) return;
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.setAttribute('data-plate', p);
+                    btn.textContent = p;
+                    btn.addEventListener('click', () => selectVehicle(p));
+                    tabsContainer.appendChild(btn);
+                });
+            }
+
+            const liveCountEl = document.getElementById('fleetLiveCount');
+            if (liveCountEl) liveCountEl.textContent = `${fleet.length} Live`;
+
+            selectVehicle(activePlate);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initFleetTracking);
+        } else {
+            initFleetTracking();
+        }
     </script>
+    <script src="assets/js/easybus-store.js"></script>
+    <script src="assets/js/easybus-nav.js"></script>
 </body>
 </html>

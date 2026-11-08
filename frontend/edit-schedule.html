@@ -39,7 +39,7 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-image: 
-                linear-gradient(to bottom, rgba(10, 15, 29, 0.75), rgba(15, 23, 42, 0.90)),
+                linear-gradient(to bottom, rgba(10, 15, 29, 0.78), rgba(15, 23, 42, 0.92)),
                 url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2000&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
@@ -49,7 +49,7 @@
 
         /* Backdrop Glass Card */
         .glass-card {
-            background: rgba(30, 41, 59, 0.55);
+            background: rgba(30, 41, 59, 0.65);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.18);
@@ -58,7 +58,7 @@
 
         /* Glass Input Fields */
         .glass-input {
-            background: rgba(255, 255, 255, 0.22);
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -71,7 +71,7 @@
         }
 
         .glass-input:focus-within {
-            background: rgba(255, 255, 255, 0.28);
+            background: rgba(255, 255, 255, 0.22);
             border-color: #f59e0b;
             box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
         }
@@ -93,7 +93,7 @@
         }
     </style>
 </head>
-<body class="flex flex-col items-center justify-between min-h-screen p-4 sm:p-6 md:p-10 text-white selection:bg-amber-500 selection:text-slate-900">
+<body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-10 text-white selection:bg-amber-500 selection:text-slate-900">
 
     <!-- Toast Notification Container -->
     <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none"></div>
@@ -114,8 +114,8 @@
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-400 flex items-center justify-center shadow-lg shadow-amber-500/20 text-slate-950 font-bold text-xl">
                         <i class="fa-solid fa-bus"></i>
                     </div>
-                    <span class="text-2xl sm:text-3xl font-extrabold tracking-tight text-amber-400 drop-shadow-sm">Easy<span class="text-white">Bus</span></span>
-                </div>
+                    <span class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm">Easy<span class="text-amber-400">Bus</span></span>
+                </a>
 
                 <!-- Page Header Title -->
                 <div class="flex items-center gap-2 text-slate-200 font-semibold text-sm sm:text-base">
@@ -195,39 +195,47 @@
                     <!-- Departure Date -->
                     <div>
                         <label class="block text-xs sm:text-sm font-bold text-slate-200 mb-2 tracking-wide">Departure Date</label>
-                        <div class="glass-input rounded-xl px-3 py-3 flex items-center gap-2">
-                            <input type="text" id="departureDate" name="departureDate" value="15/11/2026" required class="w-full bg-transparent border-none outline-none text-white font-medium text-sm sm:text-base">
-                            <i class="fa-regular fa-calendar-days text-slate-300 cursor-pointer" onclick="document.getElementById('departureDate').focus()"></i>
+                        <div class="glass-input rounded-xl px-3 py-3 flex items-center justify-between gap-2">
+                            <input type="text" id="departureDate" name="departureDate" value="15/11/2026" required class="w-full bg-transparent border-none outline-none text-white font-medium text-sm sm:text-base placeholder-white/40" placeholder="DD/MM/YYYY">
+                            <label for="hiddenDatePicker" class="cursor-pointer text-slate-300 hover:text-amber-400 transition" title="Pick date">
+                                <i class="fa-regular fa-calendar-days"></i>
+                            </label>
+                            <input type="date" id="hiddenDatePicker" class="sr-only" onchange="syncDatePicker(this.value)">
                         </div>
                     </div>
 
                     <!-- Time -->
                     <div>
                         <label class="block text-xs sm:text-sm font-bold text-slate-200 mb-2 tracking-wide">Time</label>
-                        <div class="glass-input rounded-xl px-3 py-3 flex items-center gap-2">
-                            <input type="text" id="departureTime" name="departureTime" value="08:30 AM" required class="w-full bg-transparent border-none outline-none text-white font-medium text-sm sm:text-base">
-                            <i class="fa-regular fa-clock text-slate-300 cursor-pointer" onclick="document.getElementById('departureTime').focus()"></i>
+                        <div class="glass-input rounded-xl px-3 py-3 flex items-center justify-between gap-2">
+                            <input type="text" id="departureTime" name="departureTime" value="08:30 AM" required class="w-full bg-transparent border-none outline-none text-white font-medium text-sm sm:text-base placeholder-white/40" placeholder="HH:MM AM/PM">
+                            <label for="hiddenTimePicker" class="cursor-pointer text-slate-300 hover:text-amber-400 transition" title="Pick time">
+                                <i class="fa-regular fa-clock"></i>
+                            </label>
+                            <input type="time" id="hiddenTimePicker" class="sr-only" onchange="syncTimePicker(this.value)">
                         </div>
                     </div>
 
                     <!-- Ticket Price -->
                     <div>
                         <label class="block text-xs sm:text-sm font-bold text-slate-200 mb-2 tracking-wide">Ticket Price</label>
-                        <div class="glass-input rounded-xl px-3 py-3 flex items-center gap-2">
-                            <input type="text" id="ticketPrice" name="ticketPrice" value="RM 45.00" required class="w-full bg-transparent border-none outline-none text-white font-medium text-sm sm:text-base">
+                        <div class="glass-input rounded-xl px-4 py-3 flex items-center gap-2">
+                            <span class="text-amber-400 font-bold text-sm select-none">RM</span>
+                            <input type="text" id="ticketPrice" name="ticketPrice" value="45.00" required class="w-full bg-transparent border-none outline-none text-white font-medium text-sm sm:text-base placeholder-white/40" placeholder="0.00">
                         </div>
                     </div>
 
                     <!-- Status -->
                     <div>
                         <label class="block text-xs sm:text-sm font-bold text-slate-200 mb-2 tracking-wide">Status</label>
-                        <div class="glass-input rounded-xl px-3 py-3 flex items-center justify-between">
-                            <select id="busStatus" name="busStatus" class="w-full bg-transparent border-none outline-none text-white font-medium text-sm sm:text-base cursor-pointer">
+                        <div class="glass-input rounded-xl px-3 py-3 flex items-center justify-between relative">
+                            <select id="busStatus" name="busStatus" class="w-full bg-transparent border-none outline-none text-white font-medium text-sm sm:text-base cursor-pointer appearance-none pr-6">
                                 <option value="Available" selected>Available</option>
-                                <option value="Fully Booked">Fully Booked</option>
+                                <option value="Full">Full</option>
                                 <option value="Delayed">Delayed</option>
                                 <option value="Cancelled">Cancelled</option>
                             </select>
+                            <i class="fa-solid fa-chevron-down text-slate-300 text-xs pointer-events-none absolute right-3"></i>
                         </div>
                     </div>
                 </div>
@@ -243,7 +251,7 @@
 
                     <!-- Reset & Update Buttons (Right) -->
                     <div class="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3">
-                        <!-- Reset Schedule Button (Replaced Delete Schedule per request) -->
+                        <!-- Reset Schedule Button -->
                         <button type="button" onclick="resetFormSchedule()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-red-600/85 hover:bg-red-500 text-white font-bold text-sm shadow-lg shadow-red-950/40 hover:shadow-red-600/30 transition-all duration-200 active:scale-95 focus:outline-none">
                             <i class="fa-solid fa-rotate-left"></i>
                             <span>Reset Schedule</span>
@@ -281,9 +289,82 @@
             arrivalLocation: "Penang Sentral",
             departureDate: "15/11/2026",
             departureTime: "08:30 AM",
-            ticketPrice: "RM 45.00",
+            ticketPrice: "45.00",
             busStatus: "Available"
         };
+
+        // Initialize from URL params if present (e.g. from schedule-list table click)
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('bus')) {
+                initialSchedule.busNumber = params.get('bus');
+                document.getElementById('busNumber').value = initialSchedule.busNumber;
+            }
+            if (params.has('route')) {
+                initialSchedule.routeAssignment = params.get('route');
+                document.getElementById('routeAssignment').value = initialSchedule.routeAssignment;
+            }
+            if (params.has('driver')) {
+                initialSchedule.driverName = params.get('driver');
+                document.getElementById('driverName').value = initialSchedule.driverName;
+            }
+            if (params.has('seats')) {
+                initialSchedule.availableSeats = params.get('seats');
+                document.getElementById('availableSeats').value = initialSchedule.availableSeats;
+            }
+            if (params.has('from')) {
+                initialSchedule.departureLocation = params.get('from');
+                document.getElementById('departureLocation').value = initialSchedule.departureLocation;
+            }
+            if (params.has('to')) {
+                initialSchedule.arrivalLocation = params.get('to');
+                document.getElementById('arrivalLocation').value = initialSchedule.arrivalLocation;
+            }
+            if (params.has('date')) {
+                let d = params.get('date');
+                if (d.includes('-')) {
+                    const parts = d.split('-');
+                    if (parts.length === 3) d = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                }
+                initialSchedule.departureDate = d;
+                document.getElementById('departureDate').value = initialSchedule.departureDate;
+            }
+            if (params.has('time')) {
+                initialSchedule.departureTime = params.get('time');
+                document.getElementById('departureTime').value = initialSchedule.departureTime;
+            }
+            if (params.has('price')) {
+                const p = params.get('price').replace(/[^0-9.]/g, '');
+                if (p) {
+                    initialSchedule.ticketPrice = p;
+                    document.getElementById('ticketPrice').value = p;
+                }
+            }
+            if (params.has('status')) {
+                initialSchedule.busStatus = params.get('status');
+                document.getElementById('busStatus').value = initialSchedule.busStatus;
+            }
+        });
+
+        // Helper to sync hidden date picker to text field
+        function syncDatePicker(val) {
+            if (!val) return;
+            const parts = val.split('-');
+            if (parts.length === 3) {
+                document.getElementById('departureDate').value = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+        }
+
+        // Helper to sync hidden time picker to text field (12hr AM/PM)
+        function syncTimePicker(val) {
+            if (!val) return;
+            const [hStr, mStr] = val.split(':');
+            let h = parseInt(hStr, 10);
+            const period = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+            const displayH = h < 10 ? '0' + h : h;
+            document.getElementById('departureTime').value = `${displayH}:${mStr} ${period}`;
+        }
 
         /**
          * Custom Glassmorphism Toast Notification
@@ -295,8 +376,8 @@
             toast.className = `toast-animate pointer-events-auto flex items-center gap-3 p-4 rounded-xl backdrop-blur-xl border text-white shadow-xl ${
                 type === 'success' 
                     ? 'bg-slate-900/90 border-amber-500/50 shadow-amber-500/10' 
-                    : type === 'warning'
-                    ? 'bg-slate-900/90 border-red-500/50 shadow-red-500/10'
+                    : type === 'warning' 
+                    ? 'bg-slate-900/90 border-red-500/50 shadow-red-500/10' 
                     : 'bg-slate-900/90 border-blue-500/50 shadow-blue-500/10'
             }`;
 
@@ -351,10 +432,41 @@
         function handleFormSubmit(event) {
             event.preventDefault();
             
-            const busNo = document.getElementById('busNumber').value;
-            const route = document.getElementById('routeAssignment').value;
+            const busNo = document.getElementById('busNumber').value.trim();
+            const route = document.getElementById('routeAssignment').value.trim();
+            const driver = document.getElementById('driverName') ? document.getElementById('driverName').value.trim() : '';
+            const seats = document.getElementById('availableSeats') ? parseInt(document.getElementById('availableSeats').value.trim(), 10) : 40;
+            const from = document.getElementById('departureLocation') ? document.getElementById('departureLocation').value.trim() : '';
+            const to = document.getElementById('arrivalLocation') ? document.getElementById('arrivalLocation').value.trim() : '';
+            const date = document.getElementById('departureDate') ? document.getElementById('departureDate').value.trim() : '';
+            const time = document.getElementById('departureTime') ? document.getElementById('departureTime').value.trim() : '';
+            const price = document.getElementById('ticketPrice') ? document.getElementById('ticketPrice').value.trim() : '35.00';
+            const status = document.getElementById('busStatus') ? document.getElementById('busStatus').value.trim() : 'Available';
+
+            if (window.EasyBusStore && typeof window.EasyBusStore.updateSchedule === 'function') {
+                window.EasyBusStore.updateSchedule(busNo, {
+                    busNumber: busNo,
+                    busPlate: busNo,
+                    route: route,
+                    routeAssignment: route,
+                    driverName: driver,
+                    availableSeats: seats,
+                    from: from,
+                    departureLocation: from,
+                    to: to,
+                    arrivalLocation: to,
+                    departureDate: date,
+                    departureTime: time,
+                    ticketPrice: price,
+                    busStatus: status
+                });
+            }
 
             showToast(`Schedule for <strong>${busNo}</strong> (${route}) updated successfully!`, 'success');
+
+            setTimeout(() => {
+                window.location.href = 'schedule-list.html';
+            }, 1000);
         }
 
         /**
@@ -364,5 +476,7 @@
             window.location.href = 'schedule-list.html';
         }
     </script>
+    <script src="assets/js/easybus-store.js"></script>
+    <script src="assets/js/easybus-nav.js"></script>
 </body>
 </html>
